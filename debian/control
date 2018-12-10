@@ -1,0 +1,12 @@
+Source: deepin-screensaver
+Section: devel
+Priority: optional
+Maintainer: Deepin Packages Builder <packages@deepin.com>
+Build-Depends: debhelper (>=9), qtbase5-dev
+Standards-Version: 3.9.8
+
+Package: deepin-screensaver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Screensaver Tool
+ Deepin screensaver viewer and tools.
