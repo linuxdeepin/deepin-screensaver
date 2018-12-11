@@ -45,7 +45,7 @@ public:
     bool Preview(const QString &name, int staysOn = 1, bool preview = true);
     QString GetScreenSaverCover(const QString &name) const;
     void RefreshScreenSaverList();
-    void Start();
+    void Start(const QString &name = QString());
     void Stop();
 
     QStringList allScreenSaver() const;

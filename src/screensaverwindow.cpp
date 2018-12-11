@@ -25,8 +25,8 @@
 ScreenSaverWindow::ScreenSaverWindow(QWindow *parent)
     : QQuickView(parent)
 {
-    QBitmap bitmap(1, 1);
+    QPixmap pixmap(1, 1);
 
-    bitmap.clear();
-    setCursor(bitmap);
+    pixmap.fill(Qt::transparent);
+    setCursor(pixmap);
 }

@@ -186,9 +186,9 @@ void DBusScreenSaver::RefreshScreenSaverList()
     emit allScreenSaverChanged(m_screenSaverList);
 }
 
-void DBusScreenSaver::Start()
+void DBusScreenSaver::Start(const QString &name)
 {
-    Preview(m_currentScreenSaver, 1, false);
+    Preview(name.isEmpty() ? m_currentScreenSaver : name, 1, false);
 }
 
 void DBusScreenSaver::Stop()

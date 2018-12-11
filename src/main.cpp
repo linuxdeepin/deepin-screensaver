@@ -34,18 +34,20 @@ int main(int argc, char *argv[])
 
     bool doStart = true;
 
+    QCommandLineParser parser;
+
     if (argc > 1) {
-        QCommandLineParser parser;
         QCommandLineOption option_dbus({"d", "dbus"}, "Register DBus service.");
         QCommandLineOption option_start({"s", "start"}, "Start screen saver.");
 
         parser.addOption(option_dbus);
         parser.addOption(option_start);
+        parser.addPositionalArgument("screensaer-name", "Use the screensaver application.", "[name]");
         parser.addHelpOption();
         parser.addVersionOption();
 
         parser.process(app);
-        doStart = parser.isSet(option_start);
+        doStart = !parser.isSet(option_dbus);
     }
 
     // 注册DBus服务
@@ -76,7 +78,10 @@ int main(int argc, char *argv[])
     }
 
     if (doStart) {
-        server->Start();
+        if (argc > 1)
+            server->Start(parser.positionalArguments().value(0));
+        else
+            server->Start();
     }
 
     return app.exec();
