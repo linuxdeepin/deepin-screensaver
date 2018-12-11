@@ -1,6 +1,7 @@
 *.pro.user*
 build*/
 bin/
+xscreensaver/extras/
 
 # C++ objects and libs
 

@@ -7,6 +7,13 @@ Standards-Version: 3.9.8
 
 Package: deepin-screensaver
 Architecture: any
+Recommends: deepin-screensaver-xscreensaver-data
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Screensaver Tool
  Deepin screensaver viewer and tools.
+
+Package: deepin-screensaver-xscreensaver-data
+Architecture: any
+Depends: deepin-screensaver, xscreensaver-data-extra, xscreensaver-gl-extra
+Description: Screensaver data
+ xscreensaver extra with the Deepin Screensaver.
