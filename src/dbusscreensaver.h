@@ -69,8 +69,14 @@ private:
     bool eventFilter(QObject *watched, QEvent *event) override;
     Q_SLOT void onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
 
-    const QDir moduleDir;
+    void clearResourceList();
+
+    const QList<QDir> m_resourceDirList;
+    QStringList m_resourceList;
+
+    const QList<QDir> m_moduleDirList;
     QStringList m_screenSaverList;
+    QMap<QString, QDir> m_screenSaverNameToDir;
     QString m_currentScreenSaver;
     ScreenSaverWindow *m_window = nullptr;
     QProcess *m_process = nullptr;

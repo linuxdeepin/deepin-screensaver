@@ -23,7 +23,7 @@
 #include <QBitmap>
 
 ScreenSaverWindow::ScreenSaverWindow(QWindow *parent)
-    : QWindow(parent)
+    : QQuickView(parent)
 {
     QBitmap bitmap(1, 1);
 

@@ -1,15 +1,17 @@
 TARGET = deepin-screensaver
-QT += gui dbus
+QT += gui dbus quick
 CONFIG += c++11
 
 SOURCES += \
     $$PWD/main.cpp \
     $$PWD/screensaverwindow.cpp \
-    $$PWD/dbusscreensaver.cpp
+    $$PWD/dbusscreensaver.cpp \
+    imageprovider.cpp
 
 HEADERS += \
     $$PWD/screensaverwindow.h \
-    $$PWD/dbusscreensaver.h
+    $$PWD/dbusscreensaver.h \
+    imageprovider.h
 
 screensaver.files = $$PWD/com.deepin.ScreenSaver.xml
 screensaver.header_flags += -l DBusScreenSaver -i $$PWD/dbusscreensaver.h
@@ -30,11 +32,16 @@ isEmpty(PREFIX) {
 }
 
 isEmpty(MODULE_PATH) {
-    # /usr/lib/deepin-screensaver
-    MODULE_PATH = $$PREFIX/lib/$$TARGET
+    # /usr/lib/deepin-screensaver/modules
+    MODULE_PATH = $$PREFIX/lib/$$TARGET/modules
 }
 
-DEFINES += MODULE_PATH=\\\"$$MODULE_PATH\\\"
+isEmpty(RESOURCE_PATH) {
+    # /usr/lib/deepin-screensaver/modules
+    RESOURCE_PATH = $$PREFIX/lib/$$TARGET/resources
+}
+
+DEFINES += MODULE_PATH=\\\"$$MODULE_PATH\\\" RESOURCE_PATH=\\\"$$RESOURCE_PATH\\\"
 
 target.path = $$PREFIX/bin
 

@@ -20,16 +20,19 @@
  */
 #include "dbusscreensaver.h"
 #include "screensaverwindow.h"
+#include "imageprovider.h"
 
 #include <QDebug>
 #include <QCoreApplication>
 #include <QSettings>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QResource>
 
 DBusScreenSaver::DBusScreenSaver(QObject *parent)
     : QObject(parent)
-    , moduleDir(MODULE_PATH)
+    , m_resourceDirList({QDir(RESOURCE_PATH)})
+    , m_moduleDirList({QDir("://deepin-screensaver/modules"), QDir(MODULE_PATH)})
     , m_settings(qApp->organizationName())
 {
     m_autoQuitTimer.setInterval(30000);
@@ -55,35 +58,52 @@ DBusScreenSaver::~DBusScreenSaver()
     if (isRunning()) {
         Stop();
     }
+
+    clearResourceList();
 }
 
 bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 {
+    const QDir &moduleDir = m_screenSaverNameToDir.value(name);
+
     if (!QFile::exists(moduleDir.absoluteFilePath(name)))
         return false;
-
-    if (!m_process) {
-        m_process = new QProcess(this);
-        m_process->setProcessChannelMode(QProcess::ForwardedChannels);
-    }
 
     if (!m_window) {
         m_window = new ScreenSaverWindow();
         m_window->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer);
         m_window->create();
+
+        static ImageProvider *ip = new ImageProvider();
+
+        m_window->engine()->addImageProvider("deepin-screensaver", ip);
     }
 
-    if (m_process->state() != QProcess::NotRunning) {
+    if (m_process && m_process->state() != QProcess::NotRunning) {
         m_process->terminate();
         m_process->waitForFinished();
     }
 
-    m_process->start(moduleDir.absoluteFilePath(name), {"-window-id", QString::number(m_window->winId())}, QIODevice::ReadOnly);
+    // 清理qml的播放
+    m_window->setSource(QUrl());
+    // 清理窗口背景色
+    m_window->setColor(Qt::black);
 
-    if (!m_process->waitForStarted(3000)) {
-        qDebug() << "Failed on start:" << m_process->program() << ", error string:" << m_process->errorString();
+    if (name.endsWith(".qml")) {
+        m_window->setSource(QUrl("qrc" + moduleDir.absoluteFilePath(name)));
+    } else {
+        if (!m_process) {
+            m_process = new QProcess(this);
+            m_process->setProcessChannelMode(QProcess::ForwardedChannels);
+        }
 
-        return false;
+        m_process->start(moduleDir.absoluteFilePath(name), {"-window-id", QString::number(m_window->winId())}, QIODevice::ReadOnly);
+
+        if (!m_process->waitForStarted(3000)) {
+            qDebug() << "Failed on start:" << m_process->program() << ", error string:" << m_process->errorString();
+
+            return false;
+        }
     }
 
     if (staysOn) {
@@ -111,12 +131,8 @@ QString DBusScreenSaver::GetScreenSaverCover(const QString &name) const
     if (name.isEmpty())
         return QString();
 
+    const QDir &moduleDir = m_screenSaverNameToDir.value(name);
     QString cover = moduleDir.absoluteFilePath(QString("cover/%1.bmp").arg(name));
-
-    if (QFile::exists(cover))
-        return cover;
-
-    cover = moduleDir.absoluteFilePath(QString("cover/%1.png").arg(name));
 
     if (QFile::exists(cover))
         return cover;
@@ -126,12 +142,41 @@ QString DBusScreenSaver::GetScreenSaverCover(const QString &name) const
     if (QFile::exists(cover))
         return cover;
 
+    cover = moduleDir.absoluteFilePath(QString("cover/%1.png").arg(name));
+
+    if (QFile::exists(cover))
+        return cover;
+
     return QString();
 }
 
 void DBusScreenSaver::RefreshScreenSaverList()
 {
-    m_screenSaverList = moduleDir.entryList(QDir::Files | QDir::Executable);
+    // 重新加载资源文件
+    clearResourceList();
+
+    for (const QDir &resourceDir : m_resourceDirList) {
+        for (const QFileInfo &info : resourceDir.entryInfoList({"*.rcc"}, QDir::Files)) {
+            if (QResource::registerResource(info.absoluteFilePath())) {
+                m_resourceList << info.absoluteFilePath();
+            } else {
+                qWarning() << "Failed on load resource file:" << info.absoluteFilePath();
+            }
+        }
+    }
+
+    m_screenSaverList.clear();
+    m_screenSaverNameToDir.clear();
+
+    for (const QDir &moduleDir : m_moduleDirList) {
+        for (const QFileInfo &info : moduleDir.entryInfoList(QDir::Files)) {
+            if (!info.isExecutable() && info.suffix() != "qml")
+                continue;
+
+            m_screenSaverList.append(info.fileName());
+            m_screenSaverNameToDir[info.fileName()] = moduleDir;
+        }
+    }
 
     if (!m_screenSaverList.isEmpty()) {
         if (!m_screenSaverList.contains(m_currentScreenSaver))
@@ -148,15 +193,16 @@ void DBusScreenSaver::Start()
 
 void DBusScreenSaver::Stop()
 {
-    if (!m_process || m_process->state() == QProcess::NotRunning) {
-        return;
-    }
-
     m_window->removeEventFilter(this);
     m_window->hide();
-    m_process->terminate();
-    m_process->waitForFinished();
     m_autoQuitTimer.start();
+
+    if (m_process && m_process->state() == QProcess::NotRunning) {
+        m_process->terminate();
+        m_process->waitForFinished();
+    }
+
+    m_window->setSource(QUrl());
 
     emit isRunningChanged(false);
 }
@@ -267,4 +313,13 @@ void DBusScreenSaver::onDBusPropertyChanged(const QString &interface, const QVar
 
         ++begin;
     }
+}
+
+void DBusScreenSaver::clearResourceList()
+{
+    for (const QString &name : m_resourceList) {
+        QResource::unregisterResource(name);
+    }
+
+    m_resourceList.clear();
 }

@@ -18,16 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SCREENSAVERWINDOW_H
-#define SCREENSAVERWINDOW_H
+#ifndef IMAGEPROVIDER_H
+#define IMAGEPROVIDER_H
 
-#include <QQuickView>
+#include <QQuickImageProvider>
 
-class ScreenSaverWindow : public QQuickView
+class ImageProvider : public QQuickImageProvider
 {
-    Q_OBJECT
 public:
-    explicit ScreenSaverWindow(QWindow *parent = nullptr);
+    explicit ImageProvider();
+
+    QPixmap requestPixmap(const QString &id, QSize *size, const QSize& requestedSize);
 };
 
-#endif // SCREENSAVERWINDOW_H
+#endif // IMAGEPROVIDER_H
