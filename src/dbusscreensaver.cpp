@@ -197,7 +197,7 @@ void DBusScreenSaver::Stop()
     m_window->hide();
     m_autoQuitTimer.start();
 
-    if (m_process && m_process->state() == QProcess::NotRunning) {
+    if (m_process && m_process->state() != QProcess::NotRunning) {
         m_process->terminate();
         m_process->waitForFinished();
     }
