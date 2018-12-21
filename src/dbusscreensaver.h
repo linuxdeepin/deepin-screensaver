@@ -66,7 +66,6 @@ signals:
     void isRunningChanged(bool isRunning);
 
 private:
-    bool eventFilter(QObject *watched, QEvent *event) override;
     Q_SLOT void onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
 
     void clearResourceList();

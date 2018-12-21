@@ -28,6 +28,8 @@
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QResource>
+#include <QStandardPaths>
+#include <QDirIterator>
 
 DBusScreenSaver::DBusScreenSaver(QObject *parent)
     : QObject(parent)
@@ -71,7 +73,7 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 
     if (!m_window) {
         m_window = new ScreenSaverWindow();
-        m_window->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer);
+        m_window->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer | Qt::WindowDoesNotAcceptFocus);
         m_window->create();
 
         static ImageProvider *ip = new ImageProvider();
@@ -90,7 +92,10 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
     m_window->setColor(Qt::black);
 
     if (name.endsWith(".qml")) {
-        m_window->setSource(QUrl("qrc" + moduleDir.absoluteFilePath(name)));
+        if (moduleDir.path().startsWith(":/"))
+            m_window->setSource(QUrl("qrc" + moduleDir.absoluteFilePath(name)));
+        else
+            m_window->setSource(QUrl::fromLocalFile(moduleDir.absoluteFilePath(name)));
     } else {
         if (!m_process) {
             m_process = new QProcess(this);
@@ -113,9 +118,9 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
     }
 
     if (!preview) {
-        m_window->installEventFilter(this);
+        connect(m_window, &ScreenSaverWindow::screenSaverOff, this, &DBusScreenSaver::Stop, Qt::UniqueConnection);
     } else {
-        m_window->removeEventFilter(this);
+        disconnect(m_window, &ScreenSaverWindow::screenSaverOff, this, &DBusScreenSaver::Stop);
     }
 
     m_window->showFullScreen();
@@ -126,16 +131,35 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
     return true;
 }
 
+static QString getAppRuntimePath() {
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation));
+
+    dir.mkdir(qApp->applicationName());
+
+    return dir.absoluteFilePath(qApp->applicationName());
+}
+
 QString DBusScreenSaver::GetScreenSaverCover(const QString &name) const
 {
     if (name.isEmpty())
         return QString();
 
-    const QDir &moduleDir = m_screenSaverNameToDir.value(name);
-    QString cover = moduleDir.absoluteFilePath(QString("cover/%1.bmp").arg(name));
+    QDir moduleDir = m_screenSaverNameToDir.value(name);
+
+    // 资源文件中的封面图被复制到了其它路径
+    if (moduleDir.path().startsWith(":/")) {
+        moduleDir.setPath(getAppRuntimePath());
+    }
+
+    QString cover = moduleDir.absoluteFilePath(QString("cover/%1.svg").arg(name));
 
     if (QFile::exists(cover))
         return cover;
+
+    cover = moduleDir.absoluteFilePath(QString("cover/%1.bmp").arg(name));
+
+        if (QFile::exists(cover))
+            return cover;
 
     cover = moduleDir.absoluteFilePath(QString("cover/%1.jpg").arg(name));
 
@@ -148,6 +172,31 @@ QString DBusScreenSaver::GetScreenSaverCover(const QString &name) const
         return cover;
 
     return QString();
+}
+
+// 连目录本身都复制
+static bool copyDir(QDir source, QDir target)
+{
+    target.mkdir(source.dirName());
+
+    if (!target.cd(source.dirName())) {
+        return false;
+    }
+
+    source.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+
+    QDirIterator di(source);
+
+    while (di.hasNext()) {
+        di.next();
+
+        const QString &target_file = target.absoluteFilePath(di.fileName());
+
+        if (!QFile::exists(target_file))
+            QFile::copy(di.filePath(), target_file);
+    }
+
+    return true;
 }
 
 void DBusScreenSaver::RefreshScreenSaverList()
@@ -176,6 +225,15 @@ void DBusScreenSaver::RefreshScreenSaverList()
             m_screenSaverList.append(info.fileName());
             m_screenSaverNameToDir[info.fileName()] = moduleDir;
         }
+
+        // 特殊处理资源文件, 将资源文件中的封面图复制到一个临时目录
+        if (moduleDir.path().startsWith(":/")) {
+            QDir cover_dir(moduleDir.filePath("cover"));
+
+            if (!copyDir(cover_dir, getAppRuntimePath())) {
+                qWarning() << "Failed Copy the" << cover_dir << "directory to" << getAppRuntimePath();
+            }
+        }
     }
 
     if (!m_screenSaverList.isEmpty()) {
@@ -188,6 +246,9 @@ void DBusScreenSaver::RefreshScreenSaverList()
 
 void DBusScreenSaver::Start(const QString &name)
 {
+    if (isRunning())
+        return;
+
     Preview(name.isEmpty() ? m_currentScreenSaver : name, 1, false);
 }
 
@@ -235,7 +296,8 @@ QString DBusScreenSaver::currentScreenSaver() const
 
 bool DBusScreenSaver::isRunning() const
 {
-    return m_process && m_process->state() != QProcess::NotRunning;
+    return (m_process && m_process->state() != QProcess::NotRunning)
+            || (m_window && m_window->isVisible() && m_window->source().isValid());
 }
 
 void DBusScreenSaver::setBatteryScreenSaverTimeout(int batteryScreenSaverTimeout)
@@ -263,26 +325,6 @@ void DBusScreenSaver::setCurrentScreenSaver(QString currentScreenSaver)
     m_settings.setValue("currentScreenSaver", m_currentScreenSaver);
 
     emit currentScreenSaverChanged(m_currentScreenSaver);
-}
-
-bool DBusScreenSaver::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched != m_window)
-        return QObject::eventFilter(watched, event);
-
-    switch (event->type()) {
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-    case QEvent::MouseMove:
-    case QEvent::KeyPress:
-    case QEvent::KeyRelease:
-        Stop();
-        break;
-    default:
-        break;
-    }
-
-    return QObject::eventFilter(watched, event);
 }
 
 void DBusScreenSaver::onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message)

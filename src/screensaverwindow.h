@@ -23,11 +23,21 @@
 
 #include <QQuickView>
 
+class X11EventFilter;
 class ScreenSaverWindow : public QQuickView
 {
     Q_OBJECT
 public:
     explicit ScreenSaverWindow(QWindow *parent = nullptr);
+    ~ScreenSaverWindow();
+
+signals:
+    void screenSaverOff();
+
+private:
+    bool event(QEvent *event) override;
+
+    QScopedPointer<X11EventFilter> x11event;
 };
 
 #endif // SCREENSAVERWINDOW_H
