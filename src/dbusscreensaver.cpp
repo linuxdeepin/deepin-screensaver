@@ -44,7 +44,7 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
     m_autoQuitTimer.start();
 #endif
     m_currentScreenSaver = m_settings.value("currentScreenSaver").toString();
-    m_lockScreenAtAwake = m_settings.value("lockScreenAtAwake", true).toBool();
+    m_lockScreenAtAwake = m_settings.value("lockScreenAtAwake", false).toBool();
     m_lockScreenDelay = m_settings.value("lockScreenDelay", 15).toInt();
     m_lockScreenTimer.setInterval(m_lockScreenDelay * 1000);
     m_lockScreenTimer.setSingleShot(true);
