@@ -36,7 +36,7 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
     : QObject(parent)
     , m_resourceDirList({QDir(RESOURCE_PATH)})
     , m_moduleDirList({QDir("://deepin-screensaver/modules"), QDir(MODULE_PATH)})
-    , m_settings(qApp->organizationName())
+    , m_settings(qApp->organizationName(), qApp->applicationName())
 {
     m_autoQuitTimer.setInterval(30000);
     m_autoQuitTimer.setSingleShot(true);
