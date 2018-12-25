@@ -37,6 +37,8 @@ class DBusScreenSaver : public QObject
     Q_PROPERTY(int linePowerScreenSaverTimeout READ linePowerScreenSaverTimeout WRITE setLinePowerScreenSaverTimeout NOTIFY linePowerScreenSaverTimeoutChanged)
     Q_PROPERTY(QString currentScreenSaver READ currentScreenSaver WRITE setCurrentScreenSaver NOTIFY currentScreenSaverChanged)
     Q_PROPERTY(bool isRunning READ isRunning NOTIFY isRunningChanged)
+    Q_PROPERTY(bool lockScreenAtAwake READ lockScreenAtAwake WRITE setLockScreenAtAwake NOTIFY lockScreenAtAwakeChanged)
+    Q_PROPERTY(int lockScreenDelay READ lockScreenDelay WRITE setLockScreenDelay NOTIFY lockScreenDelayChanged)
 
 public:
     explicit DBusScreenSaver(QObject *parent = nullptr);
@@ -58,12 +60,19 @@ public:
     void setLinePowerScreenSaverTimeout(int linePowerScreenSaverTimeout);
     void setCurrentScreenSaver(QString currentScreenSaver);
 
+    bool lockScreenAtAwake() const;
+    int lockScreenDelay() const;
+    void setLockScreenAtAwake(bool lockScreenAtAwake);
+    void setLockScreenDelay(int lockScreenDelay);
+
 signals:
     void allScreenSaverChanged(QStringList allScreenSaver);
     void batteryScreenSaverTimeoutChanged(int batteryScreenSaverTimeout);
     void linePowerScreenSaverTimeoutChanged(int linePowerScreenSaverTimeout);
     void currentScreenSaverChanged(QString currentScreenSaver);
     void isRunningChanged(bool isRunning);
+    void lockScreenAtAwakeChanged(bool lockScreenAtAwake);
+    void lockScreenDelayChanged(int lockScreenDelay);
 
 private:
     Q_SLOT void onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
@@ -77,6 +86,10 @@ private:
     QStringList m_screenSaverList;
     QMap<QString, QDir> m_screenSaverNameToDir;
     QString m_currentScreenSaver;
+    bool m_lockScreenAtAwake;
+    int m_lockScreenDelay;
+    QTimer m_lockScreenTimer;
+
     ScreenSaverWindow *m_window = nullptr;
     QProcess *m_process = nullptr;
     QTimer m_autoQuitTimer;

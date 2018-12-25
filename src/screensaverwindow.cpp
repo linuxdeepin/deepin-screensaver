@@ -111,9 +111,11 @@ bool ScreenSaverWindow::event(QEvent *event)
 
             XScreenSaverRegister(QX11Info::display(), QX11Info::appScreen(), winId(), XA_WINDOW);
 
+#ifdef QT_DEBUG
             // 禁止接收鼠标输入
             XRectangle rects {0, 0, 0, 0};
             XShapeCombineRectangles(QX11Info::display(), winId(), ShapeInput, 0, 0, &rects, 1, 0, 0);
+#endif
         }
     }
 

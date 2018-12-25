@@ -30,6 +30,7 @@
 #include <QResource>
 #include <QStandardPaths>
 #include <QDirIterator>
+#include <QTimer>
 
 DBusScreenSaver::DBusScreenSaver(QObject *parent)
     : QObject(parent)
@@ -39,8 +40,14 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
 {
     m_autoQuitTimer.setInterval(30000);
     m_autoQuitTimer.setSingleShot(true);
+#ifndef QT_DEBUG
     m_autoQuitTimer.start();
+#endif
     m_currentScreenSaver = m_settings.value("currentScreenSaver").toString();
+    m_lockScreenAtAwake = m_settings.value("lockScreenAtAwake", true).toBool();
+    m_lockScreenDelay = m_settings.value("lockScreenDelay", 15).toInt();
+    m_lockScreenTimer.setInterval(m_lockScreenDelay * 1000);
+    m_lockScreenTimer.setSingleShot(true);
 
     connect(&m_autoQuitTimer, &QTimer::timeout, this, &QCoreApplication::quit);
 
@@ -250,13 +257,30 @@ void DBusScreenSaver::Start(const QString &name)
         return;
 
     Preview(name.isEmpty() ? m_currentScreenSaver : name, 1, false);
+
+    // 计时用于判断在唤醒时是否要锁定屏幕
+    m_lockScreenTimer.start();
 }
 
 void DBusScreenSaver::Stop()
 {
+    if (!m_window)
+        return;
+
+    // 只在由窗口自己唤醒时才会触发锁屏
+    if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive() && sender() == m_window) {
+        QDBusInterface lockDBus("com.deepin.dde.lockFront", "/com/deepin/dde/lockFront",
+                                "com.deepin.dde.lockFront");
+
+        // 通过DBus拉起锁屏程序
+        lockDBus.call("Show");
+    }
+
     m_window->removeEventFilter(this);
     m_window->hide();
+#ifndef QT_DEBUG
     m_autoQuitTimer.start();
+#endif
 
     if (m_process && m_process->state() != QProcess::NotRunning) {
         m_process->terminate();
@@ -325,6 +349,39 @@ void DBusScreenSaver::setCurrentScreenSaver(QString currentScreenSaver)
     m_settings.setValue("currentScreenSaver", m_currentScreenSaver);
 
     emit currentScreenSaverChanged(m_currentScreenSaver);
+}
+
+bool DBusScreenSaver::lockScreenAtAwake() const
+{
+    return m_lockScreenAtAwake;
+}
+
+int DBusScreenSaver::lockScreenDelay() const
+{
+    return m_lockScreenDelay;
+}
+
+void DBusScreenSaver::setLockScreenAtAwake(bool lockScreenAtAwake)
+{
+    if (m_lockScreenAtAwake == lockScreenAtAwake)
+        return;
+
+    m_lockScreenAtAwake = lockScreenAtAwake;
+    m_settings.setValue("lockScreenAtAwake", m_lockScreenAtAwake);
+
+    emit lockScreenAtAwakeChanged(m_lockScreenAtAwake);
+}
+
+void DBusScreenSaver::setLockScreenDelay(int lockScreenDelay)
+{
+    if (m_lockScreenDelay == lockScreenDelay)
+        return;
+
+    m_lockScreenDelay = lockScreenDelay;
+    m_settings.setValue("lockScreenDelay", m_lockScreenDelay);
+    m_lockScreenTimer.setInterval(m_lockScreenDelay * 1000);
+
+    emit lockScreenDelayChanged(m_lockScreenDelay);
 }
 
 void DBusScreenSaver::onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message)
