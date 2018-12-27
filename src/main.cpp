@@ -27,6 +27,8 @@
 
 int main(int argc, char *argv[])
 {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QGuiApplication app(argc, argv);
 
     app.setOrganizationName("deepin");
@@ -55,7 +57,7 @@ int main(int argc, char *argv[])
         qWarning("Cannot connect to the D-Bus session bus.\n"
                  "Please check your system settings and try again.\n");
 
-        if (doStart)
+        if (!doStart)
             return -1;
     }
 
@@ -63,7 +65,7 @@ int main(int argc, char *argv[])
     if (!QDBusConnection::sessionBus().registerService("com.deepin.ScreenSaver")) {
         qWarning("Cannot register the \"com.deepin.ScreenSaver\" service.\n");
 
-        if (doStart)
+        if (!doStart)
             return -1;
     }
 
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
     if (!QDBusConnection::sessionBus().registerObject("/com/deepin/ScreenSaver", server)) {
         qWarning("Cannot register to the D-Bus object: \"/com/deepin/ScreenSaver\"\n");
 
-        if (doStart)
+        if (!doStart)
             return -1;
     }
 
