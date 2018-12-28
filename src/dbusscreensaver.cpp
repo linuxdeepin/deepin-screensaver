@@ -23,7 +23,7 @@
 #include "imageprovider.h"
 
 #include <QDebug>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QSettings>
 #include <QDBusConnection>
 #include <QDBusInterface>
@@ -31,6 +31,70 @@
 #include <QStandardPaths>
 #include <QDirIterator>
 #include <QTimer>
+#include <QX11Info>
+#include <QAbstractEventDispatcher>
+#include <QAbstractNativeEventFilter>
+
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <X11/extensions/scrnsaver.h>
+#include <X11/extensions/shape.h>
+
+struct xcb_screensaver_notify_event
+{
+    uint8_t      response_type;
+    uint8_t      state; /* ScreenSaverOff, ScreenSaverOn, ScreenSaverCycle*/
+    uint8_t      offset;
+    uint8_t      kid;
+    xcb_window_t window;	    /* screen saver window */
+    xcb_window_t root;	    /* root window of event screen */
+};
+
+class X11EventFilter : public QAbstractNativeEventFilter
+{
+public:
+    X11EventFilter(DBusScreenSaver *w)
+        : screenSaver(w)
+    {
+        if (!XScreenSaverQueryExtension(QX11Info::display(), &scrnsaver_event_base, &scrnsaver_error_base)) {
+            scrnsaver_event_base = scrnsaver_error_base = 0;
+        }
+
+        // 不要显示
+        puppetWindow.create();
+
+        XScreenSaverSelectInput(QX11Info::display(), puppetWindow.winId(), ScreenSaverNotifyMask);
+    }
+    ~X11EventFilter() {
+
+    }
+
+    bool nativeEventFilter(const QByteArray &eventType, void *message, long *result) override
+    {
+        Q_UNUSED(eventType)
+        Q_UNUSED(result)
+        xcb_generic_event_t *event = reinterpret_cast<xcb_generic_event_t*>(message);
+
+        if (scrnsaver_event_base != 0 &&
+                event->response_type == scrnsaver_event_base + ScreenSaverNotify) {
+            xcb_screensaver_notify_event *se = reinterpret_cast<xcb_screensaver_notify_event*>(event);
+
+            if (se->state == ScreenSaverOn) {
+                // ignore
+            } else if (se->state == ScreenSaverOff) {
+                emit screenSaver->stop();
+            }
+        }
+
+        return false;
+    }
+
+private:
+    DBusScreenSaver *screenSaver;
+
+    QWindow puppetWindow;
+    int scrnsaver_event_base, scrnsaver_error_base;
+};
 
 DBusScreenSaver::DBusScreenSaver(QObject *parent)
     : QObject(parent)
@@ -62,8 +126,6 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
 
 DBusScreenSaver::~DBusScreenSaver()
 {
-    m_window->deleteLater();
-
     if (isRunning()) {
         Stop();
     }
@@ -78,59 +140,61 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
     if (!QFile::exists(moduleDir.absoluteFilePath(name)))
         return false;
 
-    if (!m_window) {
-        m_window = new ScreenSaverWindow();
-        m_window->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer | Qt::WindowDoesNotAcceptFocus);
-        m_window->create();
-
-        static ImageProvider *ip = new ImageProvider();
-
-        m_window->engine()->addImageProvider("deepin-screensaver", ip);
-    }
-
-    if (m_process && m_process->state() != QProcess::NotRunning) {
-        m_process->terminate();
-        m_process->waitForFinished();
-    }
-
-    // 清理qml的播放
-    m_window->setSource(QUrl());
-    // 清理窗口背景色
-    m_window->setColor(Qt::black);
-
-    if (name.endsWith(".qml")) {
-        if (moduleDir.path().startsWith(":/"))
-            m_window->setSource(QUrl("qrc" + moduleDir.absoluteFilePath(name)));
-        else
-            m_window->setSource(QUrl::fromLocalFile(moduleDir.absoluteFilePath(name)));
-    } else {
-        if (!m_process) {
-            m_process = new QProcess(this);
-            m_process->setProcessChannelMode(QProcess::ForwardedChannels);
+    if (preview) {
+        if (x11event) {
+            QAbstractEventDispatcher::instance()->removeNativeEventFilter(x11event.data());
+            x11event.reset(nullptr);
         }
 
-        m_process->start(moduleDir.absoluteFilePath(name), {"-window-id", QString::number(m_window->winId())}, QIODevice::ReadOnly);
-
-        if (!m_process->waitForStarted(3000)) {
-            qDebug() << "Failed on start:" << m_process->program() << ", error string:" << m_process->errorString();
-
-            return false;
+        qGuiApp->restoreOverrideCursor();
+    } else {
+        // 安装native事件监控，收到XScreenSaverOff事件时退出屏保
+        if (!x11event) {
+            x11event.reset(new X11EventFilter(this));
+            QAbstractEventDispatcher::instance()->installNativeEventFilter(x11event.data());
         }
+
+        qGuiApp->setOverrideCursor(Qt::BlankCursor);
     }
 
-    if (staysOn) {
-        m_window->setFlag(Qt::WindowStaysOnTopHint);
-    } else {
-        m_window->setFlag(Qt::WindowStaysOnBottomHint);
+    ensureWindowMap();
+
+    for (ScreenSaverWindow *window : m_windowMap) {
+        if (name.endsWith(".qml")) {
+            if (moduleDir.path().startsWith(":/"))
+                window->start("qrc" + moduleDir.absoluteFilePath(name));
+            else
+                window->start("file://" + moduleDir.absoluteFilePath(name));
+        } else {
+            window->start(moduleDir.absoluteFilePath(name));
+        }
+
+        if (staysOn) {
+            window->setFlag(Qt::WindowStaysOnTopHint);
+        } else {
+            window->setFlag(Qt::WindowStaysOnBottomHint);
+        }
+
+        if (!preview) {
+            connect(window, &ScreenSaverWindow::inputEvent, this, &DBusScreenSaver::stop, Qt::UniqueConnection);
+        } else {
+            disconnect(window, &ScreenSaverWindow::inputEvent, this, &DBusScreenSaver::stop);
+        }
+
+        window->showFullScreen();
+
+        QTimer::singleShot(500, window, [window] {
+            // 在kwin中，窗口类型为Qt::Drawer时会导致多屏情况下只会有一个窗口被显示，另一个被最小化
+            // 这里判断最小化的窗口后更改其窗口类型再次显示。
+            if (window->visibility() == QWindow::Minimized) {
+                window->setFlag(Qt::Dialog, false);
+                window->setFlag(Qt::Window);
+                window->close();
+                window->showFullScreen();
+            }
+        });
     }
 
-    if (!preview) {
-        connect(m_window, &ScreenSaverWindow::screenSaverOff, this, &DBusScreenSaver::Stop, Qt::UniqueConnection);
-    } else {
-        disconnect(m_window, &ScreenSaverWindow::screenSaverOff, this, &DBusScreenSaver::Stop);
-    }
-
-    m_window->showFullScreen();
     m_autoQuitTimer.stop();
 
     emit isRunningChanged(true);
@@ -262,13 +326,14 @@ void DBusScreenSaver::Start(const QString &name)
     m_lockScreenTimer.start();
 }
 
-void DBusScreenSaver::Stop()
+void DBusScreenSaver::Stop(bool lock)
 {
-    if (!m_window)
+    if (m_windowMap.isEmpty())
         return;
 
     // 只在由窗口自己唤醒时才会触发锁屏
-    if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive() && sender() == m_window) {
+    if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive()
+            && (lock || qobject_cast<ScreenSaverWindow*>(sender()))) {
         QDBusInterface lockDBus("com.deepin.dde.lockFront", "/com/deepin/dde/lockFront",
                                 "com.deepin.dde.lockFront");
 
@@ -276,20 +341,27 @@ void DBusScreenSaver::Stop()
         lockDBus.call("Show");
     }
 
-    m_window->removeEventFilter(this);
-    m_window->hide();
+    if (x11event) {
+        QAbstractEventDispatcher::instance()->removeNativeEventFilter(x11event.data());
+        x11event.reset(nullptr);
+    }
+
+    for (ScreenSaverWindow *w : m_windowMap) {
+        cleanWindow(w);
+    }
+
+    m_windowMap.clear();
+
 #ifndef QT_DEBUG
     m_autoQuitTimer.start();
 #endif
 
-    if (m_process && m_process->state() != QProcess::NotRunning) {
-        m_process->terminate();
-        m_process->waitForFinished();
-    }
-
-    m_window->setSource(QUrl());
-
     emit isRunningChanged(false);
+}
+
+void DBusScreenSaver::stop()
+{
+    Stop(true);
 }
 
 QStringList DBusScreenSaver::allScreenSaver() const
@@ -320,8 +392,7 @@ QString DBusScreenSaver::currentScreenSaver() const
 
 bool DBusScreenSaver::isRunning() const
 {
-    return (m_process && m_process->state() != QProcess::NotRunning)
-            || (m_window && m_window->isVisible() && m_window->source().isValid());
+    return !m_windowMap.isEmpty();
 }
 
 void DBusScreenSaver::setBatteryScreenSaverTimeout(int batteryScreenSaverTimeout)
@@ -421,4 +492,78 @@ void DBusScreenSaver::clearResourceList()
     }
 
     m_resourceList.clear();
+}
+
+void DBusScreenSaver::ensureWindowMap()
+{
+    if (!m_windowMap.isEmpty())
+        return;
+
+    connect(qGuiApp, &QGuiApplication::screenAdded, this, &DBusScreenSaver::onScreenAdded, Qt::UniqueConnection);
+    connect(qGuiApp, &QGuiApplication::screenRemoved, this, &DBusScreenSaver::onScreenRemoved, Qt::UniqueConnection);
+
+    for (QScreen *s : qGuiApp->screens()) {
+        onScreenAdded(s);
+    }
+}
+
+void DBusScreenSaver::onScreenAdded(QScreen *s)
+{
+    // 列表为空时说明未初始化，此时不用响应屏幕add信号
+    if (sender() && m_windowMap.isEmpty())
+        return;
+
+    if (m_windowMap.contains(s))
+        return;
+
+    ScreenSaverWindow *w = new ScreenSaverWindow();
+    ImageProvider *ip = new ImageProvider(); // 会被window的engine销毁时销毁
+
+    // 必须把窗口移动到屏幕所在位置，否则窗口被创建时会被移动到0,0所在的屏幕
+    w->setPosition(s->availableGeometry().center());
+    w->setScreen(s);
+    // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
+    w->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer | Qt::WindowDoesNotAcceptFocus);
+    w->engine()->addImageProvider("deepin-screensaver", ip);
+    w->create();
+
+    m_windowMap[s] = w;
+
+#ifdef QT_DEBUG
+    // 禁止接收鼠标输入
+//    XRectangle rects {0, 0, 0, 0};
+//    XShapeCombineRectangles(QX11Info::display(), w->winId(), ShapeInput, 0, 0, &rects, 1, 0, 0);
+#endif
+
+    QFunctionPointer screenNumber = qGuiApp->platformFunction("XcbVirtualDesktopNumber");
+
+    if (screenNumber) {
+        int number = (*reinterpret_cast<int(*)(QScreen *s)>(screenNumber))(s);
+
+        s->setProperty("_d_x11_screen_number", number);
+        XScreenSaverRegister(QX11Info::display(), number, w->winId(), XA_WINDOW);
+    }
+}
+
+void DBusScreenSaver::onScreenRemoved(QScreen *s)
+{
+    if (ScreenSaverWindow *w = m_windowMap.take(s)) {
+        cleanWindow(w);
+    }
+}
+
+void DBusScreenSaver::cleanWindow(ScreenSaverWindow *w)
+{
+    w->hide();
+    w->stop();
+    w->deleteLater();
+
+    if (QScreen *s = w->screen()) {
+        bool ok = false;
+        int screenNumber = s->property("_d_x11_screen_number").toInt(&ok);
+
+        if (ok) {
+            XScreenSaverUnregister(QX11Info::display(), screenNumber);
+        }
+    }
 }

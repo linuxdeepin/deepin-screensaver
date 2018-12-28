@@ -27,8 +27,10 @@
 #include <QTimer>
 #include <QSettings>
 #include <QDBusMessage>
+#include <QScreen>
 
 class ScreenSaverWindow;
+class X11EventFilter;
 class DBusScreenSaver : public QObject
 {
     Q_OBJECT
@@ -48,7 +50,8 @@ public:
     QString GetScreenSaverCover(const QString &name) const;
     void RefreshScreenSaverList();
     void Start(const QString &name = QString());
-    void Stop();
+    void Stop(bool lock = false);
+    void stop();
 
     QStringList allScreenSaver() const;
     int batteryScreenSaverTimeout() const;
@@ -78,6 +81,10 @@ private:
     Q_SLOT void onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
 
     void clearResourceList();
+    void ensureWindowMap();
+    void onScreenAdded(QScreen *s);
+    void onScreenRemoved(QScreen *s);
+    void cleanWindow(ScreenSaverWindow *w);
 
     const QList<QDir> m_resourceDirList;
     QStringList m_resourceList;
@@ -90,10 +97,10 @@ private:
     int m_lockScreenDelay;
     QTimer m_lockScreenTimer;
 
-    ScreenSaverWindow *m_window = nullptr;
-    QProcess *m_process = nullptr;
+    QMap<QScreen*, ScreenSaverWindow*> m_windowMap;
     QTimer m_autoQuitTimer;
     QSettings m_settings;
+    QScopedPointer<X11EventFilter> x11event;
 };
 
 #endif // DBUSSCREENSAVER_H
