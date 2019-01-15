@@ -8,8 +8,8 @@ cover.files += $$PWD/cover/*
 cover.path = $$MODULE_PATH/cover
 
 screensaver_list = blaster bouboule cage discoball dymaxionmap endgame epicycle \
-    fireworkx flow flurry flyingtoasters fuzzyflakes galaxy glplanet hexadrop \
-    klein lament lockward pacman polytopes vermiculate whirlwindwarp
+    flow flurry flyingtoasters fuzzyflakes galaxy glplanet hexadrop \
+    klein lament lockward pacman polytopes vermiculate
 
 isEmpty(XSCREENSAVER_DATA_PATH) {
     XSCREENSAVER_DATA_PATH = $$PREFIX/lib/xscreensaver
