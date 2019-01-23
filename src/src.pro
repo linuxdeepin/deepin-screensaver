@@ -30,7 +30,7 @@ screensaver_service.files = $$PWD/com.deepin.ScreenSaver.service
 
 INSTALLS += screensaver_service screensaver_xmls
 
-DEFINES += MODULE_PATH=\\\"$$MODULE_PATH\\\" RESOURCE_PATH=\\\"$$RESOURCE_PATH\\\"
+DEFINES += LIB_PATH=\\\"$$LIB_PATH\\\" MODULE_PATH=\\\"$$MODULE_PATH\\\" RESOURCE_PATH=\\\"$$RESOURCE_PATH\\\"
 
 target.path = $$PREFIX/bin
 

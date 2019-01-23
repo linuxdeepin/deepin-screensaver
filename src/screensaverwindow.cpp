@@ -32,6 +32,9 @@ static QQmlEngine *globalEngine()
 {
     if (!qmlEngineGlobal.exists()) {
         qmlEngineGlobal->addImageProvider("deepin-screensaver", new ImageProvider());
+        // 添加插件载入路径，方便屏保应用携带插件扩展功能
+        qmlEngineGlobal->addImportPath("file://" LIB_PATH "/qml/imports");
+        qmlEngineGlobal->addImportPath("qrc:/deepin-screensaver/qml/imports");
     }
 
     return qmlEngineGlobal;
