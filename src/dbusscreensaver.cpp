@@ -20,7 +20,6 @@
  */
 #include "dbusscreensaver.h"
 #include "screensaverwindow.h"
-#include "imageprovider.h"
 
 #include <QDebug>
 #include <QGuiApplication>
@@ -517,14 +516,12 @@ void DBusScreenSaver::onScreenAdded(QScreen *s)
         return;
 
     ScreenSaverWindow *w = new ScreenSaverWindow();
-    ImageProvider *ip = new ImageProvider(); // 会被window的engine销毁时销毁
 
     // 必须把窗口移动到屏幕所在位置，否则窗口被创建时会被移动到0,0所在的屏幕
     w->setPosition(s->availableGeometry().center());
     w->setScreen(s);
     // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
     w->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer | Qt::WindowDoesNotAcceptFocus);
-    w->engine()->addImageProvider("deepin-screensaver", ip);
     w->create();
 
     m_windowMap[s] = w;

@@ -19,13 +19,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "screensaverwindow.h"
+#include "imageprovider.h"
 
 #include <QPixmap>
 #include <QProcess>
+#include <QQmlEngine>
 #include <QDebug>
 
+Q_GLOBAL_STATIC(QQmlEngine, qmlEngineGlobal)
+
+static QQmlEngine *globalEngine()
+{
+    if (!qmlEngineGlobal.exists()) {
+        qmlEngineGlobal->addImageProvider("deepin-screensaver", new ImageProvider());
+    }
+
+    return qmlEngineGlobal;
+}
+
 ScreenSaverWindow::ScreenSaverWindow(QWindow *parent)
-    : QQuickView(parent)
+    : QQuickView(globalEngine(), parent)
 {
 
 }
