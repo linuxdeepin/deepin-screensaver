@@ -24,6 +24,8 @@
 #include <QPixmap>
 #include <QProcess>
 #include <QQmlEngine>
+#include <QCoreApplication>
+#include <QDir>
 #include <QDebug>
 
 Q_GLOBAL_STATIC(QQmlEngine, qmlEngineGlobal)
@@ -35,6 +37,7 @@ static QQmlEngine *globalEngine()
         // 添加插件载入路径，方便屏保应用携带插件扩展功能
         qmlEngineGlobal->addImportPath("file://" LIB_PATH "/qml/imports");
         qmlEngineGlobal->addImportPath("qrc:/deepin-screensaver/qml/imports");
+        qmlEngineGlobal->addImportPath(QString("file://%1/.local/lib/%2/qml/imports").arg(QDir::homePath(), qApp->applicationName()));
     }
 
     return qmlEngineGlobal;

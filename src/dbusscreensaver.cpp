@@ -101,6 +101,9 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
     , m_moduleDirList({QDir("://deepin-screensaver/modules"), QDir(MODULE_PATH)})
     , m_settings(qApp->organizationName(), qApp->applicationName())
 {
+    m_moduleDirList.prepend(QDir(QString("%1/.local/lib/%2/modules").arg(QDir::homePath(), qApp->applicationName())));
+    m_resourceDirList.prepend(QDir(QString("%1/.local/lib/%2/resources").arg(QDir::homePath(), qApp->applicationName())));
+
     m_autoQuitTimer.setInterval(30000);
     m_autoQuitTimer.setSingleShot(true);
 #ifndef QT_DEBUG

@@ -86,10 +86,10 @@ private:
     void onScreenRemoved(QScreen *s);
     void cleanWindow(ScreenSaverWindow *w);
 
-    const QList<QDir> m_resourceDirList;
+    QList<QDir> m_resourceDirList;
     QStringList m_resourceList;
 
-    const QList<QDir> m_moduleDirList;
+    QList<QDir> m_moduleDirList;
     QStringList m_screenSaverList;
     QMap<QString, QDir> m_screenSaverNameToDir;
     QString m_currentScreenSaver;
