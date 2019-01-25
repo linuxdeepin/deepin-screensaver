@@ -1,3 +1,18 @@
+<a name="0.0.5"></a>
+## 0.0.5 (2019-01-25)
+
+
+#### Bug Fixes
+
+*   disable auto high dpi scaling if set the "QT_SCALE_FACTOR" environment ([72df843e](https://github.com/linuxdeepin/deepin-screensaver/commit/72df843e2f5781ad3dd391120571076566aae835))
+
+#### Features
+
+*   add the screensaver modules/resources/qml-plugins load path ([99338736](https://github.com/linuxdeepin/deepin-screensaver/commit/993387364dda159ec141662290b69cd84447bd94))
+*   import qml plugin/extension from ([51bee17d](https://github.com/linuxdeepin/deepin-screensaver/commit/51bee17d3d0fdb6dbfa3794424f8e8f388fb852c))
+
+
+
 <a name="0.0.3"></a>
 ## 0.0.3 (2019-01-15)
 
