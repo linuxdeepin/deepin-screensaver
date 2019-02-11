@@ -34,6 +34,8 @@
 #include <QAbstractEventDispatcher>
 #include <QAbstractNativeEventFilter>
 
+#include <xcb/xcb.h>
+#include <X11/Xproto.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/extensions/scrnsaver.h>
@@ -172,9 +174,9 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
         }
 
         if (staysOn) {
-            window->setFlag(Qt::WindowStaysOnTopHint);
+            window->setFlags(Qt::WindowStaysOnTopHint);
         } else {
-            window->setFlag(Qt::WindowStaysOnBottomHint);
+            window->setFlags(Qt::WindowStaysOnBottomHint);
         }
 
         if (!preview) {
@@ -189,8 +191,8 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
             // 在kwin中，窗口类型为Qt::Drawer时会导致多屏情况下只会有一个窗口被显示，另一个被最小化
             // 这里判断最小化的窗口后更改其窗口类型再次显示。
             if (window->visibility() == QWindow::Minimized) {
-                window->setFlag(Qt::Dialog, false);
-                window->setFlag(Qt::Window);
+                window->setFlags(Qt::Dialog);
+                window->setFlags(Qt::Window);
                 window->close();
                 window->showFullScreen();
             }
