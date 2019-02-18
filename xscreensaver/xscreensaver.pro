@@ -16,11 +16,9 @@ isEmpty(XSCREENSAVER_DATA_PATH) {
 }
 
 screensaver.path = $$MODULE_PATH
-mkpath($$PWD/extras)
 
 for(ss, screensaver_list) {
-    system(ln -s $$XSCREENSAVER_DATA_PATH/$$ss $$PWD/extras/$$ss)
-    screensaver.files += $$PWD/extras/$$ss
+    screensaver.extra += ln -s $$XSCREENSAVER_DATA_PATH/$$ss $(INSTALL_ROOT)$$screensaver.path/$$ss;
 }
 
 INSTALLS += cover screensaver
