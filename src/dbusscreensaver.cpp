@@ -174,9 +174,9 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
         }
 
         if (staysOn) {
-            window->setFlags(Qt::WindowStaysOnTopHint);
+            window->setFlags(window->flags() | Qt::WindowStaysOnTopHint);
         } else {
-            window->setFlags(Qt::WindowStaysOnBottomHint);
+            window->setFlags(window->flags() | Qt::WindowStaysOnBottomHint);
         }
 
         if (!preview) {
@@ -191,8 +191,7 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
             // 在kwin中，窗口类型为Qt::Drawer时会导致多屏情况下只会有一个窗口被显示，另一个被最小化
             // 这里判断最小化的窗口后更改其窗口类型再次显示。
             if (window->visibility() == QWindow::Minimized) {
-                window->setFlags(Qt::Dialog);
-                window->setFlags(Qt::Window);
+                window->setFlags(window->flags() & ~Qt::Dialog | Qt::Window);
                 window->close();
                 window->showFullScreen();
             }
