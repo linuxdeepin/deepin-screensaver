@@ -1,3 +1,13 @@
+<a name="0.0.7"></a>
+## 0.0.7 (2019-02-20)
+
+
+#### Bug Fixes
+
+*   wrong window flags ([a843b5fd](https://github.com/linuxdeepin/deepin-screensaver/commit/a843b5fd2487a0bf571136ebefe4681bd1d05fc8))
+
+
+
 <a name="0.0.6"></a>
 ## 0.0.6 (2019-02-12)
 
