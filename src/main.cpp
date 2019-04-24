@@ -27,11 +27,6 @@
 
 int main(int argc, char *argv[])
 {
-    // 当没有手动指定缩放比例时再开启高分屏自动缩放
-    if (!qEnvironmentVariableIsSet("QT_SCALE_FACTOR")) {
-        QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    }
-
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QGuiApplication app(argc, argv);
 
