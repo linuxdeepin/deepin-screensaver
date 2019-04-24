@@ -1,3 +1,13 @@
+<a name="0.0.8"></a>
+## 0.0.8 (2019-04-24)
+
+
+#### Bug Fixes
+
+*   no scale on HI-DPI screens ([d2eb4574](https://github.com/linuxdeepin/deepin-screensaver/commit/d2eb4574b9a82189d5df2cfa30caea6b31caf11b))
+
+
+
 <a name="0.0.7"></a>
 ## 0.0.7 (2019-02-20)
 
