@@ -190,7 +190,34 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
         QTimer::singleShot(500, window, [window] {
             // 在kwin中，窗口类型为Qt::Drawer时会导致多屏情况下只会有一个窗口被显示，另一个被最小化
             // 这里判断最小化的窗口后更改其窗口类型再次显示。
-            if (window->visibility() == QWindow::Minimized) {
+
+            bool is_hidden = window->visibility() == QWindow::Minimized;
+
+            if (!is_hidden) {
+                // KWin 上开启 HiddenPreviews=6 配置后，无法直接判断出窗口的状态，因此fallback到读取窗口属性判断其是否被隐藏
+                Atom atom;
+                int format;
+                ulong nitems;
+                ulong bytes_after_return;
+                uchar *prop_datas;
+                XGetWindowProperty(QX11Info::display(),
+                                   window->winId(),
+                                   XInternAtom(QX11Info::display(), "_NET_WM_STATE", true),
+                                   0, 1024, false,
+                                   XA_ATOM, &atom,
+                                   &format, &nitems,
+                                   &bytes_after_return, &prop_datas);
+
+                if (prop_datas && format == 32 && atom == XA_ATOM) {
+                    const Atom *states = reinterpret_cast<const Atom *>(prop_datas);
+                    const Atom *statesEnd = states + nitems;
+                    if (statesEnd != std::find(states, statesEnd, XInternAtom(QX11Info::display(), "_NET_WM_STATE_HIDDEN", true)))
+                        is_hidden = true;
+                    XFree(prop_datas);
+                }
+            }
+
+            if (is_hidden) {
                 window->setFlags(window->flags() & ~Qt::Dialog | Qt::Window);
                 window->close();
                 window->showFullScreen();
