@@ -552,7 +552,9 @@ void DBusScreenSaver::onScreenAdded(QScreen *s)
     w->setPosition(s->availableGeometry().center());
     w->setScreen(s);
     // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
-    w->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer | Qt::WindowDoesNotAcceptFocus);
+    // 不要添加Qt::WindowDoesNotAcceptFocus，以防止deepin-kwin在进入到显示桌面模式时触发屏幕保护
+    // 但是却没有退出显示桌面模式，这样将会导致dock显示在屏幕保护窗口的上方
+    w->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer);
     w->create();
 
     m_windowMap[s] = w;
