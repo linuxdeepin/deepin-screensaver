@@ -19,100 +19,159 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "screensaverwindow.h"
-#include "imageprovider.h"
+#include "screensaverview.h"
 
-#include <QPixmap>
+#include <QScreen>
+#include <QTimer>
+#include <QX11Info>
 #include <QProcess>
-#include <QQmlEngine>
-#include <QCoreApplication>
-#include <QDir>
-#include <QDebug>
 
-Q_GLOBAL_STATIC(QQmlEngine, qmlEngineGlobal)
+#include <xcb/xcb.h>
+#include <X11/Xproto.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
-static QQmlEngine *globalEngine()
+ScreenSaverWindow::ScreenSaverWindow(QObject *parent)
+    : QObject(parent)
 {
-    if (!qmlEngineGlobal.exists()) {
-        qmlEngineGlobal->addImageProvider("deepin-screensaver", new ImageProvider());
-        // 添加插件载入路径，方便屏保应用携带插件扩展功能
-        qmlEngineGlobal->addImportPath("file://" LIB_PATH "/qml/imports");
-        qmlEngineGlobal->addImportPath("qrc:/deepin-screensaver/qml/imports");
-        qmlEngineGlobal->addImportPath(QString("file://%1/.local/lib/%2/qml/imports").arg(QDir::homePath(), qApp->applicationName()));
-    }
+    m_view = new ScreenSaverView();
 
-    return qmlEngineGlobal;
-}
+    // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
+    // 不要添加Qt::WindowDoesNotAcceptFocus，以防止deepin-kwin在进入到显示桌面模式时触发屏幕保护
+    // 但是却没有退出显示桌面模式，这样将会导致dock显示在屏幕保护窗口的上方
+    m_view->setFlags(Qt::BypassWindowManagerHint);
 
-ScreenSaverWindow::ScreenSaverWindow(QWindow *parent)
-    : QQuickView(globalEngine(), parent)
-{
-
+    connect(m_view, &ScreenSaverView::inputEvent, this, &ScreenSaverWindow::inputEvent);
 }
 
 ScreenSaverWindow::~ScreenSaverWindow()
 {
-    stop();
+    m_view->deleteLater();
 }
 
 bool ScreenSaverWindow::start(const QString &filePath)
 {
-    stop();
-
-    if (filePath.endsWith(".qml")) {
-        setSource(QUrl(filePath));
-    } else {
-        if (!m_process) {
-            m_process = new QProcess(this);
-            m_process->setProcessChannelMode(QProcess::ForwardedChannels);
-        }
-
-        create();
-        m_process->start(filePath, {"-window-id", QString::number(winId())}, QIODevice::ReadOnly);
-
-        if (!m_process->waitForStarted(3000)) {
-            qDebug() << "Failed on start:" << m_process->program() << ", error string:" << m_process->errorString();
-
-            return false;
-        }
-    }
-
-    return true;
+    return m_view->start(filePath);
 }
 
 void ScreenSaverWindow::stop()
 {
-    if (m_process && m_process->state() != QProcess::NotRunning) {
-        m_process->terminate();
-        m_process->waitForFinished();
-    }
-
-    // 清理qml的播放
-    setSource(QUrl());
-    // 清理窗口背景色
-    setColor(Qt::black);
+    m_view->stop();
 }
 
-bool ScreenSaverWindow::event(QEvent *event)
+WId ScreenSaverWindow::winId() const
 {
-    switch (event->type()) {
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-    case QEvent::MouseMove:
-    case QEvent::MouseButtonDblClick:
-    case QEvent::FocusOut:
-    case QEvent::ApplicationStateChange:
-    case QEvent::TouchBegin:
-    case QEvent::TouchUpdate:
-    case QEvent::TouchEnd:
-    case QEvent::TouchCancel:
-    case QEvent::KeyPress:
-    case QEvent::KeyRelease:
-        emit inputEvent(event->type());
+    m_view->create();
 
-        break;
-    default:
-        break;
+    return m_view->winId();
+}
+
+Qt::WindowFlags ScreenSaverWindow::flags() const
+{
+    return m_view->flags();
+}
+
+void ScreenSaverWindow::setFlags(Qt::WindowFlags flags, bool bypassWindowManager)
+{
+    const Qt::WindowFlags old_flags = m_view->flags();
+
+    // 如果改变了窗口类型
+    if ((old_flags & Qt::BypassWindowManagerHint) != bypassWindowManager) {
+        if (m_view->handle()) {
+            Q_ASSERT(!m_view->m_process || m_view->m_process->state() == QProcess::NotRunning);
+            // 需要重新创建native window
+            m_view->destroy();
+        }
     }
 
-    return QQuickView::event(event);
+    if (bypassWindowManager) {
+        flags |= Qt::BypassWindowManagerHint;
+    } else {
+        flags &= ~Qt::BypassWindowManagerHint;
+
+        // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
+        // 不要添加Qt::WindowDoesNotAcceptFocus，以防止deepin-kwin在进入到显示桌面模式时触发屏幕保护
+        // 但是却没有退出显示桌面模式，这样将会导致dock显示在屏幕保护窗口的上方
+        flags |= Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer;
+    }
+
+    m_view->setFlags(flags);
+}
+
+QWindow::Visibility ScreenSaverWindow::visibility() const
+{
+    return m_view->visibility();
+}
+
+QScreen *ScreenSaverWindow::screen() const
+{
+    return m_view->screen();
+}
+
+void ScreenSaverWindow::setGeometry(const QRect &rect)
+{
+    m_view->setGeometry(rect);
+}
+
+void ScreenSaverWindow::setScreen(QScreen *screen)
+{
+    // 必须把窗口移动到屏幕所在位置，否则窗口被创建时会被移动到0,0所在的屏幕
+    m_view->setPosition(screen->availableGeometry().center());
+    m_view->setScreen(screen);
+
+    // 确保窗口一直和屏幕大小一致
+    m_view->setGeometry(screen->geometry());
+    connect(screen, &QScreen::geometryChanged, this, &ScreenSaverWindow::setGeometry);
+}
+
+void ScreenSaverWindow::show()
+{
+    m_view->showFullScreen();
+
+    QTimer::singleShot(500, m_view, [this] {
+        // 在kwin中，窗口类型为Qt::Drawer时会导致多屏情况下只会有一个窗口被显示，另一个被最小化
+        // 这里判断最小化的窗口后更改其窗口类型再次显示。
+
+        bool is_hidden = m_view->visibility() == QWindow::Minimized;
+
+        if (!is_hidden) {
+            // KWin 上开启 HiddenPreviews=6 配置后，无法直接判断出窗口的状态，因此fallback到读取窗口属性判断其是否被隐藏
+            Atom atom;
+            int format;
+            ulong nitems;
+            ulong bytes_after_return;
+            uchar *prop_datas;
+            XGetWindowProperty(QX11Info::display(),
+                               m_view->winId(),
+                               XInternAtom(QX11Info::display(), "_NET_WM_STATE", true),
+                               0, 1024, false,
+                               XA_ATOM, &atom,
+                               &format, &nitems,
+                               &bytes_after_return, &prop_datas);
+
+            if (prop_datas && format == 32 && atom == XA_ATOM) {
+                const Atom *states = reinterpret_cast<const Atom *>(prop_datas);
+                const Atom *statesEnd = states + nitems;
+                if (statesEnd != std::find(states, statesEnd, XInternAtom(QX11Info::display(), "_NET_WM_STATE_HIDDEN", true)))
+                    is_hidden = true;
+                XFree(prop_datas);
+            }
+        }
+
+        if (is_hidden) {
+            m_view->setFlags((m_view->flags() & ~Qt::Dialog) | Qt::Window);
+            m_view->close();
+            m_view->show();
+        }
+    });
+}
+
+void ScreenSaverWindow::hide()
+{
+    m_view->hide();
+}
+
+void ScreenSaverWindow::close()
+{
+    m_view->close();
 }

@@ -7,12 +7,14 @@ SOURCES += \
     $$PWD/main.cpp \
     $$PWD/screensaverwindow.cpp \
     $$PWD/dbusscreensaver.cpp \
-    imageprovider.cpp
+    imageprovider.cpp \
+    screensaverview.cpp
 
 HEADERS += \
     $$PWD/screensaverwindow.h \
     $$PWD/dbusscreensaver.h \
-    imageprovider.h
+    imageprovider.h \
+    screensaverview.h
 
 screensaver.files = $$PWD/com.deepin.ScreenSaver.xml
 screensaver.header_flags += -l DBusScreenSaver -i $$PWD/dbusscreensaver.h

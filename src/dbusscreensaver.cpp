@@ -33,6 +33,7 @@
 #include <QX11Info>
 #include <QAbstractEventDispatcher>
 #include <QAbstractNativeEventFilter>
+#include <QWindow>
 
 #include <xcb/xcb.h>
 #include <X11/Xproto.h>
@@ -164,6 +165,12 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
     ensureWindowMap();
 
     for (ScreenSaverWindow *window : m_windowMap) {
+        if (staysOn) {
+            window->setFlags(window->flags() | Qt::WindowStaysOnTopHint, !preview);
+        } else {
+            window->setFlags(window->flags() | Qt::WindowStaysOnBottomHint, false);
+        }
+
         if (name.endsWith(".qml")) {
             if (moduleDir.path().startsWith(":/"))
                 window->start("qrc" + moduleDir.absoluteFilePath(name));
@@ -173,56 +180,13 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
             window->start(moduleDir.absoluteFilePath(name));
         }
 
-        if (staysOn) {
-            window->setFlags(window->flags() | Qt::WindowStaysOnTopHint);
-        } else {
-            window->setFlags(window->flags() | Qt::WindowStaysOnBottomHint);
-        }
-
         if (!preview) {
             connect(window, &ScreenSaverWindow::inputEvent, this, &DBusScreenSaver::stop, Qt::UniqueConnection);
         } else {
             disconnect(window, &ScreenSaverWindow::inputEvent, this, &DBusScreenSaver::stop);
         }
 
-        window->showFullScreen();
-
-        QTimer::singleShot(500, window, [window] {
-            // 在kwin中，窗口类型为Qt::Drawer时会导致多屏情况下只会有一个窗口被显示，另一个被最小化
-            // 这里判断最小化的窗口后更改其窗口类型再次显示。
-
-            bool is_hidden = window->visibility() == QWindow::Minimized;
-
-            if (!is_hidden) {
-                // KWin 上开启 HiddenPreviews=6 配置后，无法直接判断出窗口的状态，因此fallback到读取窗口属性判断其是否被隐藏
-                Atom atom;
-                int format;
-                ulong nitems;
-                ulong bytes_after_return;
-                uchar *prop_datas;
-                XGetWindowProperty(QX11Info::display(),
-                                   window->winId(),
-                                   XInternAtom(QX11Info::display(), "_NET_WM_STATE", true),
-                                   0, 1024, false,
-                                   XA_ATOM, &atom,
-                                   &format, &nitems,
-                                   &bytes_after_return, &prop_datas);
-
-                if (prop_datas && format == 32 && atom == XA_ATOM) {
-                    const Atom *states = reinterpret_cast<const Atom *>(prop_datas);
-                    const Atom *statesEnd = states + nitems;
-                    if (statesEnd != std::find(states, statesEnd, XInternAtom(QX11Info::display(), "_NET_WM_STATE_HIDDEN", true)))
-                        is_hidden = true;
-                    XFree(prop_datas);
-                }
-            }
-
-            if (is_hidden) {
-                window->setFlags(window->flags() & ~Qt::Dialog | Qt::Window);
-                window->close();
-                window->showFullScreen();
-            }
-        });
+        window->show();
     }
 
     m_autoQuitTimer.stop();
@@ -547,15 +511,7 @@ void DBusScreenSaver::onScreenAdded(QScreen *s)
         return;
 
     ScreenSaverWindow *w = new ScreenSaverWindow();
-
-    // 必须把窗口移动到屏幕所在位置，否则窗口被创建时会被移动到0,0所在的屏幕
-    w->setPosition(s->availableGeometry().center());
     w->setScreen(s);
-    // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
-    // 不要添加Qt::WindowDoesNotAcceptFocus，以防止deepin-kwin在进入到显示桌面模式时触发屏幕保护
-    // 但是却没有退出显示桌面模式，这样将会导致dock显示在屏幕保护窗口的上方
-    w->setFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer);
-    w->create();
 
     m_windowMap[s] = w;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ~ 2019 Deepin Technology Co., Ltd.
+ * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
  *
  * Author:     zccrs <zccrs@live.com>
  *
@@ -18,47 +18,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SCREENSAVERWINDOW_H
-#define SCREENSAVERWINDOW_H
+#ifndef SCREENSAVERVIEW_H
+#define SCREENSAVERVIEW_H
 
-#include <QWindow>
-#include <QEvent>
+#include <QQuickView>
 
 QT_BEGIN_NAMESPACE
-class QScreen;
+class QProcess;
 QT_END_NAMESPACE
 
-class ScreenSaverView;
-class ScreenSaverWindow : public QObject
+class ScreenSaverView : public QQuickView
 {
     Q_OBJECT
 
 public:
-    explicit ScreenSaverWindow(QObject *parent = nullptr);
-    ~ScreenSaverWindow();
+    explicit ScreenSaverView(QWindow *parent = nullptr);
+    ~ScreenSaverView();
 
     bool start(const QString &filePath);
     void stop();
-
-    WId winId() const;
-    Qt::WindowFlags flags() const;
-    void setFlags(Qt::WindowFlags flags, bool bypassWindowManager);
-
-    QWindow::Visibility visibility() const;
-    QScreen *screen() const;
-
-public slots:
-    void setGeometry(const QRect &rect);
-    void setScreen(QScreen *screen);
-    void show();
-    void hide();
-    void close();
 
 signals:
     void inputEvent(QEvent::Type type);
 
 private:
-    ScreenSaverView *m_view;
+    bool event(QEvent *event) override;
+
+    QProcess *m_process = nullptr;
+
+    friend class ScreenSaverWindow;
 };
 
-#endif // SCREENSAVERWINDOW_H
+#endif // SCREENSAVERVIEW_H
