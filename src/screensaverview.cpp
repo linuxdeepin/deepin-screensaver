@@ -99,7 +99,7 @@ bool ScreenSaverView::event(QEvent *event)
     case QEvent::MouseButtonRelease:
     case QEvent::MouseMove:
     case QEvent::MouseButtonDblClick:
-    case QEvent::FocusOut:
+    //case QEvent::FocusOut: /* Multiple screen will be triggered, causing the screensaver window to exit */
     case QEvent::ApplicationStateChange:
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
