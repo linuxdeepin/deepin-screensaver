@@ -126,6 +126,7 @@ void ScreenSaverWindow::setScreen(QScreen *screen)
 
 void ScreenSaverWindow::show()
 {
+    m_view->setGeometry(screen()->geometry());
     m_view->showFullScreen();
 
     QTimer::singleShot(500, m_view, [this] {
