@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 {
     auto envType = qEnvironmentVariable("XDG_SESSION_TYPE");
     if (envType.contains("wayland")) {
-        qputenv("QT_QPA_FLATFORM", "xcb");
+        qputenv("QT_QPA_PLATFORM", "xcb");
     }
 
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
