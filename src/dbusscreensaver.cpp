@@ -114,7 +114,7 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
 #endif
     m_currentScreenSaver = m_settings.value("currentScreenSaver").toString();
     m_lockScreenAtAwake = m_settings.value("lockScreenAtAwake", false).toBool();
-    m_lockScreenDelay = m_settings.value("lockScreenDelay", 15).toInt();
+    m_lockScreenDelay = m_settings.value("lockScreenDelay", 1).toInt();  //设置屏保静置时间,超过该时间唤醒后锁屏
     m_lockScreenTimer.setInterval(m_lockScreenDelay * 1000);
     m_lockScreenTimer.setSingleShot(true);
 
