@@ -108,8 +108,8 @@ bool ScreenSaverView::event(QEvent *event)
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
         emit inputEvent(event->type());
-
         break;
+
     default:
         break;
     }
