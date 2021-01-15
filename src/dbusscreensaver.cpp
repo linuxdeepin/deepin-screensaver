@@ -34,6 +34,7 @@
 #include <QAbstractEventDispatcher>
 #include <QAbstractNativeEventFilter>
 #include <QWindow>
+#include <QThread>
 
 #include <xcb/xcb.h>
 #include <X11/Xproto.h>
@@ -325,6 +326,7 @@ void DBusScreenSaver::Stop(bool lock)
     if (m_windowMap.isEmpty())
         return;
 
+    bool waitLock = false;
     // 只在由窗口自己唤醒时才会触发锁屏
     if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive()
             && (lock || qobject_cast<ScreenSaverWindow*>(sender()))) {
@@ -333,12 +335,17 @@ void DBusScreenSaver::Stop(bool lock)
 
         // 通过DBus拉起锁屏程序
         lockDBus.call("Show");
+        waitLock = true;
     }
 
     if (x11event) {
         QAbstractEventDispatcher::instance()->removeNativeEventFilter(x11event.data());
         x11event.reset(nullptr);
     }
+
+    //等待锁屏界面显示，防止闪现桌面
+    if (waitLock)
+        QThread::msleep(400);
 
     for (ScreenSaverWindow *w : m_windowMap) {
         cleanWindow(w);
