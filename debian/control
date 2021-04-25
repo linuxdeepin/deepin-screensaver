@@ -2,7 +2,7 @@ Source: deepin-screensaver
 Section: devel
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@deepin.com>
-Build-Depends: debhelper (>=9), qtbase5-dev, qtdeclarative5-dev, libqt5x11extras5-dev, libx11-dev, libxss-dev, libxext-dev, pkg-config
+Build-Depends: debhelper (>=9), qtbase5-dev, qtdeclarative5-dev, libqt5x11extras5-dev, libx11-dev, libxss-dev, libxext-dev, pkg-config, qml-module-qt-labs-platform
 Standards-Version: 3.9.8
 
 Package: deepin-screensaver
@@ -13,6 +13,6 @@ Description: Screensaver Tool
 
 Package: deepin-screensaver-xscreensaver-data
 Architecture: any
-Depends: xscreensaver-data-extra, xscreensaver-gl-extra
+Depends: xscreensaver-data-extra, xscreensaver-gl-extra, qml-module-qt-labs-platform
 Description: Screensaver data
  xscreensaver extra with the Deepin Screensaver.

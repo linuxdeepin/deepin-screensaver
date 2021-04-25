@@ -367,6 +367,13 @@ void DBusScreenSaver::stop()
 
 QStringList DBusScreenSaver::allScreenSaver() const
 {
+    static const QString saverpic("saverpic.qml");
+    if (m_screenSaverList.contains(saverpic)) {
+        // 根据要求，对外提供的屏保程序列表，不包含自定义图片屏保程序
+        QStringList tmpList = m_screenSaverList;
+        tmpList.removeOne(saverpic);
+        return tmpList;
+    }
     return m_screenSaverList;
 }
 

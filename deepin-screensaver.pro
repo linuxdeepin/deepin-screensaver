@@ -2,4 +2,5 @@ TEMPLATE = subdirs
 SUBDIRS += \
     tools \
     src \
-    xscreensaver
+    xscreensaver \
+    customscreensaver
