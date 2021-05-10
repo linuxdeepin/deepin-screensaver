@@ -13,6 +13,6 @@ Description: Screensaver Tool
 
 Package: deepin-screensaver-xscreensaver-data
 Architecture: any
-Depends: deepin-screensaver, xscreensaver-data-extra, xscreensaver-gl-extra
+Depends: xscreensaver-data-extra, xscreensaver-gl-extra
 Description: Screensaver data
  xscreensaver extra with the Deepin Screensaver.

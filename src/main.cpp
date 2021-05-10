@@ -25,6 +25,25 @@
 #include "screensaver_adaptor.h"
 #include "dbusscreensaver.h"
 
+#define APPLICATION_XSTRING(s) APPLICATION_STRING(s)
+#define APPLICATION_STRING(s) #s
+
+#ifdef VERSION
+    static QString buildVersion(const QString &fallbackVersion)
+    {
+        QString autoVersion = APPLICATION_XSTRING(VERSION);
+        if (autoVersion.isEmpty()) {
+            autoVersion = fallbackVersion;
+        }
+        return autoVersion;
+    }
+#else
+    static QString buildVersion(const QString &fallbackVersion)
+    {
+        return fallbackVersion;
+    }
+#endif
+
 int main(int argc, char *argv[])
 {
     auto envType = qEnvironmentVariable("XDG_SESSION_TYPE");
@@ -37,6 +56,7 @@ int main(int argc, char *argv[])
 
     app.setOrganizationName("deepin");
     app.setApplicationName("deepin-screensaver");
+    app.setApplicationVersion(buildVersion(QMAKE_VERSION));
 
     bool doStart = true;
 

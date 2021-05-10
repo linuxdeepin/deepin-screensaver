@@ -37,3 +37,8 @@ DEFINES += LIB_PATH=\\\"$$LIB_PATH\\\" MODULE_PATH=\\\"$$MODULE_PATH\\\" RESOURC
 target.path = $$PREFIX/bin
 
 INSTALLS += target
+
+isEmpty(VERSION) {
+    VERSION = 0.0.1
+}
+DEFINES += QMAKE_VERSION=\\\"$$VERSION\\\"
