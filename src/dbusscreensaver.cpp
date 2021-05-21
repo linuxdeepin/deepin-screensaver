@@ -507,8 +507,11 @@ void DBusScreenSaver::ensureWindowMap()
     if (!m_windowMap.isEmpty())
         return;
 
+    // fix bug66339 屏保状态下，插入扩展屏幕后，扩展屏幕未显示屏保
+    // 屏幕增删，统一规则为退出屏保
+    connect(qGuiApp, &QGuiApplication::screenAdded, this, &DBusScreenSaver::stop, Qt::UniqueConnection);
     connect(qGuiApp, &QGuiApplication::screenAdded, this, &DBusScreenSaver::onScreenAdded, Qt::UniqueConnection);
-    connect(qGuiApp, &QGuiApplication::screenRemoved, this, &DBusScreenSaver::onScreenRemoved, Qt::UniqueConnection);
+    connect(qGuiApp, &QGuiApplication::screenRemoved, this, &DBusScreenSaver::stop, Qt::UniqueConnection);
 
     for (QScreen *s : qGuiApp->screens()) {
         onScreenAdded(s);
@@ -542,13 +545,6 @@ void DBusScreenSaver::onScreenAdded(QScreen *s)
 
         s->setProperty("_d_x11_screen_number", number);
         XScreenSaverRegister(QX11Info::display(), number, w->winId(), XA_WINDOW);
-    }
-}
-
-void DBusScreenSaver::onScreenRemoved(QScreen *s)
-{
-    if (ScreenSaverWindow *w = m_windowMap.take(s)) {
-        cleanWindow(w);
     }
 }
 

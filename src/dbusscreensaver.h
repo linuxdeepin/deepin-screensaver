@@ -83,7 +83,6 @@ private:
     void clearResourceList();
     void ensureWindowMap();
     void onScreenAdded(QScreen *s);
-    void onScreenRemoved(QScreen *s);
     void cleanWindow(ScreenSaverWindow *w);
 
     QList<QDir> m_resourceDirList;
