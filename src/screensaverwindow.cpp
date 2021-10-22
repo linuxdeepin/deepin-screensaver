@@ -37,6 +37,7 @@ ScreenSaverWindow::ScreenSaverWindow(QObject *parent)
     m_view = new ScreenSaverView();
 
     // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
+    //! todo观察Qt::WindowDoesNotAcceptFocus的最新影响 2021-10-22
     // 不要添加Qt::WindowDoesNotAcceptFocus，以防止deepin-kwin在进入到显示桌面模式时触发屏幕保护
     // 但是却没有退出显示桌面模式，这样将会导致dock显示在屏幕保护窗口的上方
     m_view->setFlags(Qt::BypassWindowManagerHint);
@@ -90,9 +91,10 @@ void ScreenSaverWindow::setFlags(Qt::WindowFlags flags, bool bypassWindowManager
         flags &= ~Qt::BypassWindowManagerHint;
 
         // kwin 下不可添加Dialog标志，否则会导致窗口只能显示出一个，然而，在 deepin-wm 上使用其它窗口类型时又会有动画
+        //! todo观察Qt::WindowDoesNotAcceptFocus的最新影响 2021-10-22
         // 不要添加Qt::WindowDoesNotAcceptFocus，以防止deepin-kwin在进入到显示桌面模式时触发屏幕保护
         // 但是却没有退出显示桌面模式，这样将会导致dock显示在屏幕保护窗口的上方
-        flags |= Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer;
+        flags |= Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Drawer | Qt::WindowDoesNotAcceptFocus;
     }
 
     m_view->setFlags(flags);
