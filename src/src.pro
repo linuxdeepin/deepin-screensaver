@@ -1,7 +1,7 @@
 TARGET = deepin-screensaver
 QT += gui dbus quick x11extras
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += x11 xscrnsaver xext
+PKGCONFIG += x11 xscrnsaver xext xcb dframeworkdbus
 
 SOURCES += \
     $$PWD/main.cpp \
