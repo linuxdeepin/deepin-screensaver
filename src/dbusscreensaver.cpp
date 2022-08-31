@@ -35,6 +35,7 @@
 #include <QAbstractNativeEventFilter>
 #include <QWindow>
 #include <QThread>
+#include <QDateTime>
 
 #include <xcb/xcb.h>
 #include <X11/Xproto.h>
@@ -85,6 +86,7 @@ public:
             if (se->state == ScreenSaverOn) {
                 // ignore
             } else if (se->state == ScreenSaverOff) {
+                qInfo() << QDateTime::currentDateTime().toString() << "recive ScreenSaverOff signals and will quit.";
                 emit screenSaver->stop();
             }
         }
@@ -132,6 +134,9 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
 
 DBusScreenSaver::~DBusScreenSaver()
 {
+    if (m_grabKeyboard)
+        XUnGrabKeyBoard();
+
     if (isRunning()) {
         Stop();
     }
@@ -193,6 +198,22 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
     m_autoQuitTimer.stop();
 
     emit isRunningChanged(true);
+
+    const static bool isWayland = qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland");
+    if (!preview && isWayland) {
+        // 在wayland环境下无法接收到键盘事件，通过强制抓取键盘来进行规避
+        qInfo() << QDateTime::currentDateTime().toString() << "current not preview,and wayland is true,grab keyboard!";
+        XGrabKeyBoard();
+
+        // 在wayland环境，无法从x11接收到ScreenSaverOff信号，导致即使屏保程序正在显示，锁屏界面也会弹出显示到屏保程序之上。
+        // 此时在密码框中输入的第一个字符会被屏保程序抓取，导致输入的第一位密码字符丢失。
+        using namespace com::deepin;
+        if (!m_sessionManagerInter)
+            m_sessionManagerInter = new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this);
+
+        connect(m_sessionManagerInter, &SessionManager::LockedChanged, this, &DBusScreenSaver::onLockedChanged
+                , Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+    }
 
     return true;
 }
@@ -323,10 +344,17 @@ void DBusScreenSaver::Start(const QString &name)
 
 void DBusScreenSaver::Stop(bool lock)
 {
+    bool waitLock = false;
+
+    if (m_grabKeyboard) {
+        XUnGrabKeyBoard();
+        // 延缓退出，避免电源按键等特殊场景触发的退出时闪现桌面
+        waitLock = true;
+    }
+
     if (m_windowMap.isEmpty())
         return;
 
-    bool waitLock = false;
     // 只在由窗口自己唤醒时才会触发锁屏
     if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive()
             && (lock || qobject_cast<ScreenSaverWindow*>(sender()))) {
@@ -561,5 +589,43 @@ void DBusScreenSaver::cleanWindow(ScreenSaverWindow *w)
         if (ok) {
             XScreenSaverUnregister(QX11Info::display(), screenNumber);
         }
+    }
+}
+
+void DBusScreenSaver::XGrabKeyBoard()
+{
+    if(m_windowMap.isEmpty() || m_grabKeyboard)
+        return;
+
+    auto conn = QX11Info::connection();
+    auto cookie = xcb_grab_keyboard(conn, true, m_windowMap.first()->winId(), XCB_TIME_CURRENT_TIME, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+    xcb_grab_keyboard_reply_t *reply;
+    if ((reply = xcb_grab_keyboard_reply(conn, cookie, nullptr))) {
+        if (reply->status == XCB_GRAB_STATUS_SUCCESS) {
+            qInfo() << QDateTime::currentDateTime().toString() << "successfully grabbed the keyboard.";
+            m_grabKeyboard = true;
+        } else {
+            qInfo() << QDateTime::currentDateTime().toString() << "failedy grabbed the keyboard.";
+            m_grabKeyboard = false;
+        }
+        free(reply);
+    }
+}
+
+void DBusScreenSaver::XUnGrabKeyBoard()
+{
+    if (!m_grabKeyboard)
+        return;
+    m_grabKeyboard = false;
+
+    auto cookie = xcb_ungrab_keyboard(QX11Info::connection(), XCB_TIME_CURRENT_TIME);
+    qInfo() << QDateTime::currentDateTime().toString() << "xcb ungrab keyboard:" << &cookie;
+}
+
+void DBusScreenSaver::onLockedChanged(const bool locked)
+{
+    if (locked) {
+        qInfo() << QDateTime::currentDateTime().toString() << "I will quit,becase session manager emit LockedChanged and locked is:" << locked;
+        stop();
     }
 }

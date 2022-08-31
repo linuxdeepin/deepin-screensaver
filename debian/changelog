@@ -1,3 +1,9 @@
+deepin-screensaver (5.0.13) stable; urgency=medium
+
+  * update V23 baseline version.
+
+ -- Deepin Packages Builder <packages@deepin.com>  Mon, 15 Aug 2022 10:56:33 +0800
+
 deepin-screensaver (0.0.1-1) unstable; urgency=medium
 
   * Initial release
