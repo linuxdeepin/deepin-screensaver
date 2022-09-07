@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 {
     auto envType = qEnvironmentVariable("XDG_SESSION_TYPE");
     if (envType.contains("wayland")) {
+        qInfo() << QDateTime::currentDateTime().toString() << "notes:change wayland to xcb for QT_QPA_PLATFORM.";
         qputenv("QT_QPA_PLATFORM", "xcb");
     }
 

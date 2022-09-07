@@ -5,6 +5,8 @@
 #ifndef DBUSSCREENSAVER_H
 #define DBUSSCREENSAVER_H
 
+#include <com_deepin_sessionmanager.h>
+
 #include <QObject>
 #include <QProcess>
 #include <QDir>
@@ -12,6 +14,7 @@
 #include <QSettings>
 #include <QDBusMessage>
 #include <QScreen>
+#include <QAtomicInteger>
 
 class ScreenSaverWindow;
 class X11EventFilter;
@@ -69,6 +72,10 @@ private:
     void onScreenAdded(QScreen *s);
     void cleanWindow(ScreenSaverWindow *w);
 
+    void XGrabKeyBoard();
+    void XUnGrabKeyBoard();
+    void onLockedChanged(const bool locked);
+
     QList<QDir> m_resourceDirList;
     QStringList m_resourceList;
 
@@ -84,6 +91,9 @@ private:
     QTimer m_autoQuitTimer;
     QSettings m_settings;
     QScopedPointer<X11EventFilter> x11event;
+
+    com::deepin::SessionManager *m_sessionManagerInter = nullptr;
+    QAtomicInteger<bool> m_grabKeyboard = false;
 };
 
 #endif // DBUSSCREENSAVER_H
