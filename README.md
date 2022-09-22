@@ -79,5 +79,5 @@ We encourage you to report issues and contribute changes
 
 ## License
 
-deepin-screensaver is licensed under [ GPL-3.0-only](LICENSE.txt)
+deepin-screensaver is licensed under [ GPL-3.0-or-later](LICENSE.txt)
 
