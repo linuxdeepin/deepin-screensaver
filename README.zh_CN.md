@@ -73,5 +73,5 @@ $ sudo make install
 
 ## 开源许可证
 
-deepin-screensaver 在 [GPL-3.0-or-later](LICENSE.txt)下发布。
+deepin-screensaver 在 [GPL-3.0-or-later] 下发布。
 
