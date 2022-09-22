@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS += \
-    saverpic
+    saverpic \
+    deepin-custom-screensaver

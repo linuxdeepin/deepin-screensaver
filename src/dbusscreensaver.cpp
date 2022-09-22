@@ -4,6 +4,8 @@
 
 #include "dbusscreensaver.h"
 #include "screensaverwindow.h"
+#include "screensaversettingdialog.h"
+#include "utils.h"
 
 #include <QDebug>
 #include <QGuiApplication>
@@ -20,6 +22,7 @@
 #include <QWindow>
 #include <QThread>
 #include <QDateTime>
+#include <QProcess>
 
 #include <xcb/xcb.h>
 #include <X11/Xproto.h>
@@ -70,7 +73,7 @@ public:
             if (se->state == ScreenSaverOn) {
                 // ignore
             } else if (se->state == ScreenSaverOff) {
-                qInfo() << QDateTime::currentDateTime().toString() << "recive ScreenSaverOff signals and will quit.";
+                qInfo() << QDateTime::currentDateTime().toString() << "receive ScreenSaverOff signals and will quit.";
                 emit screenSaver->stop();
             }
         }
@@ -473,6 +476,30 @@ void DBusScreenSaver::setLockScreenDelay(int lockScreenDelay)
     m_lockScreenTimer.setInterval(m_lockScreenDelay * 1000);
 
     emit lockScreenDelayChanged(m_lockScreenDelay);
+}
+
+bool DBusScreenSaver::StartCustomConfig(const QString &name)
+{
+    if (!Utils::hasConfigFile(name))
+        return false;
+
+    return QProcess::startDetached("/usr/bin/deepin-screensaver", {QString("--config"), name});
+}
+
+QStringList DBusScreenSaver::ConfigurableItems()
+{
+    QStringList screenSaverList;
+    for (const QString &name : m_screenSaverList) {
+        if (Utils::hasConfigFile(name))
+            screenSaverList.append(name);
+    }
+
+    return screenSaverList;
+}
+
+bool DBusScreenSaver::IsConfigurable(const QString &name)
+{
+    return Utils::hasConfigFile(name);
 }
 
 void DBusScreenSaver::onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message)

@@ -20,6 +20,7 @@ _The **master** branch is current development branch, build dependencies may cha
  * qtbase5-dev
  * qtdeclarative5-dev
  * libqt5x11extras5-dev
+ * libdtkwidget-dev
  * libx11-dev
  * libxss-dev
  * libxext-dev
