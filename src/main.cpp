@@ -2,12 +2,16 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <QGuiApplication>
+#include <DApplication>
+
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 
 #include "screensaver_adaptor.h"
 #include "dbusscreensaver.h"
+#include "customconfig.h"
+
+DWIDGET_USE_NAMESPACE
 
 #define APPLICATION_XSTRING(s) APPLICATION_STRING(s)
 #define APPLICATION_STRING(s) #s
@@ -36,29 +40,50 @@ int main(int argc, char *argv[])
         qputenv("QT_QPA_PLATFORM", "xcb");
     }
 
-    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-    QGuiApplication app(argc, argv);
+    DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    DApplication app(argc, argv);
 
     app.setOrganizationName("deepin");
     app.setApplicationName("deepin-screensaver");
     app.setApplicationVersion(buildVersion(QMAKE_VERSION));
 
     bool doStart = true;
+    bool isCustomConfig = false;
+    QString configName;
 
     QCommandLineParser parser;
-
     if (argc > 1) {
-        QCommandLineOption option_dbus({"d", "dbus"}, "Register DBus service.");
-        QCommandLineOption option_start({"s", "start"}, "Start screen saver.");
+        QCommandLineOption optionDbus({"d", "dbus"}, "Register DBus service.");
+        QCommandLineOption optionStart({"s", "start"}, "Start screen saver.");
+        QCommandLineOption optionConfig({"c", "config"}, "Start config dialog of screen saver.", "screensaer-name", "");
 
-        parser.addOption(option_dbus);
-        parser.addOption(option_start);
+        parser.addOption(optionDbus);
+        parser.addOption(optionStart);
+        parser.addOption(optionConfig);
         parser.addPositionalArgument("screensaer-name", "Use the screensaver application.", "[name]");
         parser.addHelpOption();
         parser.addVersionOption();
 
         parser.process(app);
-        doStart = !parser.isSet(option_dbus);
+        doStart = !parser.isSet(optionDbus);
+
+        isCustomConfig = parser.isSet(optionConfig);
+        configName = parser.value(optionConfig);
+    }
+
+    // custom config dialog
+    if (isCustomConfig) {
+        if (configName.isEmpty()) {
+            parser.showHelp(1);
+            return 1;
+        } else {
+            app.setQuitOnLastWindowClosed(true);
+            CustomConfig conf;
+            if (conf.startCustomConfig(configName))
+                return app.exec();
+            else
+                return 0;
+        }
     }
 
     // 注册DBus服务
@@ -70,19 +95,21 @@ int main(int argc, char *argv[])
             return -1;
     }
 
+    const QString serviceName = "com.deepin.ScreenSaver";
+    const QString objDbusPath = "/com/deepin/ScreenSaver";
     // add our D-Bus interface and connect to D-Bus
-    if (!QDBusConnection::sessionBus().registerService("com.deepin.ScreenSaver")) {
-        qWarning("Cannot register the \"com.deepin.ScreenSaver\" service.\n");
+    if (!QDBusConnection::sessionBus().registerService(serviceName)) {
+        qWarning() << QString("Cannot register the \"%1\" service.\n").arg(serviceName);
 
         if (!doStart)
             return -1;
     }
 
     auto server = new DBusScreenSaver();
-    Q_UNUSED(new ScreenSaverAdaptor(server))
+    Q_UNUSED(new ScreenSaverAdaptor(qobject_cast<DBusScreenSaver*>(server)))
 
-    if (!QDBusConnection::sessionBus().registerObject("/com/deepin/ScreenSaver", server)) {
-        qWarning("Cannot register to the D-Bus object: \"/com/deepin/ScreenSaver\"\n");
+    if (!QDBusConnection::sessionBus().registerObject(objDbusPath, server)) {
+        qWarning() << QString("Cannot register to the D-Bus object: \"%1\"\n").arg(objDbusPath);
 
         if (!doStart)
             return -1;

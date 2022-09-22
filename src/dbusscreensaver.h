@@ -8,7 +8,6 @@
 #include <com_deepin_sessionmanager.h>
 
 #include <QObject>
-#include <QProcess>
 #include <QDir>
 #include <QTimer>
 #include <QSettings>
@@ -55,6 +54,9 @@ public:
     void setLockScreenAtAwake(bool lockScreenAtAwake);
     void setLockScreenDelay(int lockScreenDelay);
 
+    bool StartCustomConfig(const QString &name);
+    QStringList ConfigurableItems();
+    bool IsConfigurable(const QString &name);
 signals:
     void allScreenSaverChanged(QStringList allScreenSaver);
     void batteryScreenSaverTimeoutChanged(int batteryScreenSaverTimeout);
