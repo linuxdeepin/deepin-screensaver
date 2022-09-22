@@ -8,7 +8,6 @@
 #include <com_deepin_sessionmanager.h>
 
 #include <QObject>
-#include <QProcess>
 #include <QDir>
 #include <QTimer>
 #include <QSettings>

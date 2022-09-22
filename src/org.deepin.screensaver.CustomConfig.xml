@@ -1,0 +1,12 @@
+<interface name='org.deepin.screensaver.CustomConfig'>
+    <method name='StartCustomConfig'>
+            <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name='ListWithCustomConfigurations'>
+            <arg name="name" type="as" direction="out"/>
+    </method>
+    <method name='HasConfigSettings'>
+            <arg name="name" type="s" direction="in"/>
+            <arg name="has" type="b" direction="out"/>
+    </method>
+</interface>

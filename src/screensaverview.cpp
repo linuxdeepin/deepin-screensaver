@@ -92,7 +92,7 @@ bool ScreenSaverView::event(QEvent *event)
     case QEvent::TouchCancel:
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
-        qInfo() << QDateTime::currentDateTime().toString() << "recive input evnet and will quit:" << event->type();
+        qInfo() << QDateTime::currentDateTime().toString() << "receive input evnet and will quit:" << event->type();
         emit inputEvent(event->type());
         break;
 

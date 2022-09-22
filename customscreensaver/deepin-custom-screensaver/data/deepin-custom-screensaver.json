@@ -1,0 +1,35 @@
+{
+    "groups": [{
+        "key": "custom_screensaver",
+        "name": "Custom Screensaver",
+        "groups": [{
+                "key": "path",
+                "name": "Path",
+                "options": [{
+                        "key": "select_path",
+                        "type": "selectPathWidget",
+                        "default": "~/Pictures"
+                    }
+                ]
+            },
+            {
+                "key": "slideshow",
+                "name": "Slideshow",
+                "options": [{
+                        "key": "time_interval",
+                        "name": "Time interval",
+                        "type": "combobox",
+                        "items": ["1 minutes" ,"3 minutes", "5 minutes", "10 minutes", "30 minutes", "60 minutes"],
+                        "default": 2
+                    },
+                    {
+                        "key": "shuffle",
+                        "text": "Shuffle",
+                        "type": "checkbox",
+                        "default": "false"
+                    }
+                ]
+            }
+        ]
+    }]
+}

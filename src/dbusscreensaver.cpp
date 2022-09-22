@@ -4,6 +4,7 @@
 
 #include "dbusscreensaver.h"
 #include "screensaverwindow.h"
+#include "screensaversettingdialog.h"
 
 #include <QDebug>
 #include <QGuiApplication>
@@ -20,6 +21,7 @@
 #include <QWindow>
 #include <QThread>
 #include <QDateTime>
+#include <QProcess>
 
 #include <xcb/xcb.h>
 #include <X11/Xproto.h>
@@ -70,7 +72,7 @@ public:
             if (se->state == ScreenSaverOn) {
                 // ignore
             } else if (se->state == ScreenSaverOff) {
-                qInfo() << QDateTime::currentDateTime().toString() << "recive ScreenSaverOff signals and will quit.";
+                qInfo() << QDateTime::currentDateTime().toString() << "receive ScreenSaverOff signals and will quit.";
                 emit screenSaver->stop();
             }
         }

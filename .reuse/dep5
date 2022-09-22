@@ -52,3 +52,18 @@ License: GPL-3.0-or-later
 Files: xscreensaver/*
 Copyright: None
 License: CC0-1.0
+
+# translations
+Files: src/translations/* customscreensaver/deepin-custom-screensaver/translations/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# json conf
+Files: customscreensaver/deepin-custom-screensaver/data/*
+Copyright: None
+License: CC0-1.0
+
+# icon
+Files: customscreensaver/deepin-custom-screensaver/src/icons/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
