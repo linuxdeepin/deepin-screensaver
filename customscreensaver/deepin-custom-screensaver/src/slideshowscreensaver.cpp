@@ -65,7 +65,7 @@ void SlideshowScreenSaver::onUpdateImage()
         return;
 
     if (m_shuffle) {
-        m_currentImage = int(QRandomGenerator::global()->generate() % uint(m_imagefiles.count()) - 1);
+        m_currentImage = int(QRandomGenerator::global()->generate() % uint(m_imagefiles.count()));
     } else {
         if (m_currentImage < m_imagefiles.count() - 1)
             m_currentImage++;
