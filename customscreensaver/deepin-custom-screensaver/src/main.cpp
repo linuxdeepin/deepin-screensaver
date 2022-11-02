@@ -6,7 +6,8 @@
 #include "commandlinemanager.h"
 #include "slideshowconfig.h"
 
-#include <QApplication>
+#include <DApplication>
+
 #include <QtDebug>
 #include <QWindow>
 #include <QMessageBox>
@@ -19,9 +20,11 @@
 
 #include <X11/Xlib.h>
 
+DWIDGET_USE_NAMESPACE
+
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    DApplication a(argc, argv);
     a.setOrganizationName("deepin");
 
     CommandLineManager::instance()->process(a.arguments());

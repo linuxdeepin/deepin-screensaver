@@ -24,13 +24,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11 link_pkgconfig
 
-PKGCONFIG += x11
+PKGCONFIG += x11 dtkwidget
 
 SOURCES += \
         src/main.cpp \
     src/slideshowscreensaver.cpp \
     src/commandlinemanager.cpp \
     src/slideshowconfig.cpp
+
 
 HEADERS += \ 
     src/slideshowscreensaver.h \
@@ -41,6 +42,9 @@ HEADERS += \
 #DTK_SETTINGS = $${QT.dtkcore.tools}/dtk-settings
 #system($$DTK_SETTINGS -o deepin-custom-screensaver_translation.cpp $$PWD/data/deepin-custom-screensaver.json)
 #system(lupdate deepin-custom-screensaver_translation.cpp -ts $$PWD/translations/$${TARGET}.ts)
+
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
+    $$PWD/translations/$${TARGET}_zh_CN.ts
 
 CONFIG(release, debug|release) {
     !system($$PWD/generate_translations.sh): error("Failed to generate translation")
