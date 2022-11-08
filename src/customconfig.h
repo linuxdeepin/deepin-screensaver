@@ -7,6 +7,7 @@
 
 #include <QObject>
 
+class SingleApplication;
 class ScreenSaverSettingDialog;
 class CustomConfig : public QObject
 {
@@ -17,7 +18,8 @@ public:
 
     bool startCustomConfig(const QString &name);
 private:
-    ScreenSaverSettingDialog *m_settingDialiog {nullptr};
+    ScreenSaverSettingDialog *m_settingDialiog { nullptr };
+    SingleApplication *m_singleApp { nullptr };
 };
 
 #endif // DBUSCUSTOMCONFIG_H

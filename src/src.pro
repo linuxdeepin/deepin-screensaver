@@ -15,7 +15,8 @@ SOURCES += \
     $$PWD/screensaversettingdialog.cpp \
     $$PWD/selectpathwidget.cpp \
     $$PWD/customconfig.cpp \
-    $$PWD/utils.cpp
+    $$PWD/utils.cpp \
+    singleapplication.cpp
 
 HEADERS += \
     $$PWD/screensaverwindow.h \
@@ -26,7 +27,8 @@ HEADERS += \
     $$PWD/truncatelineedit.h \
     $$PWD/screensaversettingdialog.h \
     $$PWD/customconfig.h \
-    $$PWD/utils.h
+    $$PWD/utils.h \
+    $$PWD/singleapplication.cpp
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
