@@ -27,19 +27,16 @@ SlideshowScreenSaver::SlideshowScreenSaver(bool subWindow, QWidget *parent)
     if (m_subWindow)
         setWindowFlag(Qt::WindowTransparentForInput, true);
 
-    loadSlideshowImages();
-
-    if (!m_imagefiles.isEmpty())
-        m_pixmap.reset(new QPixmap(m_imagefiles.first()));
-
     m_shuffle = SlideshowConfig::instance()->isShuffle();
     m_intervalTime = SlideshowConfig::instance()->intervalTime();
 
     m_timer.reset(new QTimer);
     connect(m_timer.get(), &QTimer::timeout, this, &SlideshowScreenSaver::onUpdateImage);
+    loadSlideshowImages();
 
     m_timer->setInterval(m_intervalTime);
-    m_timer->start();
+    if (!m_playOrder.isEmpty())
+        m_timer->start();
 }
 
 SlideshowScreenSaver::~SlideshowScreenSaver()
@@ -48,27 +45,23 @@ SlideshowScreenSaver::~SlideshowScreenSaver()
 
 void SlideshowScreenSaver::onUpdateImage()
 {
-    if (updateCurrentImageIndex()) {
-        if (0 > m_currentIndex || m_currentIndex > m_imagefiles.size() - 1)
-            return;
-
-        auto indexPath = m_imagefiles.at(m_currentIndex);
-        QFileInfo f(indexPath);
-        if (f.exists()) {
-            m_pixmap.reset(new QPixmap(m_imagefiles.at(m_currentIndex)));
-            update();
-            return;
+    if (!m_playOrder.isEmpty()) {
+        if (m_currentIndex ==  m_playOrder.count()) {
+            if (m_shuffle) {
+                randomImageIndex();
+            } else {
+                m_currentIndex = 1;
+            }
         } else {
-            loadSlideshowImages();
-            onUpdateImage();
+            nextValidPath();
         }
-
     } else {
-        m_pixmap.reset(nullptr);
-        m_timer->stop();
+        loadSlideshowImages();
     }
 
+    m_pixmap.reset(new QPixmap(m_playOrder.value(m_currentIndex)));
     update();
+    return;
 }
 
 void SlideshowScreenSaver::paintEvent(QPaintEvent *event)
@@ -109,26 +102,28 @@ void SlideshowScreenSaver::showDefaultBlack(QPaintEvent *event)
     p.drawPixmap(event->rect().topLeft(), pip, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
 }
 
-bool SlideshowScreenSaver::updateCurrentImageIndex()
+void SlideshowScreenSaver::randomImageIndex()
 {
-    if (m_imagefiles.isEmpty())
-        return false;
+    // When "sise < 2", it's like play in sequence
+    if (m_playOrder.size() > 2) {
+        auto vct = m_playOrder.keys().toVector();
+        std::mt19937 rg(std::random_device{}());
+        std::shuffle(vct.begin(), vct.end(), rg);
+        QMap<int, QString> temp;
+        for (int i = 0; i < vct.size(); ++i)
+            temp.insert(i + 1, m_playOrder.value(vct[i]));
+        m_playOrder.clear();
+        m_playOrder = std::move(temp);
 
-    if (m_shuffle) {
-        m_currentIndex = int(QRandomGenerator::global()->generate() % uint(m_imagefiles.count()));
-    } else {
-        if (m_currentIndex < m_imagefiles.count() - 1)
-            m_currentIndex++;
-        else
-            m_currentIndex = 0;
+        // make sure the display is different twice in a row
+        m_currentIndex = (m_lastImage == m_playOrder.first()) ? 2 : 1;
+        m_lastImage = m_playOrder.last();
     }
-
-    return true;
 }
 
-bool SlideshowScreenSaver::loadSlideshowImages()
+void SlideshowScreenSaver::loadSlideshowImages()
 {
-    m_imagefiles.clear();
+    m_playOrder.clear();
     QString path = SlideshowConfig::instance()->slideshowPath();
 
     QFileInfo fileInfo(path);
@@ -138,15 +133,51 @@ bool SlideshowScreenSaver::loadSlideshowImages()
         QFileInfoList infoList = dir.entryInfoList(filters, QDir::Name);
         if (infoList.isEmpty()) {
             qWarning() << "Warning:no image file in " << path;
-            return false;
+            return;
         }
 
         static const QStringList validSuffix { QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png") };
+        int idx = 1;
         for (auto info : infoList) {
-            if (validSuffix.contains(info.suffix()))
+            if (validSuffix.contains(info.suffix())) {
                 m_imagefiles.append(info.absoluteFilePath());   // 记录图片列表
+                m_playOrder.insert(idx, info.absoluteFilePath());
+                idx++;
+            }
         }
     }
 
-    return false;
+    init();
+}
+
+void SlideshowScreenSaver::init()
+{
+    if (!m_playOrder.isEmpty()) {
+        if (m_shuffle)
+            randomImageIndex();
+        m_pixmap.reset(new QPixmap(m_playOrder.first()));
+        m_currentIndex = 1;
+        m_lastImage = m_playOrder.last();
+    } else {
+        m_pixmap.reset(nullptr);
+        m_timer->stop();
+    }
+}
+
+void SlideshowScreenSaver::nextValidPath()
+{
+    const int num = m_playOrder.count();
+
+    // It almost never happens
+    if (++m_currentIndex > num)
+        m_currentIndex = 1;
+
+    filterInvalidFile(m_playOrder.value(m_currentIndex));
+}
+
+void SlideshowScreenSaver:: filterInvalidFile(const QString &path)
+{
+    QFileInfo f(path);
+    if (!f.exists())
+        loadSlideshowImages();
 }
