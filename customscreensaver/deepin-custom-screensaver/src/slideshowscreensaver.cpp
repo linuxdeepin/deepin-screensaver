@@ -118,6 +118,8 @@ void SlideshowScreenSaver::randomImageIndex()
         // make sure the display is different twice in a row
         m_currentIndex = (m_lastImage == m_playOrder.first()) ? 2 : 1;
         m_lastImage = m_playOrder.last();
+    } else {
+        m_currentIndex = 1;
     }
 }
 
@@ -136,10 +138,11 @@ void SlideshowScreenSaver::loadSlideshowImages()
             return;
         }
 
-        static const QStringList validSuffix { QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png") };
+        static const QStringList validSuffix {QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png")
+        };
         int idx = 1;
         for (auto info : infoList) {
-            if (validSuffix.contains(info.suffix())) {
+            if (validSuffix.contains(info.suffix(), Qt::CaseInsensitive)) {
                 m_imagefiles.append(info.absoluteFilePath());   // 记录图片列表
                 m_playOrder.insert(idx, info.absoluteFilePath());
                 idx++;
