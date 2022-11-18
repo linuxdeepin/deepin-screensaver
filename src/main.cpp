@@ -2,14 +2,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <DApplication>
-
-#include <QCommandLineParser>
-#include <QCommandLineOption>
+//#include <QCommandLineParser>
+//#include <QCommandLineOption>
 
 #include "screensaver_adaptor.h"
 #include "dbusscreensaver.h"
 #include "customconfig.h"
+#include "singleapplication.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -41,51 +40,21 @@ int main(int argc, char *argv[])
     }
 
     DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-    DApplication app(argc, argv);
+    SingleApplication app(argc, argv);
 
     app.setOrganizationName("deepin");
     app.setApplicationName("deepin-screensaver");
     app.setApplicationVersion(buildVersion(QMAKE_VERSION));
+    app.process(app.arguments());
 
-    bool doStart = true;
-    bool isCustomConfig = false;
-    QString configName;
-
-    QCommandLineParser parser;
-    if (argc > 1) {
-        QCommandLineOption optionDbus({"d", "dbus"}, "Register DBus service.");
-        QCommandLineOption optionStart({"s", "start"}, "Start screen saver.");
-        QCommandLineOption optionConfig({"c", "config"}, "Start config dialog of screen saver.", "screensaer-name", "");
-
-        parser.addOption(optionDbus);
-        parser.addOption(optionStart);
-        parser.addOption(optionConfig);
-        parser.addPositionalArgument("screensaer-name", "Use the screensaver application.", "[name]");
-        parser.addHelpOption();
-        parser.addVersionOption();
-
-        parser.process(app);
-        doStart = !parser.isSet(optionDbus);
-
-        isCustomConfig = parser.isSet(optionConfig);
-        configName = parser.value(optionConfig);
+    if (app.isSet({"c", "config"})) {
+        app.setQuitOnLastWindowClosed(true);
+        if (app.startCustomConfig())
+            return app.exec();
+        return 0;
     }
 
-    // custom config dialog
-    if (isCustomConfig) {
-        if (configName.isEmpty()) {
-            parser.showHelp(1);
-            return 1;
-        } else {
-            app.setQuitOnLastWindowClosed(true);
-            CustomConfig conf;
-            if (conf.startCustomConfig(configName))
-                return app.exec();
-            else
-                return 0;
-        }
-    }
-
+    bool doStart = app.isSet({"d", "dbus"});
     // 注册DBus服务
     if (!QDBusConnection::sessionBus().isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
@@ -117,7 +86,7 @@ int main(int argc, char *argv[])
 
     if (doStart) {
         if (argc > 1)
-            server->Start(parser.positionalArguments().value(0));
+            server->Start(app.positionalArguments().value(0));
         else
             server->Start();
     }

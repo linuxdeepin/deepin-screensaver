@@ -17,7 +17,8 @@ public:
 
     bool startCustomConfig(const QString &name);
 private:
-    ScreenSaverSettingDialog *m_settingDialiog {nullptr};
+    ScreenSaverSettingDialog *m_settingDialiog { nullptr };
+    QString m_lastConfigName;
 };
 
 #endif // DBUSCUSTOMCONFIG_H

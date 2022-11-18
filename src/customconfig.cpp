@@ -7,6 +7,7 @@
 #include "utils.h"
 
 #include <QApplication>
+#include <QDebug>
 
 CustomConfig::CustomConfig(QObject *parent) : QObject(parent)
 {
@@ -14,10 +15,7 @@ CustomConfig::CustomConfig(QObject *parent) : QObject(parent)
 
 CustomConfig::~CustomConfig()
 {
-    if (m_settingDialiog) {
-        delete m_settingDialiog;
-        m_settingDialiog = nullptr;
-    }
+
 }
 
 bool CustomConfig::startCustomConfig(const QString &name)
@@ -25,12 +23,18 @@ bool CustomConfig::startCustomConfig(const QString &name)
     if (!Utils::hasConfigFile(name))
         return false;
 
+    if (m_settingDialiog && (name == m_lastConfigName)) {
+        m_settingDialiog->activateWindow();
+        return true;
+    }
+
     if (m_settingDialiog)
         delete m_settingDialiog;
 
     m_settingDialiog = new ScreenSaverSettingDialog(name);
     m_settingDialiog->setAttribute(Qt::WA_DeleteOnClose);
     m_settingDialiog->show();
+    m_lastConfigName = name;
     return true;
 }
 

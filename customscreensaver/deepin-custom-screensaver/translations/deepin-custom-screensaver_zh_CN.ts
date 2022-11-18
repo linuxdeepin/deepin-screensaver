@@ -62,7 +62,7 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="99"/>
+        <location filename="../src/slideshowscreensaver.cpp" line="142"/>
         <source>Picture not found</source>
         <translation>图片不见了</translation>
     </message>
