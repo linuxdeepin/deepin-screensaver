@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
         XGetWindowAttributes(display, windowXID, &attr);
 
         screensaver.setGeometry(QRect(0, 0, attr.width, attr.height));
+        screensaver.init();
         screensaver.show();
 
         return a.exec();

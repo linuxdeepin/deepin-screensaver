@@ -15,7 +15,9 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QRandomGenerator>
-#include <QDebug>
+
+#include <xcb/xcb.h>
+#include <X11/Xlib.h>
 
 #define IMAGE_MAX_SIZE 30 * 1024 * 1024 // Only display image smaller than 30M
 
@@ -34,7 +36,6 @@ SlideshowScreenSaver::SlideshowScreenSaver(bool subWindow, QWidget *parent)
 
     m_timer.reset(new QTimer);
     connect(m_timer.get(), &QTimer::timeout, this, &SlideshowScreenSaver::onUpdateImage);
-    loadSlideshowImages();
 
     m_timer->setInterval(m_intervalTime);
     if (!m_playOrder.isEmpty())
@@ -45,15 +46,46 @@ SlideshowScreenSaver::~SlideshowScreenSaver()
 {
 }
 
+bool SlideshowScreenSaver::nativeEventFilter(const QByteArray &eventType, void *message, long *result)
+{
+    Q_UNUSED(result);
+    if (eventType == "xcb_generic_event_t") {
+        xcb_generic_event_t *event = reinterpret_cast<xcb_generic_event_t *>(message);
+        int type = (event->response_type & ~0x80);
+        if (XCB_CONFIGURE_NOTIFY == type) {
+            xcb_configure_notify_event_t *ce = reinterpret_cast<xcb_configure_notify_event_t *>(event);
+            qInfo() << "parent window size changed" << ce->width << ce->height;
+            QSize widSize = mapFromHandle(QSize(ce->width, ce->height));
+            if (widSize != size()) {
+                qInfo() << "update window size:" << widSize;
+                resize(widSize);
+            }
+        } else if (XCB_DESTROY_NOTIFY == type) {
+            xcb_destroy_notify_event_t *ce = reinterpret_cast<xcb_destroy_notify_event_t *>(event);
+            if (ce->window == Window(this->windowHandle()->winId())) {
+                qInfo() << "parent window closed";
+                QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+            }
+        }
+    }
+    return false;
+}
+
+void SlideshowScreenSaver::init()
+{
+    loadSlideshowImages();
+}
+
 void SlideshowScreenSaver::onUpdateImage()
 {
     if (!m_playOrder.isEmpty()) {
-        if (m_currentIndex ==  m_playOrder.count()) {
+        if (m_currentIndex == m_playOrder.count()) {
             if (m_shuffle) {
                 randomImageIndex();
             } else {
                 m_currentIndex = 1;
             }
+            filterInvalidFile(m_playOrder.value(m_currentIndex));
         } else {
             nextValidPath();
         }
@@ -62,32 +94,41 @@ void SlideshowScreenSaver::onUpdateImage()
     }
 
     m_pixmap.reset(new QPixmap(m_playOrder.value(m_currentIndex)));
+    scaledPixmap();
     update();
     return;
 }
 
 void SlideshowScreenSaver::paintEvent(QPaintEvent *event)
 {
-    if (m_pixmap) {
-        qreal scale = devicePixelRatioF();
-        QSize trueSize(this->geometry().size());
-        auto pix = m_pixmap->scaled(trueSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-
-        if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
-            pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
-                                 static_cast<int>((pix.height() - trueSize.height()) / 2.0),
-                                 trueSize.width(),
-                                 trueSize.height()));
-        }
-        pix.setDevicePixelRatio(scale);
-
+    if (m_pixmap && !m_pixmap->isNull()) {
         QPainter pa(this);
-        pa.drawPixmap(event->rect().topLeft(), pix, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
+        pa.drawPixmap(event->rect().topLeft(), *m_pixmap.data(), QRectF(QPointF(event->rect().topLeft()), QSizeF(event->rect().size())));
+
     } else {
         showDefaultBlack(event);
     }
 
     return QWidget::paintEvent(event);
+}
+
+void SlideshowScreenSaver::closeEvent(QCloseEvent *event)
+{
+    for (auto wid : findChildren<QWidget *>())
+        wid->close();
+
+    QWidget::closeEvent(event);
+}
+
+QSize SlideshowScreenSaver::mapFromHandle(const QSize &handleSize)
+{
+    qreal ratio = devicePixelRatioF();
+    qDebug() << "parent window handle size" << handleSize << "devicePixelRatio" << ratio;
+
+    if (ratio > 0 && ratio != 1.0)
+        return handleSize / ratio;
+    else
+        return handleSize;
 }
 
 void SlideshowScreenSaver::showDefaultBlack(QPaintEvent *event)
@@ -109,7 +150,7 @@ void SlideshowScreenSaver::randomImageIndex()
     // When "sise < 2", it's like play in sequence
     if (m_playOrder.size() > 2) {
         auto vct = m_playOrder.keys().toVector();
-        std::mt19937 rg(std::random_device{}());
+        std::mt19937 rg(std::random_device {}());
         std::shuffle(vct.begin(), vct.end(), rg);
         QMap<int, QString> temp;
         for (int i = 0; i < vct.size(); ++i)
@@ -137,10 +178,11 @@ void SlideshowScreenSaver::loadSlideshowImages()
         QFileInfoList infoList = dir.entryInfoList(filters, QDir::Name);
         if (infoList.isEmpty()) {
             qWarning() << "Warning:no image file in " << path;
+            m_timer->stop();
             return;
         }
 
-        static const QStringList validSuffix {QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png")};
+        static const QStringList validSuffix { QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png") };
         int idx = 1;
         for (auto info : infoList) {
             if (info.size() < IMAGE_MAX_SIZE && validSuffix.contains(info.suffix(), Qt::CaseInsensitive)) {
@@ -151,15 +193,16 @@ void SlideshowScreenSaver::loadSlideshowImages()
         }
     }
 
-    init();
+    initPixMap();
 }
 
-void SlideshowScreenSaver::init()
+void SlideshowScreenSaver::initPixMap()
 {
     if (!m_playOrder.isEmpty()) {
         if (m_shuffle)
             randomImageIndex();
         m_pixmap.reset(new QPixmap(m_playOrder.first()));
+        scaledPixmap();
         m_currentIndex = 1;
         m_lastImage = m_playOrder.last();
     } else {
@@ -179,9 +222,19 @@ void SlideshowScreenSaver::nextValidPath()
     filterInvalidFile(m_playOrder.value(m_currentIndex));
 }
 
-void SlideshowScreenSaver:: filterInvalidFile(const QString &path)
+void SlideshowScreenSaver::filterInvalidFile(const QString &path)
 {
     QFileInfo f(path);
     if (!f.exists())
         loadSlideshowImages();
+}
+
+void SlideshowScreenSaver::scaledPixmap()
+{
+    if (m_pixmap && !m_pixmap->isNull()) {
+        auto pix = m_pixmap->scaled(this->geometry().size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        m_pixmap->swap(pix);
+    } else if(m_pixmap && !m_pixmap->isNull()) {
+        loadSlideshowImages();
+    }
 }
