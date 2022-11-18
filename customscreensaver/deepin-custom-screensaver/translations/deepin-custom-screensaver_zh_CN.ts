@@ -6,57 +6,57 @@
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="7"/>
         <source>Shuffle</source>
-        <translation type="unfinished"></translation>
+        <translation>随机轮播</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="8"/>
         <source>Time interval</source>
-        <translation type="unfinished"></translation>
+        <translation>轮播间隔</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="9"/>
         <source>1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>1 分钟</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="10"/>
         <source>3 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>3 分钟</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="11"/>
         <source>5 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>5 分钟</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="12"/>
         <source>10 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>10 分钟</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="13"/>
         <source>30 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>30 分钟</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="14"/>
         <source>60 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>60 分钟</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="15"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义屏保</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="16"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>路径选择</translation>
     </message>
     <message>
         <location filename="../src/deepin-custom-screensaver_translation.cpp" line="17"/>
         <source>Slideshow</source>
-        <translation type="unfinished"></translation>
+        <translation>轮播设置</translation>
     </message>
 </context>
 <context>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="99"/>
         <source>Picture not found</source>
-        <translation type="unfinished"></translation>
+        <translation>图片不见了</translation>
     </message>
 </context>
 </TS>
