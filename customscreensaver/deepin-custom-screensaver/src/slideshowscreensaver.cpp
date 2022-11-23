@@ -17,6 +17,8 @@
 #include <QRandomGenerator>
 #include <QDebug>
 
+#define IMAGE_MAX_SIZE 30 * 1024 * 1024 // Only display image smaller than 30M
+
 DWIDGET_USE_NAMESPACE
 
 SlideshowScreenSaver::SlideshowScreenSaver(bool subWindow, QWidget *parent)
@@ -138,11 +140,10 @@ void SlideshowScreenSaver::loadSlideshowImages()
             return;
         }
 
-        static const QStringList validSuffix {QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png")
-        };
+        static const QStringList validSuffix {QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png")};
         int idx = 1;
         for (auto info : infoList) {
-            if (validSuffix.contains(info.suffix(), Qt::CaseInsensitive)) {
+            if (info.size() < IMAGE_MAX_SIZE && validSuffix.contains(info.suffix(), Qt::CaseInsensitive)) {
                 m_imagefiles.append(info.absoluteFilePath());   // 记录图片列表
                 m_playOrder.insert(idx, info.absoluteFilePath());
                 idx++;
