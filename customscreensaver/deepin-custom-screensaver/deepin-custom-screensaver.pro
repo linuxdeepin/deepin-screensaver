@@ -63,6 +63,6 @@ conf.path = /etc/deepin-screensaver/$${TARGET}/
 conf.files = data/$${TARGET}.conf
 
 icons.path = /usr/lib/deepin-screensaver/modules/cover/
-icons.files = src/icons/*.svg
+icons.files = src/icons/*.jpg
 
 INSTALLS += target translations json conf icons
