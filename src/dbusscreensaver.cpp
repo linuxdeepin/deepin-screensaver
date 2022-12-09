@@ -31,6 +31,14 @@
 #include <X11/extensions/scrnsaver.h>
 #include <X11/extensions/shape.h>
 
+#ifdef COMPILE_ON_V23
+#   define SYSTEMPOWER_SERVICE "org.deepin.system.Power1"
+#   define SYSTEMPOWER_PATH "org/deepin/system/Power1"
+#else
+#   define SYSTEMPOWER_SERVICE "com.deepin.daemon.Power"
+#   define SYSTEMPOWER_PATH "/com/deepin/daemon/Power"
+#endif
+
 struct xcb_screensaver_notify_event
 {
     uint8_t      response_type;
@@ -110,8 +118,8 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
 
     connect(&m_autoQuitTimer, &QTimer::timeout, this, &QCoreApplication::quit);
 
-    QDBusConnection::sessionBus().connect("com.deepin.daemon.Power",
-                                          "/com/deepin/daemon/Power",
+    QDBusConnection::sessionBus().connect(SYSTEMPOWER_SERVICE,
+                                          SYSTEMPOWER_PATH,
                                           "org.freedesktop.DBus.Properties",
                                           "PropertiesChanged",
                                           this, SLOT(onDBusPropertyChanged(QString,QVariantMap,QDBusMessage)));
@@ -394,16 +402,16 @@ QStringList DBusScreenSaver::allScreenSaver() const
 
 int DBusScreenSaver::batteryScreenSaverTimeout() const
 {
-    QDBusInterface remoteApp( "com.deepin.daemon.Power", "/com/deepin/daemon/Power",
-                              "com.deepin.daemon.Power" );
+    QDBusInterface remoteApp( SYSTEMPOWER_SERVICE, SYSTEMPOWER_PATH,
+                              SYSTEMPOWER_SERVICE );
 
     return remoteApp.property("BatteryScreensaverDelay").toInt();
 }
 
 int DBusScreenSaver::linePowerScreenSaverTimeout() const
 {
-    QDBusInterface remoteApp( "com.deepin.daemon.Power", "/com/deepin/daemon/Power",
-                              "com.deepin.daemon.Power" );
+    QDBusInterface remoteApp( SYSTEMPOWER_SERVICE, SYSTEMPOWER_PATH,
+                              SYSTEMPOWER_SERVICE );
 
     return remoteApp.property("LinePowerScreensaverDelay").toInt();
 }
@@ -420,16 +428,16 @@ bool DBusScreenSaver::isRunning() const
 
 void DBusScreenSaver::setBatteryScreenSaverTimeout(int batteryScreenSaverTimeout)
 {
-    QDBusInterface remoteApp( "com.deepin.daemon.Power", "/com/deepin/daemon/Power",
-                              "com.deepin.daemon.Power" );
+    QDBusInterface remoteApp( SYSTEMPOWER_SERVICE, SYSTEMPOWER_PATH,
+                              SYSTEMPOWER_SERVICE );
 
     remoteApp.setProperty("BatteryScreensaverDelay", batteryScreenSaverTimeout);
 }
 
 void DBusScreenSaver::setLinePowerScreenSaverTimeout(int linePowerScreenSaverTimeout)
 {
-    QDBusInterface remoteApp( "com.deepin.daemon.Power", "/com/deepin/daemon/Power",
-                              "com.deepin.daemon.Power" );
+    QDBusInterface remoteApp( SYSTEMPOWER_SERVICE, SYSTEMPOWER_PATH,
+                              SYSTEMPOWER_SERVICE );
 
     remoteApp.setProperty("LinePowerScreensaverDelay", linePowerScreenSaverTimeout);
 }

@@ -11,8 +11,19 @@ screensaver_list = blaster bouboule cage discoball dymaxionmap endgame epicycle 
     flow flurry flyingtoasters fuzzyflakes galaxy glplanet hexadrop \
     klein lament lockward polytopes vermiculate
 
+OS_VERSION_FILE = /etc/os-version
+exists($$OS_VERSION_FILE) {
+    infile($$OS_VERSION_FILE, MajorVersion, 23) {
+        COMPILE_ON_V23 = true
+    }
+}
+
 isEmpty(XSCREENSAVER_DATA_PATH) {
-    XSCREENSAVER_DATA_PATH = $$PREFIX/lib/xscreensaver
+    if($$COMPILE_ON_V23) {
+        XSCREENSAVER_DATA_PATH = $$PREFIX/libexec/xscreensaver
+    } else {
+        XSCREENSAVER_DATA_PATH = $$PREFIX/lib/xscreensaver
+    }
 }
 
 screensaver.path = $$MODULE_PATH
