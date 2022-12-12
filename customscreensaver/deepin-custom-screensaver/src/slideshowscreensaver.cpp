@@ -19,7 +19,7 @@
 #include <xcb/xcb.h>
 #include <X11/Xlib.h>
 
-#define IMAGE_MAX_SIZE 30 * 1024 * 1024 // Only display image smaller than 30M
+#define IMAGE_MAX_SIZE 30 * 1024 * 1024   // Only display image smaller than 30M
 
 DWIDGET_USE_NAMESPACE
 
@@ -141,8 +141,9 @@ void SlideshowScreenSaver::showDefaultBlack(QPaintEvent *event)
     pa.setPen(Qt::white);
     pa.drawText(pip.rect(), Qt::AlignCenter, tr("Picture not found"));   // This text may be written in the configuration in the future
 
+    const auto &pix = pip.scaled(mapFromHandle(this->geometry().size()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     QPainter p(this);
-    p.drawPixmap(event->rect().topLeft(), pip, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
+    p.drawPixmap(event->rect().topLeft(), pix, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
 }
 
 void SlideshowScreenSaver::randomImageIndex()
@@ -232,9 +233,9 @@ void SlideshowScreenSaver::filterInvalidFile(const QString &path)
 void SlideshowScreenSaver::scaledPixmap()
 {
     if (m_pixmap && !m_pixmap->isNull()) {
-        auto pix = m_pixmap->scaled(this->geometry().size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        auto pix = m_pixmap->scaled(mapFromHandle(this->geometry().size()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         m_pixmap->swap(pix);
-    } else if(m_pixmap && !m_pixmap->isNull()) {
+    } else if (m_pixmap && !m_pixmap->isNull()) {
         loadSlideshowImages();
     }
 }
