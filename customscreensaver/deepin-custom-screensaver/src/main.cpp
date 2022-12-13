@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         }
 
         SlideshowScreenSaver screensaver(true);
-        screensaver.setProperty("_q_embedded_native_parent_handle",QVariant(windowHwnd));
+        screensaver.setProperty("_q_embedded_native_parent_handle", QVariant(windowHwnd));
         screensaver.winId();
         screensaver.windowHandle()->setParent(window);
 
@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
     } else {
 
         SlideshowScreenSaver screensaver;
+        screensaver.init();
         screensaver.show();
 
         return a.exec();

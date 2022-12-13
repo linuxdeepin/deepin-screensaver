@@ -36,10 +36,7 @@ SlideshowScreenSaver::SlideshowScreenSaver(bool subWindow, QWidget *parent)
 
     m_timer.reset(new QTimer);
     connect(m_timer.get(), &QTimer::timeout, this, &SlideshowScreenSaver::onUpdateImage);
-
     m_timer->setInterval(m_intervalTime);
-    if (!m_playOrder.isEmpty())
-        m_timer->start();
 }
 
 SlideshowScreenSaver::~SlideshowScreenSaver()
@@ -74,6 +71,9 @@ bool SlideshowScreenSaver::nativeEventFilter(const QByteArray &eventType, void *
 void SlideshowScreenSaver::init()
 {
     loadSlideshowImages();
+
+    if (!m_playOrder.isEmpty())
+        m_timer->start();
 }
 
 void SlideshowScreenSaver::onUpdateImage()
