@@ -2,13 +2,16 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-//#include <QCommandLineParser>
-//#include <QCommandLineOption>
+#include <DApplication>
+
+#include <QCommandLineParser>
+#include <QCommandLineOption>
 
 #include "screensaver_adaptor.h"
 #include "dbusscreensaver.h"
 #include "customconfig.h"
-#include "singleapplication.h"
+#include "commandlinehelper.h"
+#include "singlecustomsetting.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -16,19 +19,19 @@ DWIDGET_USE_NAMESPACE
 #define APPLICATION_STRING(s) #s
 
 #ifdef VERSION
-    static QString buildVersion(const QString &fallbackVersion)
-    {
-        QString autoVersion = APPLICATION_XSTRING(VERSION);
-        if (autoVersion.isEmpty()) {
-            autoVersion = fallbackVersion;
-        }
-        return autoVersion;
+static QString buildVersion(const QString &fallbackVersion)
+{
+    QString autoVersion = APPLICATION_XSTRING(VERSION);
+    if (autoVersion.isEmpty()) {
+        autoVersion = fallbackVersion;
     }
+    return autoVersion;
+}
 #else
-    static QString buildVersion(const QString &fallbackVersion)
-    {
-        return fallbackVersion;
-    }
+static QString buildVersion(const QString &fallbackVersion)
+{
+    return fallbackVersion;
+}
 #endif
 
 int main(int argc, char *argv[])
@@ -40,21 +43,24 @@ int main(int argc, char *argv[])
     }
 
     DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-    SingleApplication app(argc, argv);
+    DApplication app(argc, argv);
 
     app.setOrganizationName("deepin");
     app.setApplicationName("deepin-screensaver");
     app.setApplicationVersion(buildVersion(QMAKE_VERSION));
-    app.process(app.arguments());
 
-    if (app.isSet({"c", "config"})) {
+    CommandLineHelper::instance()->process(app.arguments());
+
+    if (CommandLineHelper::instance()->isSet(QStringList({ "c", "config" }))) {
         app.setQuitOnLastWindowClosed(true);
-        if (app.startCustomConfig())
+        SingleCustomSetting singleSetting;
+        if (singleSetting.startCustomConfig())
             return app.exec();
         return 0;
     }
 
-    bool doStart = app.isSet({"d", "dbus"});
+    bool doStart = !CommandLineHelper::instance()->isSet(QStringList({ "d", "dbus" }));
+
     // 注册DBus服务
     if (!QDBusConnection::sessionBus().isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
@@ -75,7 +81,7 @@ int main(int argc, char *argv[])
     }
 
     auto server = new DBusScreenSaver();
-    Q_UNUSED(new ScreenSaverAdaptor(qobject_cast<DBusScreenSaver*>(server)))
+    Q_UNUSED(new ScreenSaverAdaptor(qobject_cast<DBusScreenSaver *>(server)))
 
     if (!QDBusConnection::sessionBus().registerObject(objDbusPath, server)) {
         qWarning() << QString("Cannot register to the D-Bus object: \"%1\"\n").arg(objDbusPath);
@@ -86,7 +92,7 @@ int main(int argc, char *argv[])
 
     if (doStart) {
         if (argc > 1)
-            server->Start(app.positionalArguments().value(0));
+            server->Start(CommandLineHelper::instance()->positionalArguments().value(0));
         else
             server->Start();
     }
