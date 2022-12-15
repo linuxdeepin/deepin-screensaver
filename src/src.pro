@@ -16,7 +16,8 @@ SOURCES += \
     $$PWD/selectpathwidget.cpp \
     $$PWD/customconfig.cpp \
     $$PWD/utils.cpp \
-    singleapplication.cpp
+    singlecustomsetting.cpp \
+    commandlinehelper.cpp
 
 HEADERS += \
     $$PWD/screensaverwindow.h \
@@ -28,7 +29,8 @@ HEADERS += \
     $$PWD/screensaversettingdialog.h \
     $$PWD/customconfig.h \
     $$PWD/utils.h \
-    singleapplication.h
+    singlecustomsetting.h \
+    commandlinehelper.h
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
