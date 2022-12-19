@@ -36,7 +36,7 @@ SlideshowScreenSaver::SlideshowScreenSaver(bool subWindow, QWidget *parent)
 
     m_timer.reset(new QTimer);
     connect(m_timer.get(), &QTimer::timeout, this, &SlideshowScreenSaver::onUpdateImage);
-    m_timer->setInterval(m_intervalTime);
+    m_timer->setInterval(m_intervalTime * 1000);
 }
 
 SlideshowScreenSaver::~SlideshowScreenSaver()

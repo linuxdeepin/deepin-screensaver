@@ -9,13 +9,13 @@
 #include <QApplication>
 #include <QDebug>
 
-CustomConfig::CustomConfig(QObject *parent) : QObject(parent)
+CustomConfig::CustomConfig(QObject *parent)
+    : QObject(parent)
 {
 }
 
 CustomConfig::~CustomConfig()
 {
-
 }
 
 bool CustomConfig::startCustomConfig(const QString &name)
@@ -37,4 +37,3 @@ bool CustomConfig::startCustomConfig(const QString &name)
     m_lastConfigName = name;
     return true;
 }
-

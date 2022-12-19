@@ -8,7 +8,9 @@
 #include <QStandardPaths>
 #include <QApplication>
 
-class SlideshowConfigGlobal : public SlideshowConfig {};
+class SlideshowConfigGlobal : public SlideshowConfig
+{
+};
 Q_GLOBAL_STATIC(SlideshowConfigGlobal, slideshowConfig);
 
 static const char *const kGroupSlideshowPath = "custom_screensaver.path.select_path";
@@ -18,17 +20,18 @@ static const char *const kKeyValue = "value";
 
 static const char *const kDeepinScreenSaver = "deepin-screensaver";
 
-static const QList<int> kIntervalTimeList {1, 3, 5, 10, 30, 60}; // minutes
-static const int kFefaultTimeIndex = 2;
+static const int kMaxIntervalTime = 3600;   // second
+static const int kMinIntervalTime = 3;   // second
+static const int kDefaultTime = 10;
 
-SlideshowConfig::SlideshowConfig(QObject *parent) : QObject(parent)
+SlideshowConfig::SlideshowConfig(QObject *parent)
+    : QObject(parent)
 {
     m_settings.reset(new QSettings(confPath(), QSettings::IniFormat));
 }
 
 SlideshowConfig::~SlideshowConfig()
 {
-
 }
 
 SlideshowConfig *SlideshowConfig::instance()
@@ -58,42 +61,32 @@ void SlideshowConfig::setSlideShowPath(QString path)
     m_settings->endGroup();
 }
 
-int SlideshowConfig::intervalTimeIndex() const
-{
-    // DSettingDialog中保存的是时间序号，为了兼容，此处也只能是时间序号
-    m_settings->beginGroup(kGroupIntervalTime);
-    int index = m_settings->value(kKeyValue, kFefaultTimeIndex).toInt();
-    m_settings->endGroup();
-
-    if (index < 0 || index >= kIntervalTimeList.count())
-        index = kFefaultTimeIndex;
-
-    return index;
-}
-
-void SlideshowConfig::setIntervalTimeIndex(int index)
-{
-    if (index < 0 || index >= kIntervalTimeList.count())
-        index = kFefaultTimeIndex;
-
-    m_settings->beginGroup(kGroupIntervalTime);
-    m_settings->setValue(kKeyValue, index);
-    m_settings->endGroup();
-}
-
 int SlideshowConfig::intervalTime() const
 {
-    int index = intervalTimeIndex();
+    m_settings->beginGroup(kGroupIntervalTime);
+    int intervalTime = m_settings->value(kKeyValue, kDefaultTime).toInt();
+    m_settings->endGroup();
 
-    int time = kIntervalTimeList.at(index) * 60 * 1000;
+    if (intervalTime < kMinIntervalTime || intervalTime > kMaxIntervalTime)
+        intervalTime = kDefaultTime;
 
-    return time;
+    return intervalTime;
+}
+
+void SlideshowConfig::setIntervalTime(int tempTime)
+{
+    if (tempTime < kMinIntervalTime || tempTime > kMaxIntervalTime)
+        tempTime = kDefaultTime;
+
+    m_settings->beginGroup(kGroupIntervalTime);
+    m_settings->setValue(kKeyValue, tempTime);
+    m_settings->endGroup();
 }
 
 bool SlideshowConfig::isShuffle() const
 {
     m_settings->beginGroup(kGroupShuffle);
-    bool shuffle =  m_settings->value(kKeyValue, false).toBool();
+    bool shuffle = m_settings->value(kKeyValue, false).toBool();
     m_settings->endGroup();
 
     return shuffle;
@@ -116,10 +109,10 @@ QString SlideshowConfig::confPath()
 
         confFilePath = configPaths.first();
         confFilePath = confFilePath
-                        + "/" + QApplication::organizationName()
-                        + "/" + kDeepinScreenSaver + "/"
-                        + QApplication::applicationName()
-                        + "/" + QApplication::applicationName() + ".conf";
+                + "/" + QApplication::organizationName()
+                + "/" + kDeepinScreenSaver + "/"
+                + QApplication::applicationName()
+                + "/" + QApplication::applicationName() + ".conf";
 
         QFileInfo confFile(confFilePath);
 
@@ -133,9 +126,9 @@ QString SlideshowConfig::confPath()
             // 系统配置文件存在，则拷贝。否则不做处理，后面设置值时会自动创建
             QString pathGeneral("/etc");
             pathGeneral = pathGeneral
-                          + "/" + kDeepinScreenSaver
-                          + "/" + QApplication::applicationName()
-                          + "/" + QApplication::applicationName() + ".conf";
+                    + "/" + kDeepinScreenSaver
+                    + "/" + QApplication::applicationName()
+                    + "/" + QApplication::applicationName() + ".conf";
             QFile confGeneralFile(pathGeneral);
             if (confGeneralFile.exists()) {
                 confGeneralFile.copy(confFilePath);

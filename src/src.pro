@@ -17,7 +17,8 @@ SOURCES += \
     $$PWD/customconfig.cpp \
     $$PWD/utils.cpp \
     singlecustomsetting.cpp \
-    commandlinehelper.cpp
+    commandlinehelper.cpp \
+    timeintervalwidget.cpp
 
 HEADERS += \
     $$PWD/screensaverwindow.h \
@@ -30,7 +31,8 @@ HEADERS += \
     $$PWD/customconfig.h \
     $$PWD/utils.h \
     singlecustomsetting.h \
-    commandlinehelper.h
+    commandlinehelper.h \
+    timeintervalwidget.h
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts

@@ -16,7 +16,6 @@ DCORE_USE_NAMESPACE
 SelectPathWidget::SelectPathWidget(QWidget *parent)
     : DWidget(parent)
 {
-
 }
 
 void SelectPathWidget::setOption(Dtk::Core::DSettingsOption *option)
@@ -34,6 +33,7 @@ void SelectPathWidget::setOption(Dtk::Core::DSettingsOption *option)
     m_selectTips = new DLabel(tr("Picture path"), this);
     m_selectLineEdit = new TruncateLineEdit(this);
     m_selectBtn = new DPushButton(QStringLiteral("..."), this);
+    m_selectBtn->setFocusPolicy(Qt::NoFocus);
 
     m_selectLineEdit->setElideMode(Qt::ElideMiddle);
     m_selectLineEdit->setText(valueText);
@@ -65,7 +65,7 @@ void SelectPathWidget::setOption(Dtk::Core::DSettingsOption *option)
         QString selectPath = DFileDialog::getExistingDirectory(nullptr, tr("Picture path"), currentPath,
                                                                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         if (selectPath.isEmpty())
-            return ;
+            return;
 
         option->setValue(selectPath);
     });
@@ -76,7 +76,7 @@ void SelectPathWidget::setOption(Dtk::Core::DSettingsOption *option)
             // 如果配置的默认值是~，则恢复默认将触发该逻辑，此时纠正为homePath进行保存
             currentPath.replace(QStringLiteral("~"), QDir::homePath());
             option->setValue(currentPath);
-            return ;
+            return;
         }
         m_selectLineEdit->setText(currentPath);
     });
@@ -86,9 +86,9 @@ bool SelectPathWidget::eventFilter(QObject *obj, QEvent *event)
 {
     if (m_selectLineEdit && obj == m_selectLineEdit->lineEdit()) {
         if (event->type() == QEvent::MouseButtonPress
-                || event->type() == QEvent::MouseButtonRelease
-                || event->type() == QEvent::MouseButtonDblClick
-                || event->type() == QEvent::MouseMove )
+            || event->type() == QEvent::MouseButtonRelease
+            || event->type() == QEvent::MouseButtonDblClick
+            || event->type() == QEvent::MouseMove)
             return true;
     }
 

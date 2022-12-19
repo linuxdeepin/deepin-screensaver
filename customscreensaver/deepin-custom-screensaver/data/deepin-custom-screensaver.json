@@ -15,12 +15,11 @@
             {
                 "key": "slideshow",
                 "name": "Slideshow",
-                "options": [{
+                "options": [
+                                {
                         "key": "time_interval",
-                        "name": "Time interval",
-                        "type": "combobox",
-                        "items": ["1 minutes" ,"3 minutes", "5 minutes", "10 minutes", "30 minutes", "60 minutes"],
-                        "default": 2
+                        "type": "timeIntervalWidget",
+                        "default": "10"
                     },
                     {
                         "key": "shuffle",

@@ -12,6 +12,7 @@
 class SlideshowConfig : public QObject
 {
     Q_OBJECT
+
 public:
     static SlideshowConfig *instance();
 
@@ -19,24 +20,8 @@ public:
 
     QString slideshowPath() const;
     void setSlideShowPath(QString path);
-
-    /*!
-     * \brief intervalTime
-     * \return time index
-     */
-    int intervalTimeIndex() const;
-    /*!
-     * \brief setIntervalTime
-     * \param index     0:1 minutes
-     *                  1:3 minutes
-     *                  2:5 minutes
-     *                  3:10 minutes
-     *                  4:30 minutes
-     *                  5:60 minutes
-     */
-    void setIntervalTimeIndex(int index);
-
-    int intervalTime() const;   // ms
+    void setIntervalTime(int tempTime);
+    int intervalTime() const;
 
     bool isShuffle() const;
     void setShuffle(const bool shuffle);
@@ -55,4 +40,4 @@ private:
     QScopedPointer<QSettings> m_settings;
 };
 
-#endif // SLIDESHOWCONFIG_H
+#endif   // SLIDESHOWCONFIG_H
