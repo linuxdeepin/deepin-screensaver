@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
 
     } else if (CommandLineManager::instance()->isSet("t")) {
 
-        int index = CommandLineManager::instance()->value("t").toInt();
-        SlideshowConfig::instance()->setIntervalTimeIndex(index);
+        int time = CommandLineManager::instance()->value("t").toInt();
+        SlideshowConfig::instance()->setIntervalTime(time);
 
     } else if (CommandLineManager::instance()->isSet("m")) {
 

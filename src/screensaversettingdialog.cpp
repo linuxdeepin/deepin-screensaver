@@ -4,6 +4,7 @@
 
 #include "screensaversettingdialog.h"
 #include "selectpathwidget.h"
+#include "timeintervalwidget.h"
 #include "utils.h"
 
 #include <DSettingsWidgetFactory>
@@ -19,14 +20,16 @@ DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 #define SELECTPATHWIDGET "selectPathWidget"
+#define TIMEINTERVALWIDGET "timeIntervalWidget"
 
 SelectPathWidget *ScreenSaverSettingDialog::m_selectPathWidget = nullptr;
+TimeIntervalWidget *ScreenSaverSettingDialog::m_timeIntervalWidget = nullptr;
 
 ScreenSaverSettingDialog::ScreenSaverSettingDialog(const QString &name, QWidget *parent)
-    : DSettingsDialog(parent)
-    , m_screenSaverName(name)
+    : DSettingsDialog(parent), m_screenSaverName(name)
 {
     widgetFactory()->registerWidget(SELECTPATHWIDGET, &ScreenSaverSettingDialog::createSelectPathWidget);
+    widgetFactory()->registerWidget(TIMEINTERVALWIDGET, &ScreenSaverSettingDialog::createTimeIntervalWidget);
 
     setIcon(QIcon(":/images/deepin-screensaver-config.svg"));
 
@@ -77,7 +80,6 @@ ScreenSaverSettingDialog::ScreenSaverSettingDialog(const QString &name, QWidget 
 
 ScreenSaverSettingDialog::~ScreenSaverSettingDialog()
 {
-
 }
 
 QPair<QWidget *, QWidget *> ScreenSaverSettingDialog::createSelectPathWidget(QObject *obj)
@@ -88,4 +90,14 @@ QPair<QWidget *, QWidget *> ScreenSaverSettingDialog::createSelectPathWidget(QOb
     ScreenSaverSettingDialog::m_selectPathWidget->setOption(option);
 
     return qMakePair(nullptr, ScreenSaverSettingDialog::m_selectPathWidget);
+}
+
+QPair<QWidget *, QWidget *> ScreenSaverSettingDialog::createTimeIntervalWidget(QObject *obj)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(obj);
+
+    ScreenSaverSettingDialog::m_timeIntervalWidget = new TimeIntervalWidget;
+    ScreenSaverSettingDialog::m_timeIntervalWidget->setOption(option);
+
+    return qMakePair(nullptr, ScreenSaverSettingDialog::m_timeIntervalWidget);
 }

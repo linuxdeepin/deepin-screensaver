@@ -15,6 +15,7 @@ class DSettings;
 DCORE_END_NAMESPACE
 
 class SelectPathWidget;
+class TimeIntervalWidget;
 
 class ScreenSaverSettingDialog : public Dtk::Widget::DSettingsDialog
 {
@@ -24,10 +25,12 @@ public:
     ~ScreenSaverSettingDialog();
 
 public:
-    static QPair<QWidget*, QWidget*> createSelectPathWidget(QObject *obj);
+    static QPair<QWidget *, QWidget *> createSelectPathWidget(QObject *obj);
+    static QPair<QWidget *, QWidget *> createTimeIntervalWidget(QObject *obj);
 
 public:
     static SelectPathWidget *m_selectPathWidget;
+    static TimeIntervalWidget *m_timeIntervalWidget;
 
 private:
     QScopedPointer<Dtk::Core::QSettingBackend> m_backend;
@@ -36,4 +39,4 @@ private:
     QString m_screenSaverName;
 };
 
-#endif // SCREENSAVERSETTINGDIALOG_H
+#endif   // SCREENSAVERSETTINGDIALOG_H
