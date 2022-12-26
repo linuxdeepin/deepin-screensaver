@@ -12,6 +12,7 @@ screensaver_list = blaster bouboule cage discoball dymaxionmap endgame epicycle 
     klein lament lockward polytopes vermiculate
 
 OS_VERSION_FILE = /etc/os-version
+COMPILE_ON_V23 = false
 exists($$OS_VERSION_FILE) {
     infile($$OS_VERSION_FILE, MajorVersion, 23) {
         COMPILE_ON_V23 = true
