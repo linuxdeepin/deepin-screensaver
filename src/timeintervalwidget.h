@@ -12,6 +12,7 @@
 
 class TimeIntervalWidget : public Dtk::Widget::DWidget
 {
+    Q_OBJECT
 public:
     TimeIntervalWidget();
     void setOption(Dtk::Core::DSettingsOption *option);
