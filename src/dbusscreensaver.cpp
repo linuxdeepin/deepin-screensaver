@@ -32,8 +32,8 @@
 #include <X11/extensions/shape.h>
 
 #ifdef COMPILE_ON_V23
-#   define SYSTEMPOWER_SERVICE "org.deepin.system.Power1"
-#   define SYSTEMPOWER_PATH "org/deepin/system/Power1"
+#   define SYSTEMPOWER_SERVICE "org.deepin.dde.Power1"
+#   define SYSTEMPOWER_PATH "/org/deepin/dde/Power1"
 #else
 #   define SYSTEMPOWER_SERVICE "com.deepin.daemon.Power"
 #   define SYSTEMPOWER_PATH "/com/deepin/daemon/Power"
