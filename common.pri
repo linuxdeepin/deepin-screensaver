@@ -17,9 +17,13 @@ isEmpty(RESOURCE_PATH) {
     RESOURCE_PATH = $$LIB_PATH/resources
 }
 
-OS_VERSION_FILE = /etc/os-version
-exists($$OS_VERSION_FILE) {
+isEmpty(COMPILE_ON_V23) {
+    OS_VERSION_FILE = /etc/os-version
+    COMPILE_ON_V23 = false
+    !exists($$OS_VERSION_FILE): error(\"$$OS_VERSION_FILE\" is not exists. Install \"deepin-desktop-base\" first)
     infile($$OS_VERSION_FILE, MajorVersion, 23) {
+        COMPILE_ON_V23 = true
         DEFINES += COMPILE_ON_V23
+        message("COMPILE ON V23")
     }
 }
