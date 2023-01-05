@@ -34,9 +34,13 @@
 #ifdef COMPILE_ON_V23
 #   define SYSTEMPOWER_SERVICE "org.deepin.dde.Power1"
 #   define SYSTEMPOWER_PATH "/org/deepin/dde/Power1"
+#   define LOCKFRONT_SERVICE "org.deepin.dde.LockFront1"
+#   define LOCKFRONT_PATH "/org/deepin/dde/LockFront1"
 #else
 #   define SYSTEMPOWER_SERVICE "com.deepin.daemon.Power"
 #   define SYSTEMPOWER_PATH "/com/deepin/daemon/Power"
+#   define LOCKFRONT_SERVICE "com.deepin.dde.lockFront"
+#   define LOCKFRONT_PATH "/com/deepin/dde/lockFront"
 #endif
 
 struct xcb_screensaver_notify_event
@@ -353,8 +357,8 @@ void DBusScreenSaver::Stop(bool lock)
     // 只在由窗口自己唤醒时才会触发锁屏
     if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive()
             && (lock || qobject_cast<ScreenSaverWindow*>(sender()))) {
-        QDBusInterface lockDBus("com.deepin.dde.lockFront", "/com/deepin/dde/lockFront",
-                                "com.deepin.dde.lockFront");
+        QDBusInterface lockDBus(LOCKFRONT_SERVICE, LOCKFRONT_PATH,
+                                LOCKFRONT_SERVICE);
 
         // 通过DBus拉起锁屏程序
         lockDBus.call("Show");
