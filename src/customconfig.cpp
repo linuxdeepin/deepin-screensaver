@@ -33,6 +33,8 @@ bool CustomConfig::startCustomConfig(const QString &name)
 
     m_settingDialiog = new ScreenSaverSettingDialog(name);
     m_settingDialiog->setAttribute(Qt::WA_DeleteOnClose);
+    // remove dialog flag to let dock show window entry.
+    m_settingDialiog->setWindowFlag(Qt::Dialog, false);
     m_settingDialiog->show();
     m_lastConfigName = name;
     return true;

@@ -30,8 +30,9 @@ ScreenSaverSettingDialog::ScreenSaverSettingDialog(const QString &name, QWidget 
 {
     widgetFactory()->registerWidget(SELECTPATHWIDGET, &ScreenSaverSettingDialog::createSelectPathWidget);
     widgetFactory()->registerWidget(TIMEINTERVALWIDGET, &ScreenSaverSettingDialog::createTimeIntervalWidget);
-
-    setIcon(QIcon(":/images/deepin-screensaver-config.svg"));
+    QIcon icon(":/images/deepin-screensaver-config.svg");
+    setIcon(icon);
+    setWindowIcon(icon);
 
     // 加载翻译
     qApp->loadTranslator();
