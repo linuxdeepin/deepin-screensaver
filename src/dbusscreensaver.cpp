@@ -304,7 +304,7 @@ void DBusScreenSaver::RefreshScreenSaverList()
     m_screenSaverNameToDir.clear();
 
     for (const QDir &moduleDir : m_moduleDirList) {
-        for (const QFileInfo &info : moduleDir.entryInfoList(QDir::Files)) {
+        for (const QFileInfo &info : moduleDir.entryInfoList(QDir::Files, QDir::Name)) {
             if (!info.isExecutable() && info.suffix() != "qml")
                 continue;
 
@@ -322,10 +322,23 @@ void DBusScreenSaver::RefreshScreenSaverList()
         }
     }
 
-    if (!m_screenSaverList.isEmpty()) {
-        if (!m_screenSaverList.contains(m_currentScreenSaver))
-            m_currentScreenSaver = m_screenSaverList.first();
+    // 视频屏保需置顶显示
+    static const QString top("deepin-video-screensaver");
+    {
+        QStringList tmpList;
+        QStringList topList;
+        for (const QString &v: m_screenSaverList) {
+            if (v.startsWith(top))
+                topList.append(v);
+            else
+                tmpList.append(v);
+        }
+
+        m_screenSaverList = {topList + tmpList};
     }
+
+    if (!m_screenSaverList.isEmpty() && !m_screenSaverList.contains(m_currentScreenSaver))
+        m_currentScreenSaver = m_screenSaverList.first();
 
     emit allScreenSaverChanged(m_screenSaverList);
 }
@@ -395,13 +408,13 @@ void DBusScreenSaver::stop()
 QStringList DBusScreenSaver::allScreenSaver() const
 {
     static const QString saverpic("saverpic.qml");
-    if (m_screenSaverList.contains(saverpic)) {
-        // 根据要求，对外提供的屏保程序列表，不包含自定义图片屏保程序
-        QStringList tmpList = m_screenSaverList;
-        tmpList.removeOne(saverpic);
-        return tmpList;
+    auto saverList = m_screenSaverList;
+    if (saverList.contains(saverpic)) {
+        // 对外提供的屏保程序列表，不包含自定义图片屏保程序
+        saverList.removeOne(saverpic);
     }
-    return m_screenSaverList;
+
+    return saverList;
 }
 
 int DBusScreenSaver::batteryScreenSaverTimeout() const
@@ -561,7 +574,6 @@ void DBusScreenSaver::ensureWindowMap()
     // fix bug66339 屏保状态下，插入扩展屏幕后，扩展屏幕未显示屏保
     // 屏幕增删，统一规则为退出屏保
     connect(qGuiApp, &QGuiApplication::screenAdded, this, &DBusScreenSaver::stop, Qt::UniqueConnection);
-    connect(qGuiApp, &QGuiApplication::screenAdded, this, &DBusScreenSaver::onScreenAdded, Qt::UniqueConnection);
     connect(qGuiApp, &QGuiApplication::screenRemoved, this, &DBusScreenSaver::stop, Qt::UniqueConnection);
 
     for (QScreen *s : qGuiApp->screens()) {
