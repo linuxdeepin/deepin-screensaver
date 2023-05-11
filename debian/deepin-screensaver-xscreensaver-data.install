@@ -1,4 +1,5 @@
 usr/lib/deepin-screensaver/modules/*
+usr/share/deepin-video-screensaver/*
 usr/share/deepin-custom-screensaver/translations/*.qm
 usr/share/deepin-screensaver/translations/*.qm
 etc/deepin-screensaver/deepin-custom-screensaver/*.conf
