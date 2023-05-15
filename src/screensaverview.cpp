@@ -53,10 +53,7 @@ bool ScreenSaverView::start(const QString &filePath)
 
         create();
         m_process->start(filePath, {"-window-id", QString::number(winId())}, QIODevice::ReadOnly);
-        connect(m_process, (void (QProcess::*)(int))&QProcess::finished, this, [this]() {
-           qCritical() << "process exited" << m_process->pid() << m_process->program()
-                       << m_process->arguments();
-        });
+
         if (!m_process->waitForStarted(3000)) {
             qDebug() << "Failed on start:" << m_process->program() << ", error string:" << m_process->errorString();
 
