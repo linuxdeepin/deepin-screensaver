@@ -64,6 +64,6 @@ Copyright: None
 License: CC0-1.0
 
 # icon
-Files: src/images/* customscreensaver/deepin-custom-screensaver/src/icons/*
+Files: src/images/* customscreensaver/deepin-custom-screensaver/src/icons/* customscreensaver/deepin-video-screensaver/data/cover/*
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
