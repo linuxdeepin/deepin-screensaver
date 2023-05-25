@@ -1,34 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="sq" sourcelanguage="en">
 <context>
     <name>QObject</name>
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="7"/>
         <source>Shuffle</source>
-        <translation type="unfinished"></translation>
+        <translation>Përzieji</translation>
     </message>
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="8"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekrankursyes Vetjak</translation>
     </message>
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="9"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Shteg</translation>
     </message>
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="10"/>
         <source>Slideshow</source>
-        <translation type="unfinished"></translation>
+        <translation>Shfaqje Diapozitivash</translation>
     </message>
 </context>
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
         <source>Picture not found</source>
-        <translation type="vanished">Picture not found</translation>
+        <translation type="vanished">S’u gjet foto</translation>
     </message>
 </context>
 </TS>

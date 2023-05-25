@@ -29,7 +29,7 @@ void TimeIntervalWidget::setOption(Dtk::Core::DSettingsOption *option)
     m_lineEdit->setText(option->value().toString());
     m_lineEdit->setClearButtonEnabled(false);
     m_lineEdit->setFixedWidth(SPECIFYLINEEDITLENGTH);
-    m_prefixTips = new DLabel(tr("Time interval(s)"), this);
+    m_prefixTips = new DLabel(tr("Time interval (s)"), this);
     m_suffixTips = new DLabel(QString("%1: %2-%3")
                                       .arg(tr("Range"))
                                       .arg(QString::number(kMinIntervalTime))
