@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN" sourcelanguage="en">
 <context>
     <name>SelectPathWidget</name>
     <message>
@@ -19,8 +17,8 @@
     <name>TimeIntervalWidget</name>
     <message>
         <location filename="../timeintervalwidget.cpp" line="32"/>
-        <source>Time interval(s)</source>
-        <translation>轮播间隔(秒)</translation>
+        <source>Time interval (s)</source>
+        <translation>轮播间隔（秒）</translation>
     </message>
     <message>
         <location filename="../timeintervalwidget.cpp" line="34"/>

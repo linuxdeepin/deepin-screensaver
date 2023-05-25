@@ -1,18 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="fa" sourcelanguage="en">
 <context>
     <name>SelectPathWidget</name>
     <message>
         <location filename="../selectpathwidget.cpp" line="33"/>
         <location filename="../selectpathwidget.cpp" line="65"/>
         <source>Picture path</source>
-        <translation>Picture path</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../selectpathwidget.cpp" line="40"/>
         <source>Select a path of pictures</source>
-        <translation>Select a path of pictures</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -20,12 +18,12 @@
     <message>
         <location filename="../timeintervalwidget.cpp" line="32"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../timeintervalwidget.cpp" line="34"/>
         <source>Range</source>
-        <translation>Range</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
