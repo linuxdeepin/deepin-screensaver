@@ -43,6 +43,11 @@
 #   define LOCKFRONT_PATH "/com/deepin/dde/lockFront"
 #endif
 
+static bool isXWayland() {
+    static const bool ret = qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland");
+    return ret;
+}
+
 struct xcb_screensaver_notify_event
 {
     uint8_t      response_type;
@@ -198,8 +203,7 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 
     emit isRunningChanged(true);
 
-    const static bool isWayland = qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland");
-    if (!preview && isWayland) {
+    if (!preview && isXWayland()) {
         // 在wayland环境下无法接收到键盘事件，通过强制抓取键盘来进行规避
         qInfo() << QDateTime::currentDateTime().toString() << "current not preview,and wayland is true,grab keyboard!";
         XGrabKeyBoard();
@@ -379,6 +383,18 @@ void DBusScreenSaver::Stop(bool lock)
     }
 
     m_windowMap.clear();
+
+    //reset state
+    if (isXWayland()) {
+        qInfo() << "reset idle by com.deepin.daemon.KWayland";
+        QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.KWayland", "/com/deepin/daemon/KWayland/Output",
+                                    "com.deepin.daemon.KWayland.Idle", "simulateUserActivity");
+        QDBusConnection::sessionBus().asyncCall(msg, 5);
+        qInfo() << "call" << msg.path() << msg.interface() << "simulateUserActivity";
+    } else {
+        qInfo() << "reset idle by X";
+        XResetScreenSaver(QX11Info::display());
+    }
 
 #ifndef QT_DEBUG
     m_autoQuitTimer.start();
