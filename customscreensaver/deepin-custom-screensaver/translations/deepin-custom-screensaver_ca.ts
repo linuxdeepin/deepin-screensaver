@@ -4,12 +4,12 @@
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="7"/>
         <source>Shuffle</source>
-        <translation type="unfinished"/>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="8"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Protector de pantalla personalitzat</translation>
     </message>
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="9"/>
@@ -19,14 +19,14 @@
     <message>
         <location filename="../deepin-custom-screensaver_translation.cpp" line="10"/>
         <source>Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Presentació de diapositives</translation>
     </message>
 </context>
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
         <source>Picture not found</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Imatge no trobada</translation>
     </message>
 </context>
 </TS>

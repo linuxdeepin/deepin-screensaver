@@ -5,12 +5,12 @@
         <location filename="../selectpathwidget.cpp" line="33"/>
         <location filename="../selectpathwidget.cpp" line="65"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Ścieżka zdjęcia</translation>
     </message>
     <message>
         <location filename="../selectpathwidget.cpp" line="40"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Wybierz ścieżkę zdjęć</translation>
     </message>
 </context>
 <context>
@@ -18,12 +18,12 @@
     <message>
         <location filename="../timeintervalwidget.cpp" line="32"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Przedział czasowy (s)</translation>
     </message>
     <message>
         <location filename="../timeintervalwidget.cpp" line="34"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Zasięg</translation>
     </message>
 </context>
 </TS>
