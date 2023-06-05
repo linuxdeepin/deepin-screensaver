@@ -54,7 +54,7 @@ Copyright: None
 License: CC0-1.0
 
 # translations
-Files: src/translations/* customscreensaver/deepin-custom-screensaver/translations/*
+Files: src/translations/* customscreensaver/deepin-custom-screensaver/translations/* .tx/config
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
