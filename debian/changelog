@@ -1,3 +1,9 @@
+deepin-screensaver (5.0.17) stable; urgency=medium
+
+  * update version to 5.0.17.
+
+ -- Zhang Yu <zhangyub@uniontech.com>  Wed, 7 Jun 2023 16:13:00 +0800
+ 
 deepin-screensaver (5.0.16) stable; urgency=medium
 
   * update V23 baseline version.
