@@ -15,6 +15,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QRandomGenerator>
+#include <QImageReader>
 
 #include <xcb/xcb.h>
 #include <X11/Xlib.h>
@@ -202,7 +203,14 @@ void SlideshowScreenSaver::initPixMap()
     if (!m_playOrder.isEmpty()) {
         if (m_shuffle)
             randomImageIndex();
-        m_pixmap.reset(new QPixmap(m_playOrder.first()));
+        QPixmap pix(m_playOrder.first());
+        if(pix.isNull())
+        {
+            QImageReader reader(m_playOrder.first());
+            reader.setDecideFormatFromContent(true);
+            pix = QPixmap::fromImage(reader.read());
+        }
+        m_pixmap.reset(new QPixmap(pix));
         scaledPixmap();
         m_currentIndex = 1;
         m_lastImage = m_playOrder.last();
