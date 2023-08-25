@@ -7,6 +7,8 @@
 
 #include <com_deepin_sessionmanager.h>
 
+#include <DConfig>
+
 #include <QObject>
 #include <QDir>
 #include <QTimer>
@@ -14,6 +16,8 @@
 #include <QDBusMessage>
 #include <QScreen>
 #include <QAtomicInteger>
+
+DCORE_USE_NAMESPACE
 
 class ScreenSaverWindow;
 class X11EventFilter;
@@ -68,6 +72,7 @@ signals:
 
 private:
     Q_SLOT void onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
+    Q_SLOT void onConfigChanged(const QString &key);
 
     void clearResourceList();
     void ensureWindowMap();
@@ -96,6 +101,8 @@ private:
 
     com::deepin::SessionManager *m_sessionManagerInter = nullptr;
     QAtomicInteger<bool> m_grabKeyboard = false;
+
+    DConfig *m_dcfg;
 };
 
 #endif // DBUSSCREENSAVER_H

@@ -36,11 +36,13 @@ void CommandLineManager::initOptions()
                                                                                    "\n 0:1 minutes\n 1:3 minutes\n 2:5 minutes\n 3:10 minutes"
                                                                                    "\n 4:30 minutes\n 5:60 minutes", "TIME");
     QCommandLineOption intervalModeOption(QStringList() << "m" << "interval-mode", "set whether to paly randomly.\n  true or false", "MODE");
+    QCommandLineOption config(QStringList() << "config", "show config user Interface");
 
     m_commandParser->addOption(subWindowOption);
     m_commandParser->addOption(pathOption);
     m_commandParser->addOption(intervalTimeOption);
     m_commandParser->addOption(intervalModeOption);
+    m_commandParser->addOption(config);
 }
 
 void CommandLineManager::process(const QStringList &arguments)
