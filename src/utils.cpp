@@ -9,17 +9,32 @@
 #include <QApplication>
 #include <QStandardPaths>
 
-#define CUSTOM_SCREENSAVER_JSON_FILE_PATH "/etc/deepin-screensaver/"
+#define CUSTOM_SCREENSAVER_FILE_PATH "/etc/deepin-screensaver/"
 
 bool Utils::hasConfigFile(const QString &screenSaverName)
 {
     if (screenSaverName.isEmpty())
-        return false;
+        return false;    
 
-    QString jsonFilePath(CUSTOM_SCREENSAVER_JSON_FILE_PATH);
+    QString jsonFilePath(CUSTOM_SCREENSAVER_FILE_PATH);
     jsonFilePath += screenSaverName + "/" + screenSaverName + ".json";
     QFileInfo jsonFile(jsonFilePath);
     if (!jsonFile.exists() || !jsonFile.isReadable()) {
+        return false;
+    }
+
+    return true;
+}
+
+bool Utils::hasDesktopConfigFile(const QString &screenSaverName)
+{
+    if (screenSaverName.isEmpty())
+        return false;
+
+    QString desktopFilePath(CUSTOM_SCREENSAVER_FILE_PATH);
+    desktopFilePath += screenSaverName + "/" + screenSaverName + ".desktop";
+    QFileInfo desktopFile(desktopFilePath);
+    if (!desktopFile.exists() || !desktopFile.isReadable()) {
         return false;
     }
 
@@ -44,7 +59,7 @@ QString Utils::configLocationPath(const QString &screenSaverName)
 QString Utils::configGeneralPath(const QString &screenSaverName)
 {
     QString path("/etc");
-    path = CUSTOM_SCREENSAVER_JSON_FILE_PATH + screenSaverName
+    path = CUSTOM_SCREENSAVER_FILE_PATH + screenSaverName
             + "/" + screenSaverName + ".conf";
 
     return path;
@@ -53,8 +68,17 @@ QString Utils::configGeneralPath(const QString &screenSaverName)
 QString Utils::jsonPath(const QString &screenSaverName)
 {
     QString path("/etc");
-    path = CUSTOM_SCREENSAVER_JSON_FILE_PATH + screenSaverName
+    path = CUSTOM_SCREENSAVER_FILE_PATH + screenSaverName
             + "/" + screenSaverName + ".json";
+
+    return path;
+}
+
+QString Utils::desktopPath(const QString &screenSaverName)
+{
+    QString path("/etc");
+    path = CUSTOM_SCREENSAVER_FILE_PATH + screenSaverName
+            + "/" + screenSaverName + ".desktop";
 
     return path;
 }

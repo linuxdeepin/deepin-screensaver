@@ -86,8 +86,12 @@ int main(int argc, char *argv[])
         else
             SlideshowConfig::instance()->setShuffle(false);
 
+    } else if (CommandLineManager::instance()->isSet("config")) {
+        qInfo() << "show dconfig dialog";
+        if (SlideshowConfig::instance()->startCustomConfig())
+            return a.exec();
+        return 0;
     } else {
-
         SlideshowScreenSaver screensaver;
         screensaver.init();
         screensaver.show();

@@ -1,5 +1,5 @@
 TARGET = deepin-screensaver
-QT += core gui dbus quick x11extras
+QT += core gui dbus quick x11extras dtkcore
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11 link_pkgconfig
@@ -76,3 +76,14 @@ DEFINES += QMAKE_VERSION=\\\"$$VERSION\\\"
 
 RESOURCES += \
     images.qrc
+
+# DConfig
+meta_file.files += \
+    $$PWD/configs/org.deepin.screensaver.json
+meta_file.base = $$PWD/configs
+meta_file.appid = org.deepin.screensaver
+
+DCONFIG_META_FILES += meta_file
+load(dtk_install_dconfig)
+
+
