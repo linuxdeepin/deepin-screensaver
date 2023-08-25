@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "slideshowconfig.h"
+#include "slideshowconfigdialog.h"
 
 #include <QDir>
 #include <QStandardPaths>
@@ -13,21 +14,12 @@ class SlideshowConfigGlobal : public SlideshowConfig
 };
 Q_GLOBAL_STATIC(SlideshowConfigGlobal, slideshowConfig);
 
-static const char *const kGroupSlideshowPath = "custom_screensaver.path.select_path";
-static const char *const kGroupIntervalTime = "custom_screensaver.slideshow.time_interval";
-static const char *const kGroupShuffle = "custom_screensaver.slideshow.shuffle";
-static const char *const kKeyValue = "value";
-
-static const char *const kDeepinScreenSaver = "deepin-screensaver";
-
-static const int kMaxIntervalTime = 3600;   // second
-static const int kMinIntervalTime = 3;   // second
-static const int kDefaultTime = 10;
 
 SlideshowConfig::SlideshowConfig(QObject *parent)
     : QObject(parent)
 {
     m_settings.reset(new QSettings(confPath(), QSettings::IniFormat));
+    m_dCfg = DConfig::create(kCfgAppId, kCfgName, "", this);
 }
 
 SlideshowConfig::~SlideshowConfig()
@@ -41,10 +33,18 @@ SlideshowConfig *SlideshowConfig::instance()
 
 QString SlideshowConfig::slideshowPath() const
 {
+    QString path;
     static const QString defaultPath(QDir::homePath() + "/Pictures");
-    m_settings->beginGroup(kGroupSlideshowPath);
-    QString path = m_settings->value(kKeyValue, defaultPath).toString();
-    m_settings->endGroup();
+
+    if (m_dCfg->isValid()) {
+        path = m_dCfg->value(kSlideshowPath, defaultPath).toString();
+    }
+    else {
+        m_settings->beginGroup(kGroupSlideshowPath);
+        path = m_settings->value(kKeyValue, defaultPath).toString();
+        m_settings->endGroup();
+    }
+
     if (path.startsWith(QStringLiteral("~")))
         path.replace(QStringLiteral("~"), QDir::homePath());
 
@@ -63,9 +63,15 @@ void SlideshowConfig::setSlideShowPath(QString path)
 
 int SlideshowConfig::intervalTime() const
 {
-    m_settings->beginGroup(kGroupIntervalTime);
-    int intervalTime = m_settings->value(kKeyValue, kDefaultTime).toInt();
-    m_settings->endGroup();
+    int intervalTime = 0;
+    if (m_dCfg->isValid()) {
+        intervalTime = m_dCfg->value(kIntervalTime, kDefaultTime).toInt();
+    }
+    else {
+        m_settings->beginGroup(kGroupIntervalTime);
+        intervalTime = m_settings->value(kKeyValue, kDefaultTime).toInt();
+        m_settings->endGroup();
+    }
 
     if (intervalTime < kMinIntervalTime || intervalTime > kMaxIntervalTime)
         intervalTime = kDefaultTime;
@@ -85,9 +91,15 @@ void SlideshowConfig::setIntervalTime(int tempTime)
 
 bool SlideshowConfig::isShuffle() const
 {
-    m_settings->beginGroup(kGroupShuffle);
-    bool shuffle = m_settings->value(kKeyValue, false).toBool();
-    m_settings->endGroup();
+    bool shuffle;
+    if (m_dCfg->isValid()) {
+        shuffle = m_dCfg->value(kIntervalTime, false).toBool();
+    }
+    else {
+        m_settings->beginGroup(kGroupShuffle);
+        shuffle = m_settings->value(kKeyValue, false).toBool();
+        m_settings->endGroup();
+    }
 
     return shuffle;
 }
@@ -97,6 +109,18 @@ void SlideshowConfig::setShuffle(const bool shuffle)
     m_settings->beginGroup(kGroupShuffle);
     m_settings->setValue(kKeyValue, shuffle);
     m_settings->endGroup();
+}
+
+bool SlideshowConfig::startCustomConfig()
+{
+    SlideShowConfigDialog *configDialog = new SlideShowConfigDialog();
+    dCfgValid = configDialog->dconfigValid();
+    if (!dCfgValid)
+        return false;
+
+    configDialog->startConfig();
+
+    return true;
 }
 
 QString SlideshowConfig::confPath()

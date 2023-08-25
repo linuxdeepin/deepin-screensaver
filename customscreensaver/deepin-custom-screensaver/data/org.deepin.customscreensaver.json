@@ -1,0 +1,39 @@
+{
+    "magic": "dsg.config.meta",
+    "version": "1.0",
+    "contents": {
+        "slideshowPath": {
+            "value": "~/Pictures",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Picture path",
+            "name[zh_CN]": "图片路径",
+            "description[zh_CN]":"自定义屏保的图片路径",
+            "description": "custom screensaver picture path",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
+        "intervalTime": {
+            "value": 10,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Time interval",
+            "name[zh_CN]": "轮播间隔",
+            "description[zh_CN]":"自定义屏保轮播间隔时间",
+            "description": "The interval time of custom screensaver slide show ",
+            "permissions": "readwrite",
+            "visibility": "public"
+        },
+        "enableShuffle": {
+            "value": false,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Shuffle",
+            "name[zh_CN]": "随机播放",
+            "description[zh_CN]":"开启随机播放自定义屏保",
+            "description": "Enable shuffle play custom screensaver",
+            "permissions": "readwrite",
+            "visibility": "public"
+        }
+    }
+}

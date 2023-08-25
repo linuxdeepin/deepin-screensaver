@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui dtkcore
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,13 +30,15 @@ SOURCES += \
         src/main.cpp \
     src/slideshowscreensaver.cpp \
     src/commandlinemanager.cpp \
-    src/slideshowconfig.cpp
+    src/slideshowconfig.cpp \
+    src/slideshowconfigdialog.cpp
 
 
 HEADERS += \ 
     src/slideshowscreensaver.h \
     src/commandlinemanager.h \
-    src/slideshowconfig.h
+    src/slideshowconfig.h \
+    src/slideshowconfigdialog.h
 
 #!! 放开注释来更新json配置文件所生成的ts文件
 #DTK_SETTINGS = $${QT.dtkcore.tools}/dtk-settings
@@ -66,3 +68,12 @@ icons.path = /usr/lib/deepin-screensaver/modules/cover/
 icons.files = src/icons/*.jpg
 
 INSTALLS += target translations json conf icons
+
+# DConfig
+meta_file.files += \
+    $$PWD/data/org.deepin.customscreensaver.json
+meta_file.base = $$PWD/data
+meta_file.appid = org.deepin.screensaver
+
+DCONFIG_META_FILES += meta_file
+load(dtk_install_dconfig)

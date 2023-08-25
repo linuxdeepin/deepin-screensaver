@@ -7,6 +7,8 @@
 #include "screensaversettingdialog.h"
 #include "utils.h"
 
+#include <DDesktopEntry>
+
 #include <QDebug>
 #include <QGuiApplication>
 #include <QSettings>
@@ -42,6 +44,12 @@
 #   define LOCKFRONT_SERVICE "com.deepin.dde.lockFront"
 #   define LOCKFRONT_PATH "/com/deepin/dde/lockFront"
 #endif
+
+DCORE_USE_NAMESPACE
+
+static constexpr char dCfgAppId[] { "org.deepin.screensaver" };
+static constexpr char dCfgName[] { "org.deepin.screensaver" };
+static constexpr char dCurrentScreenSaver[] { "currentScreenSaver" };
 
 struct xcb_screensaver_notify_event
 {
@@ -114,13 +122,22 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
 #ifndef QT_DEBUG
     m_autoQuitTimer.start();
 #endif
-    m_currentScreenSaver = m_settings.value("currentScreenSaver").toString();
+
+    //add dconfig
+    m_dcfg = DConfig::create(dCfgAppId, dCfgName, "", this);
+    m_currentScreenSaver = m_dcfg->value(dCurrentScreenSaver).toString();
+
+    if (m_currentScreenSaver.isEmpty()) {
+        m_currentScreenSaver = m_settings.value("currentScreenSaver").toString();
+    }
+
     m_lockScreenAtAwake = m_settings.value("lockScreenAtAwake", false).toBool();
     m_lockScreenDelay = m_settings.value("lockScreenDelay", 1).toInt();  //设置屏保静置时间,超过该时间唤醒后锁屏
     m_lockScreenTimer.setInterval(m_lockScreenDelay * 1000);
     m_lockScreenTimer.setSingleShot(true);
 
     connect(&m_autoQuitTimer, &QTimer::timeout, this, &QCoreApplication::quit);
+    connect(m_dcfg, &DConfig::valueChanged, this, &DBusScreenSaver::onConfigChanged, Qt::DirectConnection);
 
     QDBusConnection::sessionBus().connect(SYSTEMPOWER_SERVICE,
                                           SYSTEMPOWER_PATH,
@@ -146,10 +163,8 @@ DBusScreenSaver::~DBusScreenSaver()
 bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 {
     const QDir &moduleDir = m_screenSaverNameToDir.value(name);
-
     if (!QFile::exists(moduleDir.absoluteFilePath(name)))
         return false;
-
     if (preview) {
         if (x11event) {
             QAbstractEventDispatcher::instance()->removeNativeEventFilter(x11event.data());
@@ -452,6 +467,8 @@ void DBusScreenSaver::setCurrentScreenSaver(QString currentScreenSaver)
         return;
 
     m_currentScreenSaver = currentScreenSaver;
+
+    m_dcfg->setValue(dCurrentScreenSaver, m_currentScreenSaver);
     m_settings.setValue("currentScreenSaver", m_currentScreenSaver);
 
     emit currentScreenSaverChanged(m_currentScreenSaver);
@@ -492,17 +509,26 @@ void DBusScreenSaver::setLockScreenDelay(int lockScreenDelay)
 
 bool DBusScreenSaver::StartCustomConfig(const QString &name)
 {
-    if (!Utils::hasConfigFile(name))
-        return false;
+    if (Utils::hasConfigFile(name))
+        return QProcess::startDetached("/usr/bin/deepin-screensaver", {QString("--config"), name});
 
-    return QProcess::startDetached("/usr/bin/deepin-screensaver", {QString("--config"), name});
+    if (Utils::hasDesktopConfigFile(name))  {
+        DDesktopEntry entry(Utils::desktopPath(name));
+        QString exec = entry.stringValue("Exec");
+        if (exec.isEmpty()) {
+            return false;
+        }
+        return QProcess::startDetached(exec, {QString("--config"), ""});
+    }
+
+    return false;
 }
 
 QStringList DBusScreenSaver::ConfigurableItems()
 {
     QStringList screenSaverList;
     for (const QString &name : m_screenSaverList) {
-        if (Utils::hasConfigFile(name))
+        if (Utils::hasDesktopConfigFile(name) || Utils::hasConfigFile(name))
             screenSaverList.append(name);
     }
 
@@ -511,7 +537,7 @@ QStringList DBusScreenSaver::ConfigurableItems()
 
 bool DBusScreenSaver::IsConfigurable(const QString &name)
 {
-    return Utils::hasConfigFile(name);
+    return Utils::hasDesktopConfigFile(name) || Utils::hasConfigFile(name);
 }
 
 void DBusScreenSaver::onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message)
@@ -542,6 +568,15 @@ void DBusScreenSaver::onDBusPropertyChanged(const QString &interface, const QVar
 
         ++begin;
     }
+}
+
+void DBusScreenSaver::onConfigChanged(const QString &key)
+{
+    QString screenSaver = m_dcfg->value(dCurrentScreenSaver).toString();
+    if (!allScreenSaver().contains(screenSaver))
+        return;
+    if (key == dCurrentScreenSaver)
+        setCurrentScreenSaver(screenSaver);
 }
 
 void DBusScreenSaver::clearResourceList()
