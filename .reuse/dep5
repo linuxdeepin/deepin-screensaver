@@ -58,8 +58,8 @@ Files: src/translations/* customscreensaver/deepin-custom-screensaver/translatio
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
-# json conf
-Files: customscreensaver/deepin-custom-screensaver/data/*
+# conf
+Files: src/configs/* customscreensaver/deepin-custom-screensaver/data/*
 Copyright: None
 License: CC0-1.0
 
