@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "timeintervalwidget.h"
+#include "src/slideshowconfig.h"
 
 #include <QHBoxLayout>
 
@@ -11,24 +12,35 @@ DCORE_USE_NAMESPACE
 
 #define SPECIFYLINEEDITLENGTH 65
 
-static const int kMaxIntervalTime = 3600;   // second
-static const int kMinIntervalTime = 3;   // second
-static const int kDefaultTime = 10;
-
 TimeIntervalWidget::TimeIntervalWidget()
 {
+    initOption();
 }
 
-void TimeIntervalWidget::setOption(Dtk::Core::DSettingsOption *option)
+void TimeIntervalWidget::setInterval(int time)
 {
-    if (m_option || !option)
-        return;
-    m_option = option;
+    if (time < kMinIntervalTime || time > kMaxIntervalTime)
+        time = kDefaultTime;
 
+    m_lineEdit->setText(QString::number(time));
+}
+
+int TimeIntervalWidget::interval()
+{
+    auto intervalTime = m_lineEdit->text().toInt();
+    if (intervalTime < kMinIntervalTime || intervalTime > kMaxIntervalTime)
+        intervalTime = kDefaultTime;
+
+    return intervalTime;
+}
+
+void TimeIntervalWidget::initOption()
+{
     m_lineEdit = new DLineEdit(this);
-    m_lineEdit->setText(option->value().toString());
     m_lineEdit->setClearButtonEnabled(false);
     m_lineEdit->setFixedWidth(SPECIFYLINEEDITLENGTH);
+    m_lineEdit->lineEdit()->setValidator(new QIntValidator(m_lineEdit));
+
     m_prefixTips = new DLabel(tr("Time interval (s)"), this);
     m_suffixTips = new DLabel(QString("%1: %2-%3")
                                       .arg(tr("Range"))
@@ -43,7 +55,6 @@ void TimeIntervalWidget::setOption(Dtk::Core::DSettingsOption *option)
     layout->addStretch(3);
 
     connect(m_lineEdit, &DLineEdit::editingFinished, this, &TimeIntervalWidget::onEditingFinished);
-    connect(option, &DSettingsOption::valueChanged, this, &TimeIntervalWidget::onValueChanged);
 }
 
 void TimeIntervalWidget::onEditingFinished()
@@ -54,11 +65,6 @@ void TimeIntervalWidget::onEditingFinished()
         m_lineEdit->setText(QString::number(intervalTime));
     }
 
-    m_option->setValue(QString::number(intervalTime));
+    emit valueChanged(intervalTime);
     m_lineEdit->clearFocus();
-}
-
-void TimeIntervalWidget::onValueChanged(QVariant value)
-{
-    m_lineEdit->setText(value.toString());
 }
