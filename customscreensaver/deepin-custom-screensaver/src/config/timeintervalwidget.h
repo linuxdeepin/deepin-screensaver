@@ -15,17 +15,20 @@ class TimeIntervalWidget : public Dtk::Widget::DWidget
     Q_OBJECT
 public:
     TimeIntervalWidget();
-    void setOption(Dtk::Core::DSettingsOption *option);
+    void setInterval(int time);
+    int interval();
+signals:
+    void valueChanged(int v);
+private:
+    void initOption();
 
 private Q_SLOTS:
     void onEditingFinished();
-    void onValueChanged(QVariant value);
 
 private:
     Dtk::Widget::DLabel *m_prefixTips = nullptr;
     Dtk::Widget::DLabel *m_suffixTips = nullptr;
     Dtk::Widget::DLineEdit *m_lineEdit = nullptr;
-    Dtk::Core::DSettingsOption *m_option = nullptr;
 };
 
 #endif   // TIMEINTERVALWIDGET_H

@@ -19,18 +19,19 @@ class SelectPathWidget : public Dtk::Widget::DWidget
     Q_OBJECT
 public:
     explicit SelectPathWidget(QWidget *parent = nullptr);
-
-    void setOption(Dtk::Core::DSettingsOption *option);
-
+    void setPath(const QString &path);
+    QString getPath();
+signals:
+    void requsetSetPath();
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
+    void initOption();
+private:
     Dtk::Widget::DLabel *m_selectTips = nullptr;
     TruncateLineEdit *m_selectLineEdit = nullptr;
     Dtk::Widget::DPushButton *m_selectBtn = nullptr;
-
-    Dtk::Core::DSettingsOption *m_option = nullptr;
 };
 
 #endif // SELECTPATHWIDGET_H

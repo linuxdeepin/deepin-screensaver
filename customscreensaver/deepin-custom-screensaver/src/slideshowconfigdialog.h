@@ -5,44 +5,41 @@
 #ifndef SLIDESHOWCONFIGDIALOG_H
 #define SLIDESHOWCONFIGDIALOG_H
 
-#include <DApplication>
-#include <DDialog>
-#include <DLineEdit>
+#include "config/selectpathwidget.h"
+#include "config/timeintervalwidget.h"
+#include "singleinstance.h"
+
+#include <DAbstractDialog>
 #include <DCheckBox>
+#include <DTitlebar>
 
-DWIDGET_USE_NAMESPACE
-
-class SlideShowConfigDialog : public DDialog
+class SlideShowConfigDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
 {
     Q_OBJECT
-
 public:
     explicit SlideShowConfigDialog(QWidget *parent = nullptr);
     ~SlideShowConfigDialog();
-
     void startConfig();
-protected:
-    void mousePressEvent(QMouseEvent *) override;
 
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void handArguments(const QStringList &);
 private slots:
-    void setSlideShowPath();
-    void setIntervalTime();
-    void setPlayMode(const bool &mode);
+    void selectPath();
+    void intervalChanged(int v);
+    void shuffleChanged(int v);
+    void resetSettings();
 
 private:
-
     void initUI();
     void initConnect();
-    void initUiValue();
-    QString defaultPath();
+    void initValue();
 
-    DLineEdit *m_slideShowPathEdit;
-    DPushButton *m_openFileBtn;
-    DLineEdit *m_intervalTimeEdit;
-    DCheckBox *m_enableShuffleBox;
-
-    bool m_enableShuffle = false;
-    QString m_slideShowPath;
+private:
+    DTK_WIDGET_NAMESPACE::DTitlebar *frameBar = nullptr;
+    SelectPathWidget *pathWidget = nullptr;
+    TimeIntervalWidget *intervalWidget = nullptr;
+    DTK_WIDGET_NAMESPACE::DCheckBox *shuffleCheck = nullptr;
 };
 
 #endif // SLIDESHOWCONFIGDIALOG_H

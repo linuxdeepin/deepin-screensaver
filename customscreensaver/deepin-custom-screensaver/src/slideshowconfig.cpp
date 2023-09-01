@@ -120,10 +120,26 @@ void SlideshowConfig::setShuffle(const bool shuffle)
 
 bool SlideshowConfig::startCustomConfig()
 {
-    SlideShowConfigDialog *configDialog = new SlideShowConfigDialog();
-    configDialog->startConfig();
+    auto ins = new SingleInstance(qApp->applicationName() + "-config", this);
+    if (ins->isSingle()) {
+        SlideShowConfigDialog *configDialog = new SlideShowConfigDialog();
+
+        connect(ins, &SingleInstance::handArguments, configDialog, [configDialog](){
+            configDialog->activateWindow();;
+        });
+
+        configDialog->startConfig();
+    } else {
+        ins->sendNewClient();
+        return false;
+    }
 
     return true;
+}
+
+QString SlideshowConfig::defaultPath()
+{
+    return "~/Pictures";
 }
 
 QString SlideshowConfig::confPath()

@@ -53,6 +53,7 @@ public:
     void setShuffle(const bool shuffle);
 
     bool startCustomConfig();
+    static QString defaultPath();
 private:
     QString confPath();
 
