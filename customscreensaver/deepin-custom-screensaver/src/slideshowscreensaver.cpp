@@ -27,8 +27,6 @@ DWIDGET_USE_NAMESPACE
 SlideshowScreenSaver::SlideshowScreenSaver(bool subWindow, QWidget *parent)
     : QWidget(parent), m_subWindow(subWindow)
 {
-    qApp->loadTranslator();
-
     if (m_subWindow)
         setWindowFlag(Qt::WindowTransparentForInput, true);
 
