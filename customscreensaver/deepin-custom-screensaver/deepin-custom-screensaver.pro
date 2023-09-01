@@ -31,14 +31,24 @@ SOURCES += \
     src/slideshowscreensaver.cpp \
     src/commandlinemanager.cpp \
     src/slideshowconfig.cpp \
-    src/slideshowconfigdialog.cpp
-
+    src/slideshowconfigdialog.cpp \
+    src/config/contenttitle.cpp \
+    src/config/selectpathwidget.cpp \
+    src/config/truncatelineedit.cpp \
+    src/config/timeintervalwidget.cpp \
+    src/singleinstance.cpp
 
 HEADERS += \ 
     src/slideshowscreensaver.h \
     src/commandlinemanager.h \
     src/slideshowconfig.h \
-    src/slideshowconfigdialog.h
+    src/slideshowconfigdialog.h \
+    src/config/contenttitle.h \
+    src/config/selectpathwidget.h \
+    src/config/truncatelineedit.h \
+    src/config/timeintervalwidget.h \
+    src/singleinstance.h
+
 
 #!! 放开注释来更新json配置文件所生成的ts文件
 #DTK_SETTINGS = $${QT.dtkcore.tools}/dtk-settings
@@ -74,3 +84,6 @@ meta_file.appid = org.deepin.screensaver
 
 DCONFIG_META_FILES += meta_file
 load(dtk_install_dconfig)
+
+RESOURCES += \
+    icon.qrc

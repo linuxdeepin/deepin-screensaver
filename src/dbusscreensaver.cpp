@@ -509,9 +509,6 @@ void DBusScreenSaver::setLockScreenDelay(int lockScreenDelay)
 
 bool DBusScreenSaver::StartCustomConfig(const QString &name)
 {
-    if (Utils::hasConfigFile(name))
-        return QProcess::startDetached("/usr/bin/deepin-screensaver", {QString("--config"), name});
-
     if (Utils::hasDesktopConfigFile(name))  {
         DDesktopEntry entry(Utils::desktopPath(name));
         QString exec = entry.stringValue("Exec");
@@ -520,6 +517,9 @@ bool DBusScreenSaver::StartCustomConfig(const QString &name)
         }
         return QProcess::startDetached(exec);
     }
+
+    if (Utils::hasConfigFile(name))
+        return QProcess::startDetached("/usr/bin/deepin-screensaver", {QString("--config"), name});
 
     return false;
 }

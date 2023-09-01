@@ -11,28 +11,21 @@ SOURCES += \
     $$PWD/dbusscreensaver.cpp \
     $$PWD/imageprovider.cpp \
     $$PWD/screensaverview.cpp \
-    $$PWD/truncatelineedit.cpp \
     $$PWD/screensaversettingdialog.cpp \
-    $$PWD/selectpathwidget.cpp \
     $$PWD/customconfig.cpp \
     $$PWD/utils.cpp \
     singlecustomsetting.cpp \
-    commandlinehelper.cpp \
-    timeintervalwidget.cpp
-
+    commandlinehelper.cpp
 HEADERS += \
     $$PWD/screensaverwindow.h \
     $$PWD/dbusscreensaver.h \
     $$PWD/imageprovider.h \
     $$PWD/screensaverview.h \
-    $$PWD/selectpathwidget.h \
-    $$PWD/truncatelineedit.h \
     $$PWD/screensaversettingdialog.h \
     $$PWD/customconfig.h \
     $$PWD/utils.h \
     singlecustomsetting.h \
-    commandlinehelper.h \
-    timeintervalwidget.h
+    commandlinehelper.h
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
