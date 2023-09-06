@@ -46,6 +46,9 @@ QString SlideshowConfig::slideshowPath() const
         m_settings->endGroup();
     }
 
+    if (path.isEmpty())
+        path = defaultPath();
+
     if (path.startsWith(QStringLiteral("~")))
         path.replace(QStringLiteral("~"), QDir::homePath());
 
