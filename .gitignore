@@ -40,3 +40,5 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user
+
+customscreensaver/deepin-custom-screensaver/deepin-custom-screensaver_translation.cpp

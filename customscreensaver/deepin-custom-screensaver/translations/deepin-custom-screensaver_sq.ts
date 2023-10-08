@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="sq" sourcelanguage="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="sq" sourcelanguage="en">
 <context>
     <name>QObject</name>
     <message>
@@ -25,8 +27,9 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
+        <location filename="../src/slideshowscreensaver.cpp" line="143"/>
         <source>Picture not found</source>
-        <translation type="vanished">S’u gjet foto</translation>
+        <translation>S’u gjet foto</translation>
     </message>
 </context>
 </TS>
