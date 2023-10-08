@@ -41,14 +41,13 @@ HEADERS += \
 #!! 放开注释来更新json配置文件所生成的ts文件
 #DTK_SETTINGS = $${QT.dtkcore.tools}/dtk-settings
 #system($$DTK_SETTINGS -o deepin-custom-screensaver_translation.cpp $$PWD/data/deepin-custom-screensaver.json)
-#system(lupdate deepin-custom-screensaver_translation.cpp -ts $$PWD/translations/$${TARGET}.ts)
+#SOURCES += deepin-custom-screensaver_translation.cpp
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
 
 CONFIG(release, debug|release) {
     !system($$PWD/generate_translations.sh): error("Failed to generate translation")
-    !system($$PWD/update_translations.sh): error("Failed to generate translation")
 }
 
 target.path = /usr/lib/deepin-screensaver/modules/
