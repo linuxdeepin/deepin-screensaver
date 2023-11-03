@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
     DApplication a(argc, argv);
     a.setOrganizationName("deepin");
+    a.loadTranslator();
 
     CommandLineManager::instance()->process(a.arguments());
 
