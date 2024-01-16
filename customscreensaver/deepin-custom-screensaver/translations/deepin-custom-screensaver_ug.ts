@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        translation>ئەسلىدىكى تەڭشەك ھالىتىگە قايتۇرۇش</translation>
+        <translation>ئەسلىدىكى تەڭشەك ھالىتىگە قايتۇرۇش</translation>
     </message>
 </context>
 <context>

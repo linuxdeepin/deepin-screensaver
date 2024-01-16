@@ -109,12 +109,12 @@ void SlideShowConfigDialog::initUI()
         bgGroup->setUseWidgetBackground(false);
         contentlayout->addWidget(bgGroup);
 
-        for (QWidget *wid : contWid) {
+        for (QWidget *pwid : contWid) {
             QWidget *wrapperWidget = new QWidget(bgGroup);
             QHBoxLayout *hLay = new QHBoxLayout(wrapperWidget);
             hLay->setContentsMargins(10, 6, 10, 6);
-            wid->setParent(wrapperWidget);
-            hLay->addWidget(wid);
+            pwid->setParent(wrapperWidget);
+            hLay->addWidget(pwid);
 
             bgGpLayout->addWidget(wrapperWidget);
         }
@@ -136,9 +136,12 @@ void SlideShowConfigDialog::initUI()
 
     // reset
     {
+        QSpacerItem *spaceItem = new QSpacerItem(0, 30, QSizePolicy::Minimum,QSizePolicy::Expanding);
+        contentlayout->addItem(spaceItem);
+
         QWidget *box = new QWidget();
         QHBoxLayout *box_layout = new QHBoxLayout(box);
-        box_layout->setContentsMargins(0, 30, 0, 0);
+        box_layout->setContentsMargins(0, 0, 0, 0);
         auto resetBt = new DPushButton(QObject::tr("Restore Defaults"), box);
         resetBt->setMaximumWidth(300);
         resetBt->setAutoDefault(false);
