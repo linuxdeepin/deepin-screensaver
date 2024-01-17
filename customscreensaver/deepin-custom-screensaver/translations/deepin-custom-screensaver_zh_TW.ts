@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
+        <location filename="../src/slideshowconfigdialog.cpp" line="145"/>
         <source>Restore Defaults</source>
         <translation>復原預設</translation>
     </message>
@@ -45,7 +45,7 @@
         <translation>輪播設定</translation>
     </message>
     <message>
-        <location filename="../src/slideshowconfigdialog.cpp" line="225"/>
+        <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
         <translation>選擇圖片路徑</translation>
     </message>
@@ -53,7 +53,7 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="143"/>
+        <location filename="../src/slideshowscreensaver.cpp" line="141"/>
         <source>Picture not found</source>
         <translation>圖片不見了</translation>
     </message>

@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
+        <location filename="../src/slideshowconfigdialog.cpp" line="145"/>
         <source>Restore Defaults</source>
         <translation>Standaardwaarden herstellen</translation>
     </message>
@@ -14,7 +14,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="39"/>
         <source>Picture path</source>
-        <translation type="unfinished"></translation>
+        <translation>Afbeeldingslocatie</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="46"/>
@@ -45,7 +45,7 @@
         <translation>Diavoorstelling</translation>
     </message>
     <message>
-        <location filename="../src/slideshowconfigdialog.cpp" line="225"/>
+        <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
         <translation>Afbeeldingslocatie</translation>
     </message>
@@ -53,7 +53,7 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="143"/>
+        <location filename="../src/slideshowscreensaver.cpp" line="141"/>
         <source>Picture not found</source>
         <translation>Bestand niet aangetroffen</translation>
     </message>
