@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
+        <location filename="../src/slideshowconfigdialog.cpp" line="145"/>
         <source>Restore Defaults</source>
         <translation>Alapértelmezések visszaállítása</translation>
     </message>
@@ -45,15 +45,15 @@
         <translation>Diavetítés</translation>
     </message>
     <message>
-        <location filename="../src/slideshowconfigdialog.cpp" line="225"/>
+        <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"></translation>
+        <translation>Kép elérési útvonala</translation>
     </message>
 </context>
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="143"/>
+        <location filename="../src/slideshowscreensaver.cpp" line="141"/>
         <source>Picture not found</source>
         <translation>A kép nem található</translation>
     </message>
