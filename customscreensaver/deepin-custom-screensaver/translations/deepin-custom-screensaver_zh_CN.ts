@@ -53,9 +53,9 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="141"/>
-        <source>Picture not found</source>
-        <translation>图片不见了</translation>
+        <location filename="../src/slideshowscreensaver.cpp" line="142"/>
+        <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
+        <translation>请在自定义屏保“屏保设置”中选择有效的图片路径。</translation>
     </message>
 </context>
 <context>

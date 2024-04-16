@@ -138,7 +138,8 @@ void SlideshowScreenSaver::showDefaultBlack(QPaintEvent *event)
 
     QPainter pa(&pip);
     pa.setPen(Qt::white);
-    pa.drawText(pip.rect(), Qt::AlignCenter, tr("Picture not found"));   // This text may be written in the configuration in the future
+    pa.drawText(pip.rect(), Qt::AlignCenter,
+                tr("Please select a valid image path in the Custom Screensaver \"Screensaver Setting\"."));
 
     const auto &pix = pip.scaled(mapFromHandle(this->geometry().size()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     QPainter p(this);
@@ -202,8 +203,7 @@ void SlideshowScreenSaver::initPixMap()
         if (m_shuffle)
             randomImageIndex();
         QPixmap pix(m_playOrder.first());
-        if(pix.isNull())
-        {
+        if (pix.isNull()) {
             QImageReader reader(m_playOrder.first());
             reader.setDecideFormatFromContent(true);
             pix = QPixmap::fromImage(reader.read());

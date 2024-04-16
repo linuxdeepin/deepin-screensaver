@@ -53,9 +53,9 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="141"/>
-        <source>Picture not found</source>
-        <translation>Picture not found</translation>
+        <location filename="../src/slideshowscreensaver.cpp" line="142"/>
+        <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
+        <translation></translation>
     </message>
 </context>
 <context>
