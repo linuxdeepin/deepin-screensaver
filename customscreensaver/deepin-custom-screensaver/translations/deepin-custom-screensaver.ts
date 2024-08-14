@@ -8,6 +8,12 @@
         <source>Restore Defaults</source>
         <translation>Restore Defaults</translation>
     </message>
+    <message>
+        <location filename="../src/main.cpp" line="37"/>
+        <location filename="../src/main.cpp" line="38"/>
+        <source>deepin-screensaver</source>
+        <translation>自定义屏保</translation>
+    </message>
 </context>
 <context>
     <name>SelectPathWidget</name>

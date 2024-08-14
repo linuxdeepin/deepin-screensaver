@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
     a.setOrganizationName("deepin");
     a.loadTranslator();
-
+    a.setApplicationName(QObject::tr("deepin-screensaver"));
+    a.setApplicationDisplayName(QObject::tr("deepin-screensaver"));
     CommandLineManager::instance()->process(a.arguments());
 
     if (CommandLineManager::instance()->isSet("window-id")) {
