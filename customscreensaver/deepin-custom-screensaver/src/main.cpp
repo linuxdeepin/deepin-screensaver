@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
 
     a.setApplicationName(QObject::tr("deepin-screensaver"));
     a.setApplicationDisplayName(QObject::tr("deepin-screensaver"));//The taskbar displays internationalization
-
     CommandLineManager::instance()->process(a.arguments());
 
     if (CommandLineManager::instance()->isSet("window-id")) {
