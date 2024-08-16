@@ -9,8 +9,8 @@
         <translation>恢复默认</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
+        <location filename="../src/main.cpp" line="39"/>
         <source>deepin-screensaver</source>
         <translation>自定义屏保</translation>
     </message>

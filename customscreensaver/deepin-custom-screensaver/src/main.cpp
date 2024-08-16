@@ -34,8 +34,10 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
     a.setOrganizationName("deepin");
     a.loadTranslator();
+
     a.setApplicationName(QObject::tr("deepin-screensaver"));
-    a.setApplicationDisplayName(QObject::tr("deepin-screensaver"));
+    a.setApplicationDisplayName(QObject::tr("deepin-screensaver"));//The taskbar displays internationalization
+
     CommandLineManager::instance()->process(a.arguments());
 
     if (CommandLineManager::instance()->isSet("window-id")) {
