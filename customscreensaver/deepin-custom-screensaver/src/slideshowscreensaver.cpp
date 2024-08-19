@@ -187,8 +187,11 @@ void SlideshowScreenSaver::loadSlideshowImages()
         int idx = 1;
         for (auto info : infoList) {
             if (info.size() < IMAGE_MAX_SIZE && validSuffix.contains(info.suffix(), Qt::CaseInsensitive)) {
-                m_imagefiles.append(info.absoluteFilePath());   // 记录图片列表
-                m_playOrder.insert(idx, info.absoluteFilePath());
+                QScopedPointer<QPixmap> pixmapPointer(new QPixmap(info.absoluteFilePath()));
+                if (pixmapPointer && !pixmapPointer->isNull()){
+                    m_imagefiles.append(info.absoluteFilePath());   // 记录图片列表
+                    m_playOrder.insert(idx, info.absoluteFilePath());
+                }
                 idx++;
             }
         }
