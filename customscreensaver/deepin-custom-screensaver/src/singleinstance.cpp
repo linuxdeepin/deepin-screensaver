@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "singleinstance.h"
-
+#include <QtNetwork/qlocalserver.h>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QStandardPaths>
