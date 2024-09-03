@@ -2,3 +2,6 @@ usr/lib/deepin-screensaver/modules/*
 usr/share/deepin-custom-screensaver/translations/*.qm
 etc/deepin-screensaver/deepin-custom-screensaver/*.desktop
 usr/share/dsg/configs/org.deepin.screensaver/org.deepin.customscreensaver.json
+usr/share/deepin-web-screensaver/translations/*.qm
+etc/deepin-screensaver/deepin-web-screensaver/*.desktop
+usr/share/dsg/configs/org.deepin.screensaver/org.deepin.webscreensaver.json
