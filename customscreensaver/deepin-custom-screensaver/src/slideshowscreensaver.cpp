@@ -93,6 +93,13 @@ void SlideshowScreenSaver::onUpdateImage()
     }
 
     m_pixmap.reset(new QPixmap(m_playOrder.value(m_currentIndex)));
+
+    if (m_pixmap && !m_pixmap->isNull()) {
+        m_invaildPath.clear();
+    } else {
+        m_invaildPath = m_playOrder.value(m_currentIndex);
+        qWarning() << "There is an issue with the format of the image" << m_invaildPath;
+    }
     scaledPixmap();
     update();
     return;
@@ -139,7 +146,7 @@ void SlideshowScreenSaver::showDefaultBlack(QPaintEvent *event)
     QPainter pa(&pip);
     pa.setPen(Qt::white);
     pa.drawText(pip.rect(), Qt::AlignCenter,
-                tr("Please select a valid image path in the Custom Screensaver \"Screensaver Setting\"."));
+                tr("Please select a valid image path in the Custom Screensaver \"Screensaver Setting\".") + m_invaildPath);
 
     const auto &pix = pip.scaled(mapFromHandle(this->geometry().size()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     QPainter p(this);
@@ -187,11 +194,8 @@ void SlideshowScreenSaver::loadSlideshowImages()
         int idx = 1;
         for (auto info : infoList) {
             if (info.size() < IMAGE_MAX_SIZE && validSuffix.contains(info.suffix(), Qt::CaseInsensitive)) {
-                QScopedPointer<QPixmap> pixmapPointer(new QPixmap(info.absoluteFilePath()));
-                if (pixmapPointer && !pixmapPointer->isNull()){
-                    m_imagefiles.append(info.absoluteFilePath());   // 记录图片列表
-                    m_playOrder.insert(idx, info.absoluteFilePath());
-                }
+                m_imagefiles.append(info.absoluteFilePath());   // 记录图片列表
+                m_playOrder.insert(idx, info.absoluteFilePath());
                 idx++;
             }
         }
