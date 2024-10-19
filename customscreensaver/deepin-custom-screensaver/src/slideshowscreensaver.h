@@ -42,6 +42,7 @@ private:
     QScopedPointer<QTimer> m_timer;
 
     QString m_path;   // 图片路径
+    QString m_invaildPath;   // 无效图片路径提示
     bool m_shuffle { false };   // 随机轮播
     int m_intervalTime { 0 };   // 轮播间隔
     int m_currentIndex { 0 };
