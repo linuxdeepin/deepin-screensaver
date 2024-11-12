@@ -92,7 +92,14 @@ void SlideshowScreenSaver::onUpdateImage()
         loadSlideshowImages();
     }
 
-    m_pixmap.reset(new QPixmap(m_playOrder.value(m_currentIndex)));
+    QPixmap pix(m_playOrder.value(m_currentIndex));
+    if (pix.isNull()) {
+        QImageReader reader(m_playOrder.value(m_currentIndex));
+        reader.setDecideFormatFromContent(true);
+        pix = QPixmap::fromImage(reader.read());
+    }
+
+    m_pixmap.reset(new QPixmap(pix));
 
     if (m_pixmap && !m_pixmap->isNull()) {
         m_invaildPath.clear();
@@ -215,7 +222,15 @@ void SlideshowScreenSaver::initPixMap()
             reader.setDecideFormatFromContent(true);
             pix = QPixmap::fromImage(reader.read());
         }
+
         m_pixmap.reset(new QPixmap(pix));
+
+        if (m_pixmap && !m_pixmap->isNull()) {
+            m_invaildPath.clear();
+        } else {
+            m_invaildPath = m_playOrder.first();
+            qWarning() << "There is an issue with the format of the image" << m_invaildPath;
+        }
         scaledPixmap();
         m_currentIndex = 1;
         m_lastImage = m_playOrder.last();
