@@ -1,3 +1,9 @@
+deepin-screensaver (5.0.21) unstable; urgency=medium
+
+  * fix a bug that os_version error
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 05 Dec 2024 19:20:57 +0800
+
 deepin-screensaver (5.0.20) unstable; urgency=medium
 
   * update version to 5.0.20.
