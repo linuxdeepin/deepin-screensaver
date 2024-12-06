@@ -1,0 +1,17 @@
+{
+    "magic": "dsg.config.meta",
+    "version": "1.0",
+    "contents": {
+        "slideshowPath": {
+            "value": "",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Web url",
+            "name[zh_CN]": "网页地址",
+            "description[zh_CN]":"自定义屏保网页地址",
+            "description": "Custom screensaver web url",
+            "permissions": "readwrite",
+            "visibility": "public"
+        }
+    }
+}
