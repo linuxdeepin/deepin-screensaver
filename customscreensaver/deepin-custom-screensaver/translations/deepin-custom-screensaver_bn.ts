@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>পূর্বনির্ধারিত জিনিসে ফিরে যান</translation>
+        <translation>唳∴唳Σ唰嵿 唳唳� 唳唳ㄠΠ唰佮Ζ唰嵿Η唳距Π 唳曕Π唰佮Θ</translation>
     </message>
 </context>
 <context>

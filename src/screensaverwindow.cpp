@@ -7,8 +7,12 @@
 
 #include <QScreen>
 #include <QTimer>
-#include <QX11Info>
 #include <QProcess>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#include <QX11Info>
+#else
+#include <QtGui/private/qtx11extras_p.h>
+#endif
 
 #include <xcb/xcb.h>
 #include <X11/Xproto.h>
@@ -128,9 +132,19 @@ void ScreenSaverWindow::show()
             ulong nitems;
             ulong bytes_after_return;
             uchar *prop_datas;
-            XGetWindowProperty(QX11Info::display(),
+            // #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+            auto display = QX11Info::display();
+            // #else
+            // Display *display = nullptr;
+            // if (auto *x11Application = qGuiApp->nativeInterface<QNativeInterface::QX11Application>()) {
+            //     display = x11Application->display();
+            // }
+            // if (!display)
+            //     return;
+            // #endif
+            XGetWindowProperty(display,
                                m_view->winId(),
-                               XInternAtom(QX11Info::display(), "_NET_WM_STATE", true),
+                               XInternAtom(display, "_NET_WM_STATE", true),
                                0, 1024, false,
                                XA_ATOM, &atom,
                                &format, &nitems,
@@ -139,7 +153,7 @@ void ScreenSaverWindow::show()
             if (prop_datas && format == 32 && atom == XA_ATOM) {
                 const Atom *states = reinterpret_cast<const Atom *>(prop_datas);
                 const Atom *statesEnd = states + nitems;
-                if (statesEnd != std::find(states, statesEnd, XInternAtom(QX11Info::display(), "_NET_WM_STATE_HIDDEN", true)))
+                if (statesEnd != std::find(states, statesEnd, XInternAtom(display, "_NET_WM_STATE_HIDDEN", true)))
                     is_hidden = true;
                 XFree(prop_datas);
             }

@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>Varsayılanları Geri Yükle</translation>
+        <translation>Varsay谋lanlar谋 Geri Y眉kle</translation>
     </message>
 </context>
 <context>
