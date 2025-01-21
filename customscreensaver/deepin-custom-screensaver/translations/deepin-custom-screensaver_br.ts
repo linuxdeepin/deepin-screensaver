@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>Adderaouiñ</translation>
+        <translation>Adderaoui帽 ar reizhiado霉 dre ziouer</translation>
     </message>
 </context>
 <context>

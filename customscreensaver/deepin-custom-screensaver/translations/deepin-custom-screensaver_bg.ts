@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>����٧��ѧߧ�ӧ�ӧѧߧ� �ߧ� �ߧѧ����ۧܧڧ��</translation>
+        <translation>Възстановяване на настройките по подразбиране</translation>
     </message>
 </context>
 <context>

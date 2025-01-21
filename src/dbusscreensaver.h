@@ -5,8 +5,6 @@
 #ifndef DBUSSCREENSAVER_H
 #define DBUSSCREENSAVER_H
 
-#include <com_deepin_sessionmanager.h>
-
 #include <DConfig>
 
 #include <QObject>
@@ -16,6 +14,7 @@
 #include <QDBusMessage>
 #include <QScreen>
 #include <QAtomicInteger>
+#include <QDBusInterface>
 
 DCORE_USE_NAMESPACE
 
@@ -71,6 +70,7 @@ signals:
     void lockScreenDelayChanged(int lockScreenDelay);
 
 private:
+    Q_SLOT void onSessionPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
     Q_SLOT void onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
     Q_SLOT void onConfigChanged(const QString &key);
 
@@ -99,10 +99,10 @@ private:
     QSettings m_settings;
     QScopedPointer<X11EventFilter> x11event;
 
-    com::deepin::SessionManager *m_sessionManagerInter = nullptr;
     QAtomicInteger<bool> m_grabKeyboard = false;
 
     DConfig *m_dcfg;
+    QScopedPointer<QDBusInterface> m_powerInterface;
 };
 
 #endif // DBUSSCREENSAVER_H
