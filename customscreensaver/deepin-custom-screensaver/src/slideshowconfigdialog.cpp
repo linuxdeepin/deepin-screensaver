@@ -141,7 +141,7 @@ void SlideShowConfigDialog::initUI()
 
         QWidget *box = new QWidget();
         QHBoxLayout *box_layout = new QHBoxLayout(box);
-        box_layout->setContentsMargins(0, 0, 0, 0);
+        box_layout->setContentsMargins(0, 0, 0, 10);
         auto resetBt = new DPushButton(QObject::tr("Restore Defaults"), box);
         resetBt->setMaximumWidth(300);
         resetBt->setAutoDefault(false);
