@@ -8,12 +8,7 @@
 #include <QCommandLineOption>
 #include <QDateTime>
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#    include "screensaver_adaptor.h"
-#else
 #include "screensaveradaptor.h"
-#endif
-
 #include "dbusscreensaver.h"
 #include "customconfig.h"
 #include "commandlinehelper.h"
