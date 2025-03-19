@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     a.loadTranslator();
     a.setApplicationName(QObject::tr("deepin-screensaver"));
     a.setApplicationDisplayName(QObject::tr("deepin-screensaver"));
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     CommandLineManager::instance()->process(a.arguments());
 
     if (CommandLineManager::instance()->isSet("window-id")) {
