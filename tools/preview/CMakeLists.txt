@@ -31,11 +31,7 @@ set(FORMS
 )
 
 # 生成 UI 头文件
-if (QT_VERSION_MAJOR MATCHES 6)
-    qt_wrap_ui(${PROJECT_NAME}_UI_HEADERS ${FORMS})
-else()
-    #qt5_wrap_ui(${PROJECT_NAME}_UI_HEADERS ${FORMS})
-endif()
+qt_wrap_ui(${PROJECT_NAME}_UI_HEADERS ${FORMS})
 
 # 添加生成的 UI 头文件所在的目录到头文件搜索路径
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
