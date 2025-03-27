@@ -42,11 +42,7 @@ SlideshowScreenSaver::~SlideshowScreenSaver()
 {
 }
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 bool SlideshowScreenSaver::nativeEventFilter(const QByteArray &eventType, void *message, long *result)
-#else
-bool SlideshowScreenSaver::nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result)
-#endif
 {
     Q_UNUSED(result);
     if (eventType == "xcb_generic_event_t") {

@@ -65,7 +65,7 @@ INSTALLS += target
 isEmpty(VERSION) {
     VERSION = 0.0.1
 }
-DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+DEFINES += QMAKE_VERSION=\\\"$$VERSION\\\"
 
 RESOURCES += \
     images.qrc

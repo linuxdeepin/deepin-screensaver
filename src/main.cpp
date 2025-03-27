@@ -6,9 +6,8 @@
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
-#include <QDateTime>
 
-#include "screensaveradaptor.h"
+#include "screensaver_adaptor.h"
 #include "dbusscreensaver.h"
 #include "customconfig.h"
 #include "commandlinehelper.h"
@@ -42,14 +41,13 @@ int main(int argc, char *argv[])
         qInfo() << QDateTime::currentDateTime().toString() << "notes:change wayland to xcb for QT_QPA_PLATFORM.";
         qputenv("QT_QPA_PLATFORM", "xcb");
     }
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+
     DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#endif
     DApplication app(argc, argv);
 
     app.setOrganizationName("deepin");
     app.setApplicationName("deepin-screensaver");
-    app.setApplicationVersion(buildVersion(APP_VERSION));
+    app.setApplicationVersion(buildVersion(QMAKE_VERSION));
 
     CommandLineHelper::instance()->process(app.arguments());
 

@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>Obnovi钮 predvolen茅 hodnoty</translation>
+        <translation>Obnoviť predvolené nastavenia</translation>
     </message>
 </context>
 <context>

@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# 遍历 screensaver 列表，创建软连接
-for ss in @SCREENSAVER_LIST@; do
-    ln -sf "@RELATIVE_PATH@/${ss}" "@MODULE_PATH@/${ss}"
-done

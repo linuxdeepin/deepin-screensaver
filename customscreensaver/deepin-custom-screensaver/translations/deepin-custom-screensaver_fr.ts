@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>RÃ©initialiser par dÃ©faut</translation>
+        <translation>R¨¦initialiser par d¨¦faut</translation>
     </message>
 </context>
 <context>

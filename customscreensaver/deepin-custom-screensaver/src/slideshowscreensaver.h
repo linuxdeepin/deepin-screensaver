@@ -16,11 +16,7 @@ public:
     explicit SlideshowScreenSaver(bool subWindow = false, QWidget *parent = nullptr);
     ~SlideshowScreenSaver() override;
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     bool nativeEventFilter(const QByteArray &eventType, void *message, long *result) override;
-#else
-    bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result) override;
-#endif
     void init();
 private slots:
     void onUpdateImage();
