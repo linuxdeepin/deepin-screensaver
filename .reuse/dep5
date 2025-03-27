@@ -29,7 +29,7 @@ Copyright: None
 License: CC0-1.0
 
 # Project file
-Files: *.pro *.pri *.qrc
+Files: *.project *.pro *.pri *.qrc
 Copyright: None
 License: CC0-1.0
 

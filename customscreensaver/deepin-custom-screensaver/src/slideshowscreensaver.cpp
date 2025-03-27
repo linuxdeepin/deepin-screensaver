@@ -147,17 +147,21 @@ QSize SlideshowScreenSaver::mapFromHandle(const QSize &handleSize)
 void SlideshowScreenSaver::showDefaultBlack(QPaintEvent *event)
 {
     qreal scale = devicePixelRatioF();
-    QPixmap pip(this->geometry().size());
-    pip.fill(Qt::black);
-
-    QPainter pa(&pip);
-    pa.setPen(Qt::white);
-    pa.drawText(pip.rect(), Qt::AlignCenter,
-                tr("Please select a valid image path in the Custom Screensaver \"Screensaver Setting\".") + m_invaildPath);
-
-    const auto &pix = pip.scaled(mapFromHandle(this->geometry().size()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     QPainter p(this);
-    p.drawPixmap(event->rect().topLeft(), pix, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
+    p.fillRect(this->rect(), Qt::black);
+
+    QRect logicalRect = this->rect();
+    QRect physicalRect(logicalRect.x() / scale,
+                       logicalRect.y() / scale,
+                       logicalRect.width() / scale,
+                       logicalRect.height() / scale);
+
+    QFont font = p.font();
+    font.setPointSizeF(font.pointSizeF() * scale); 
+    p.setFont(font);
+    p.setPen(Qt::white);
+    p.drawText(physicalRect, Qt::AlignCenter,
+                tr("Please select a valid image path in the Custom Screensaver \"Screensaver Setting\".") + m_invaildPath);
 }
 
 void SlideshowScreenSaver::randomImageIndex()
