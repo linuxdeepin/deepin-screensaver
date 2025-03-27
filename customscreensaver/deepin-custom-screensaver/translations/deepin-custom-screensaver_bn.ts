@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>ржбрж┐ржлрж▓рзНржЯ ржорж╛ржи ржкрзБржирж░рзБржжрзНржзрж╛рж░ ржХрж░рзБржи</translation>
+        <translation>Б1▌8Б1р2Б1▐4Б1с3Б1▐0Б1▌6Б1▀9Б1▐4Б1с3Б1▌5Б1▀8Б1▐4Б1▀9Б1▌2 Б1▄4Б1▀9Б1▌6Б1▀9Б1▀2Б1р7 Б1▌9Б1▀9Б1▐4Б1р7 Б1▐3Б1▀8Б1▌6</translation>
     </message>
 </context>
 <context>

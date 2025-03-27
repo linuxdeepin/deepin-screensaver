@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="142"/>
         <source>Restore Defaults</source>
-        <translation>Restabile葯te valorile implicite</translation>
+        <translation>Restabilirea sătărilor de bază</translation>
     </message>
 </context>
 <context>

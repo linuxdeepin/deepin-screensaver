@@ -14,12 +14,12 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="39"/>
         <source>Picture path</source>
-        <translation>Cami de la imatge</translation>
+        <translation>Cam¨ª de la imatge</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="46"/>
         <source>Select a path of pictures</source>
-        <translation>Seleccioneu un camÃ­ per a les imatges</translation>
+        <translation>Seleccioneu un cam¨ª per a les imatges</translation>
     </message>
 </context>
 <context>

@@ -30,9 +30,6 @@ ui_*.h
 Makefile*
 *build-*
 
-# vscode
-.vscode/
-
 # QtCreator
 
 *.autosave

@@ -52,11 +52,7 @@ void TruncateLineEdit::resizeEvent(QResizeEvent *event)
 void TruncateLineEdit::updateShowText()
 {
     QStyleOptionFrame panel;
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     panel.init(this->lineEdit());
-#else
-    panel.initFrom(this->lineEdit());
-#endif
     QRect contentsRect = style()->subElementRect(QStyle::SE_LineEditContents, &panel, this->lineEdit());
 
     // QLineEdit绘制显示时，将扣除内容边距，所以计算截断文本时，需要使用内容宽度，而不是控件宽度
