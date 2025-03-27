@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# 遍历 screensaver 列表，创建软连接
-for ss in blaster bouboule cage discoball dymaxionmap endgame epicycle flow flurry flyingtoasters fuzzyflakes galaxy glplanet hexadrop klein lament lockward polytopes vermiculate; do
-    ln -sf "../../xscreensaver/${ss}" "/usr/local/lib/deepin-screensaver/modules/${ss}"
-done
