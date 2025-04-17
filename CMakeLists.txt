@@ -11,6 +11,7 @@ endif()
 set(LIB_PATH "${CMAKE_INSTALL_PREFIX}/lib/deepin-screensaver" CACHE PATH "Library installation path")
 set(MODULE_PATH "${LIB_PATH}/modules" CACHE PATH "Module installation path")
 set(RESOURCE_PATH "${LIB_PATH}/resources" CACHE PATH "Resource installation path")
+set(QT_VERSION_MAJOR "6" CACHE STRING "Build with qt version major")
 
 add_definitions(-DLIB_PATH="${LIB_PATH}" -DMODULE_PATH="${MODULE_PATH}" -DRESOURCE_PATH="${RESOURCE_PATH}")
 
@@ -20,14 +21,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 # 引入翻译生成
 include(translation-generate)
 
-# 查找 Qt 版本
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-message("   >>> Found Qt version: ${QT_VERSION_MAJOR}")
-set(QT_DESIRED_VERSION ${QT_VERSION_MAJOR})
-
-if (QT_VERSION_MAJOR MATCHES 6)
-    set(DTK_VERSION_MAJOR 6)
+if (QT_VERSION_MAJOR STREQUAL "6")
+    set(QT_VERSION_MAJOR "6")
+    set(QT_DESIRED_VERSION "6")
+    set(DTK_VERSION_MAJOR "6")
 else()
+    set(QT_VERSION_MAJOR "5")
+    set(QT_DESIRED_VERSION "5")
     set(DTK_VERSION_MAJOR "")
 endif()
 message("   >>> Build with DTK: ${DTK_VERSION_MAJOR}")

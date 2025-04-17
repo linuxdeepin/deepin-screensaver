@@ -7,8 +7,10 @@ include /usr/share/dpkg/default.mk
 define detect_qt_version
 ifneq (,$(shell which qmake6 2>/dev/null))
     QT_DIR="/usr/lib/$(DEB_HOST_MULTIARCH)/cmake/Qt6"
+    QT_VERSION_MAJOR="6"
 else
     QT_DIR="/usr/lib/$(DEB_HOST_MULTIARCH)/cmake/Qt5"
+    QT_VERSION_MAJOR="5"
 endif
 endef
 
@@ -30,4 +32,5 @@ override_dh_auto_configure:
 	-DCMAKE_INSTALL_PREFIX=/usr \
 	-DAPP_VERSION=$(DEB_VERSION_UPSTREAM) -DVERSION=$(DEB_VERSION_UPSTREAM) \
 	-DLIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH) \
-	-DQT_DIR=$(QT_DIR)
+	-DQT_DIR=$(QT_DIR) \
+	-DQT_VERSION_MAJOR=$(QT_VERSION_MAJOR)
