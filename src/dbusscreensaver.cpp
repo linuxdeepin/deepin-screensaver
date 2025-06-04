@@ -15,6 +15,7 @@
 #include <QSettings>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusMessage>
 #include <QResource>
 #include <QStandardPaths>
 #include <QDirIterator>
@@ -43,6 +44,15 @@ DCORE_USE_NAMESPACE
 static constexpr char dCfgAppId[] { "org.deepin.screensaver" };
 static constexpr char dCfgName[] { "org.deepin.screensaver" };
 static constexpr char dCurrentScreenSaver[] { "currentScreenSaver" };
+
+// 需要发送 DBus PropertiesChanged 信号的属性列表
+const QStringList DBusScreenSaver::m_dbusProperties = {
+    "currentScreenSaver",
+    "lockScreenAtAwake", 
+    "lockScreenDelay",
+    "batteryScreenSaverTimeout",
+    "linePowerScreenSaverTimeout"
+};
 
 struct xcb_screensaver_notify_event
 {
@@ -164,6 +174,32 @@ DBusScreenSaver::~DBusScreenSaver()
     }
 
     clearResourceList();
+}
+
+// 重写 setProperty 方法以自动发送 DBus PropertiesChanged 信号
+bool DBusScreenSaver::setProperty(const char *name, const QVariant &value)
+{
+    bool result = QObject::setProperty(name, value);
+    
+    if (result && m_dbusProperties.contains(name)) {
+        sendDBusPropertyChanged(name, value);
+    }
+    
+    return result;
+}
+
+void DBusScreenSaver::sendDBusPropertyChanged(const QString &propertyName, const QVariant &value)
+{
+    QVariantMap changedProperties;
+    changedProperties.insert(propertyName, value);
+
+    QDBusMessage signal = QDBusMessage::createSignal(
+        "/com/deepin/ScreenSaver",
+        "org.freedesktop.DBus.Properties",
+        "PropertiesChanged"
+    );
+    signal << "com.deepin.ScreenSaver" << changedProperties << QStringList();
+    QDBusConnection::sessionBus().send(signal);
 }
 
 bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
