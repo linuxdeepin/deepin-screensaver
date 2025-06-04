@@ -35,6 +35,8 @@ public:
     explicit DBusScreenSaver(QObject *parent = nullptr);
     ~DBusScreenSaver();
 
+    bool setProperty(const char *name, const QVariant &value);
+
     bool Preview(const QString &name, int staysOn = 1, bool preview = true);
     QString GetScreenSaverCover(const QString &name) const;
     void RefreshScreenSaverList();
@@ -60,6 +62,7 @@ public:
     bool StartCustomConfig(const QString &name);
     QStringList ConfigurableItems();
     bool IsConfigurable(const QString &name);
+
 signals:
     void allScreenSaverChanged(QStringList allScreenSaver);
     void batteryScreenSaverTimeoutChanged(int batteryScreenSaverTimeout);
@@ -83,6 +86,9 @@ private:
     void XUnGrabKeyBoard();
     void onLockedChanged(const bool locked);
 
+    // 统一的 DBus 属性变化信号发送方法
+    void sendDBusPropertyChanged(const QString &propertyName, const QVariant &value);
+
     QList<QDir> m_resourceDirList;
     QStringList m_resourceList;
 
@@ -103,6 +109,8 @@ private:
 
     DConfig *m_dcfg;
     QScopedPointer<QDBusInterface> m_powerInterface;
+
+    static const QStringList m_dbusProperties;
 };
 
 #endif // DBUSSCREENSAVER_H
