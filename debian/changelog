@@ -1,3 +1,9 @@
+deepin-screensaver (6.5.2) unstable; urgency=medium
+
+  * feat: implement automatic DBus property change notifications
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 05 Jun 2025 20:24:36 +0800
+
 deepin-screensaver (6.5.1) unstable; urgency=medium
 
   * chore: switch to qt6 for debian
