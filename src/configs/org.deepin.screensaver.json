@@ -12,6 +12,17 @@
             "description": "set current screen saver",
             "permissions": "readwrite",
             "visibility": "public"
+        },
+        "control.center.requirePassword.show": {
+            "value": true,
+            "serial":0,
+            "flags":[],
+            "name":"Does the password need to be displayed when restoring the screen protector in the control center",
+            "name[zh_CN]":"控制中心屏幕保护恢复时需要密码是否显示",
+            "description[zh_CN]":"用于控制控制中心屏幕保护恢复时需要密码是否显示",
+            "description":"Is the password required for controlling the screen protection recovery in the control center displayed.",
+            "permissions":"readwrite",
+            "visibility":"public"
         }
     }
 }
