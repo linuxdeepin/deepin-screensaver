@@ -5,7 +5,7 @@
         "currentScreenSaver": {
             "value": "",
             "serial": 0,
-            "flags": ["global"],
+            "flags": [],
             "name": "Set Current ScreenSaver",
             "name[zh_CN]": "设置当前屏保",
             "description[zh_CN]":"设置当前屏保",
