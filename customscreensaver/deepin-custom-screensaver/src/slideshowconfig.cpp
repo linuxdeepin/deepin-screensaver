@@ -142,7 +142,7 @@ bool SlideshowConfig::startCustomConfig()
 
 QString SlideshowConfig::defaultPath()
 {
-    return "~/Pictures";
+    return "~/Pictures/Wallpapers";
 }
 
 QString SlideshowConfig::confPath()
