@@ -10,7 +10,7 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Tùy chỉnh màn hình chờ</translation>
     </message>
 </context>
 <context>
@@ -18,12 +18,12 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="39"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Đường dẫn ảnh</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="46"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Chọn đường dẫn ảnh</translation>
     </message>
 </context>
 <context>
