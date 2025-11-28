@@ -59,7 +59,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="142"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, përzgjidhni një shteg të vlefshëm figurash te “Rregullime Ekrankursyesi” të Ekrankursyesit Vetjak.</translation>
     </message>
 </context>
 <context>
@@ -67,12 +67,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Interval(e) kohorë</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Segment</translation>
     </message>
 </context>
 </TS>
