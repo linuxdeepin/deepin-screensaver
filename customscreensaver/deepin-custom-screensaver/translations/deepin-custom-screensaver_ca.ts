@@ -18,12 +18,12 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="39"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Camí de la imatge</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="46"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Estalvi de pantalla personalitzat</translation>
     </message>
 </context>
 <context>
@@ -31,7 +31,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="82"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Estalvi de pantalla personalitzat</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
