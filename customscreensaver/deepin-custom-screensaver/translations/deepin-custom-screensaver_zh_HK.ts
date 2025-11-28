@@ -18,12 +18,12 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="39"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>選擇圖片路徑</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="46"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>請選擇圖片路徑</translation>
     </message>
 </context>
 <context>
@@ -31,27 +31,27 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="82"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>自定義螢幕保護程式</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>路徑</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
         <source>Shuffle</source>
-        <translation type="unfinished"/>
+        <translation>隨機輪播</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>輪播設置</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>選擇圖片路徑</translation>
     </message>
 </context>
 <context>
@@ -59,7 +59,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="142"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>請在自定義屏保“屏保設置”中選擇有效的圖片路徑。</translation>
     </message>
 </context>
 <context>
@@ -67,12 +67,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>輪播間隔（秒）</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>數值範圍</translation>
     </message>
 </context>
 </TS>
