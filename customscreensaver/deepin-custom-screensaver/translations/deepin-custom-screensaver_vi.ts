@@ -36,7 +36,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Đường dẫn</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
