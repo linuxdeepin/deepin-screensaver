@@ -59,7 +59,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="142"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Vui lòng chọn đường dẫn ảnh hợp lệ trong mục &quot;Màn hình chờ tùy chỉnh&quot; của &quot;Cài đặt màn hình chờ&quot;.</translation>
     </message>
 </context>
 <context>
@@ -67,12 +67,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Khoảng thời gian (giây)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Phạm vi</translation>
     </message>
 </context>
 </TS>
