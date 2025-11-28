@@ -10,7 +10,7 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Estalvi de pantalla personalitzat</translation>
     </message>
 </context>
 <context>
@@ -59,7 +59,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="142"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Seleccioneu un camí d&apos;imatge vàlid a la Configuració del protector de pantalla, del protector de pantalla personalitzat.</translation>
     </message>
 </context>
 <context>
@@ -67,12 +67,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Interval de temps (s)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Interval</translation>
     </message>
 </context>
 </TS>
