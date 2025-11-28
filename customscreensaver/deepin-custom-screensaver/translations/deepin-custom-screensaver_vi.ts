@@ -41,17 +41,17 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
         <source>Shuffle</source>
-        <translation type="unfinished"/>
+        <translation>Xáo trộn</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Trình chiếu</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Đường dẫn ảnh</translation>
     </message>
 </context>
 <context>
