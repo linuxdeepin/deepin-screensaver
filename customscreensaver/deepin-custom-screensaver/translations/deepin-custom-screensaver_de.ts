@@ -59,7 +59,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="142"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Bitte wählen Sie in Eigener Bildschirmschoner &quot;Bildschirmschoner-Einstellungen&quot; einen gültigen Pfad zu Bildern aus.</translation>
     </message>
 </context>
 <context>
@@ -67,12 +67,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Zeitintervall (s)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Bereich</translation>
     </message>
 </context>
 </TS>
