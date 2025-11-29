@@ -51,7 +51,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Pfad zu Bildern</translation>
     </message>
 </context>
 <context>
