@@ -10,7 +10,7 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Własny wygaszacz ekranu</translation>
     </message>
 </context>
 <context>
@@ -67,12 +67,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Odstęp czasu (s)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Zakres</translation>
     </message>
 </context>
 </TS>
