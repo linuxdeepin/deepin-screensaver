@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pl" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pl" sourcelanguage="en">
 <context>
     <name>QObject</name>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="145"/>
         <source>Restore Defaults</source>
         <translation>Przywróć domyślne</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="37"/>
+        <location filename="../src/main.cpp" line="38"/>
+        <source>deepin-screensaver</source>
+        <translation>Własny wygaszacz ekranu</translation>
     </message>
 </context>
 <context>
@@ -19,7 +23,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="46"/>
         <source>Select a path of pictures</source>
-        <translation>Wybierz ścieżkę zdjęć</translation>
+        <translation>Wybierz ścieżkę ze zdjęciami</translation>
     </message>
 </context>
 <context>
@@ -37,12 +41,12 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
         <source>Shuffle</source>
-        <translation>Odtwarzanie losowe</translation>
+        <translation>Wymieszaj</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation>Pokaz slajdów</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
@@ -53,9 +57,9 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="141"/>
-        <source>Picture not found</source>
-        <translation>Nie znaleziono zdjęcia</translation>
+        <location filename="../src/slideshowscreensaver.cpp" line="142"/>
+        <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -63,12 +67,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation>Przedział czasowy (s)</translation>
+        <translation>Odstęp czasu (s)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation>Zasięg</translation>
+        <translation>Zakres</translation>
     </message>
 </context>
 </TS>
