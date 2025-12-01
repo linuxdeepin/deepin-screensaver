@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_HK" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_HK" sourcelanguage="en">
 <context>
     <name>QObject</name>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="145"/>
         <source>Restore Defaults</source>
         <translation>恢復默認</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="37"/>
+        <location filename="../src/main.cpp" line="38"/>
+        <source>deepin-screensaver</source>
+        <translation>自定義螢幕保護程式</translation>
     </message>
 </context>
 <context>

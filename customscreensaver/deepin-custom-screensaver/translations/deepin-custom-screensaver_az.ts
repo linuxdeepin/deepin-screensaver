@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="az" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="az" sourcelanguage="en">
 <context>
     <name>QObject</name>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="145"/>
         <source>Restore Defaults</source>
         <translation>Standartları bərpa edin</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="37"/>
+        <location filename="../src/main.cpp" line="38"/>
+        <source>deepin-screensaver</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -53,9 +57,9 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="141"/>
-        <source>Picture not found</source>
-        <translation>Şəkil tapılmadı</translation>
+        <location filename="../src/slideshowscreensaver.cpp" line="142"/>
+        <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
