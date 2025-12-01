@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo" sourcelanguage="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="bo" sourcelanguage="en">
 <context>
     <name>QObject</name>
     <message>
@@ -10,20 +12,25 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SelectPathWidget</name>
     <message>
-        <location filename="../src/config/selectpathwidget.cpp" line="39"/>
+        <location filename="../src/config/selectpathwidget.cpp" line="45"/>
         <source>Picture path</source>
         <translation>པར་རིས་འགྲོ་ལམ་འདེམས་པ།</translation>
     </message>
     <message>
-        <location filename="../src/config/selectpathwidget.cpp" line="46"/>
+        <location filename="../src/config/selectpathwidget.cpp" line="52"/>
         <source>Select a path of pictures</source>
         <translation>པར་རིས་འགྲོ་ལམ་འདེམས་རོགས།</translation>
+    </message>
+    <message>
+        <location filename="../src/config/selectpathwidget.cpp" line="83"/>
+        <source>Select a valid image path</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -57,9 +64,9 @@
 <context>
     <name>SlideshowScreenSaver</name>
     <message>
-        <location filename="../src/slideshowscreensaver.cpp" line="142"/>
+        <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
