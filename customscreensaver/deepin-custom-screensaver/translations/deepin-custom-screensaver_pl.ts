@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pl" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pl" sourcelanguage="en">
 <context>
     <name>QObject</name>
     <message>
@@ -30,7 +28,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -53,7 +51,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
@@ -66,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
