@@ -9,6 +9,11 @@
 
 #include <QHBoxLayout>
 #include <QEvent>
+#include <QDir>
+#include <QFileInfo>
+
+static const qint64 kImageMaxSize = 30 * 1024 * 1024;   // Only display image smaller than 30M
+static const QStringList kValidSuffix { QStringLiteral("jpg"), QStringLiteral("jpeg"), QStringLiteral("bmp"), QStringLiteral("png") };
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -22,6 +27,7 @@ SelectPathWidget::SelectPathWidget(QWidget *parent)
 void SelectPathWidget::setPath(const QString &path)
 {
     m_selectLineEdit->setText(path);
+    validatePath();
 }
 
 QString SelectPathWidget::getPath()
@@ -66,4 +72,36 @@ bool SelectPathWidget::eventFilter(QObject *obj, QEvent *event)
     }
 
     return QObject::eventFilter(obj, event);
+}
+
+void SelectPathWidget::validatePath()
+{
+    QString path = m_selectLineEdit->getText();
+    bool valid = hasValidImages(path);
+    m_selectLineEdit->setAlert(!valid);
+    if (!valid) {
+        m_selectLineEdit->showAlertMessage(tr("Select a valid image path"), -1);
+    } else {
+        m_selectLineEdit->hideAlertMessage();
+    }
+}
+
+bool SelectPathWidget::hasValidImages(const QString &path) const
+{
+    QFileInfo fileInfo(path);
+    if (!fileInfo.exists() || !fileInfo.isDir())
+        return false;
+
+    QDir dir(path);
+    QDir::Filters filters = QDir::Files | QDir::NoDotAndDotDot | QDir::Readable;
+    QFileInfoList infoList = dir.entryInfoList(filters, QDir::Name);
+    if (infoList.isEmpty())
+        return false;
+
+    for (const auto &info : infoList) {
+        if (info.size() < kImageMaxSize && kValidSuffix.contains(info.suffix(), Qt::CaseInsensitive))
+            return true;
+    }
+
+    return false;
 }

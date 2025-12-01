@@ -21,6 +21,7 @@ public:
     explicit SelectPathWidget(QWidget *parent = nullptr);
     void setPath(const QString &path);
     QString getPath();
+    void validatePath();
 signals:
     void requsetSetPath();
 protected:
@@ -28,6 +29,9 @@ protected:
 
 private:
     void initOption();
+private:
+    bool hasValidImages(const QString &path) const;
+
 private:
     Dtk::Widget::DLabel *m_selectTips = nullptr;
     TruncateLineEdit *m_selectLineEdit = nullptr;
