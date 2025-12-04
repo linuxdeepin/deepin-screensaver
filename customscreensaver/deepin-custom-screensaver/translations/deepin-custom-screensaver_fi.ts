@@ -51,12 +51,12 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Diaesitys</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Kuvien polku</translation>
     </message>
 </context>
 <context>
