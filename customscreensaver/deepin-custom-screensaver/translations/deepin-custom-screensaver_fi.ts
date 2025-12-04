@@ -36,17 +36,17 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="82"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Mukautettu näytönsäästäjä</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Polku</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
         <source>Shuffle</source>
-        <translation type="unfinished"/>
+        <translation>Sekoitta</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
