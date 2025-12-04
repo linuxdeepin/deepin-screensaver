@@ -77,7 +77,7 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Alue</translation>
     </message>
 </context>
 </TS>
