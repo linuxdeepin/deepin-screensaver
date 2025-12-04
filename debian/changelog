@@ -1,3 +1,17 @@
+deepin-screensaver (6.5.3) unstable; urgency=medium
+
+  * i18n: Updates for project Deepin Desktop Environment (#114)
+  * fix: improve path selection behavior
+  * fix: update Transifex project and filters
+  * i18n: Updates for project Deepin Desktop Environment (#111)
+  * chore: add translation sync YAML configuration
+  * fix: update default slideshow image path to Wallpapers directory
+  * fix: (config)remove global flag from currentScreenSaver setting
+  * fix: (customscreensaver)remove global flags from configuration
+    options
+
+ -- fuleyi <fuleyi@uniontech.com>  Thu, 04 Dec 2025 19:14:26 +0800
+
 deepin-screensaver (6.5.2) unstable; urgency=medium
 
   * feat: implement automatic DBus property change notifications
