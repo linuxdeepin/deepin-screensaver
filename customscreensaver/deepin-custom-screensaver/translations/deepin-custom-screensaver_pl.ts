@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Wybierz prawidłową ścieżkę w ustawieniach pokazu slajdów.</translation>
     </message>
 </context>
 <context>
