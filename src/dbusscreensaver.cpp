@@ -207,6 +207,9 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
     const QDir &moduleDir = m_screenSaverNameToDir.value(name);
     if (!QFile::exists(moduleDir.absoluteFilePath(name)))
         return false;
+
+    m_previewing = preview;
+
     if (preview) {
         if (x11event) {
             QAbstractEventDispatcher::instance()->removeNativeEventFilter(x11event.data());
@@ -228,7 +231,7 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 
     for (ScreenSaverWindow *window : m_windowMap) {
         if (staysOn) {
-            window->setFlags(window->flags() | Qt::WindowStaysOnTopHint, !preview);
+            window->setFlags(window->flags() | Qt::WindowStaysOnTopHint, true);
         } else {
             window->setFlags(window->flags() | Qt::WindowStaysOnBottomHint, false);
         }
@@ -242,11 +245,7 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
             window->start(moduleDir.absoluteFilePath(name));
         }
 
-        if (!preview) {
-            connect(window, &ScreenSaverWindow::inputEvent, this, &DBusScreenSaver::stop, Qt::UniqueConnection);
-        } else {
-            disconnect(window, &ScreenSaverWindow::inputEvent, this, &DBusScreenSaver::stop);
-        }
+        connect(window, &ScreenSaverWindow::inputEvent, this, &DBusScreenSaver::onInputEventReceived, Qt::UniqueConnection);
 
         window->show();
     }
@@ -457,6 +456,7 @@ void DBusScreenSaver::Stop(bool lock)
 #endif
 
     emit isRunningChanged(false);
+    m_previewing = false;
 }
 
 void DBusScreenSaver::stop()
@@ -649,6 +649,17 @@ void DBusScreenSaver::onConfigChanged(const QString &key)
         return;
     if (key == dCurrentScreenSaver)
         setCurrentScreenSaver(screenSaver);
+}
+
+void DBusScreenSaver::onInputEventReceived(QEvent::Type type)
+{
+    if (m_previewing) {
+        if (type == QEvent::MouseMove) { // 预览时鼠标移动不退出
+            return;
+        }
+    }
+    qInfo() << QDateTime::currentDateTime().toString() << "receive input evnet and will quit:" << type;
+    Stop();
 }
 
 void DBusScreenSaver::clearResourceList()

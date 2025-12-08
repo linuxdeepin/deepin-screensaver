@@ -76,6 +76,7 @@ private:
     Q_SLOT void onSessionPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
     Q_SLOT void onDBusPropertyChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
     Q_SLOT void onConfigChanged(const QString &key);
+    Q_SLOT void onInputEventReceived(QEvent::Type type);
 
     void clearResourceList();
     void ensureWindowMap();
@@ -111,6 +112,7 @@ private:
     QScopedPointer<QDBusInterface> m_powerInterface;
 
     static const QStringList m_dbusProperties;
+    bool m_previewing = false;
 };
 
 #endif // DBUSSCREENSAVER_H
