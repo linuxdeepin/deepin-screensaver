@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation>Veuillez sélectionner un chemin d&apos;accès à une image valide dans les « Paramètres d&apos;économiseur d&apos;écran » de l&apos;économiseur d&apos;écran personnalisé.</translation>
+        <translation>Veuillez sélectionner un chemin d&apos;accès à une image valide dans les &quot;Paramètres d&apos;économiseur d&apos;écran&quot; de l&apos;économiseur d&apos;écran personnalisé.</translation>
     </message>
 </context>
 <context>
@@ -72,12 +72,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Intervalle de temps (s)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Rayon</translation>
     </message>
 </context>
 </TS>
