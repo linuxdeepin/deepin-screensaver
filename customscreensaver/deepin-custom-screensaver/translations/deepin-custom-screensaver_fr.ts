@@ -10,7 +10,7 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Écran de veille personnalisé</translation>
     </message>
 </context>
 <context>
@@ -18,17 +18,17 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="45"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Chemin de l&apos;image</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="52"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Sélectionner un chemin d&apos;accès aux images</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Sélectionner un chemin d&apos;accès valide aux images</translation>
     </message>
 </context>
 <context>
@@ -36,7 +36,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="82"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Écran de veille personnalisé</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
