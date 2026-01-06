@@ -417,8 +417,8 @@ void DBusScreenSaver::Stop(bool lock)
     if (m_windowMap.isEmpty())
         return;
 
-    // 只在由窗口自己唤醒时才会触发锁屏
-    if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive()
+    // 只在由窗口自己唤醒时才会触发锁屏，预览模式下不触发锁屏
+    if (m_lockScreenAtAwake && !m_lockScreenTimer.isActive() && !m_previewing
             && (lock || qobject_cast<ScreenSaverWindow*>(sender()))) {
         auto ver = DSysInfo::majorVersion().toInt();
         QString lockfontService = "com.deepin.dde.lockFront";
