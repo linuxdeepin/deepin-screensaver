@@ -3,6 +3,11 @@
 export QT_SELECT=5
 include /usr/share/dpkg/default.mk
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_CFLAGS_MAINT_APPEND = -Wall -Wextra -fstack-protector-strong -D_FORTIFY_SOURCE=2
+export DEB_CXXFLAGS_MAINT_APPEND = -Wall -Wextra -fstack-protector-strong -D_FORTIFY_SOURCE=2
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed -Wl,-z,noexecstack
+
 # 检测当前安装的Qt版本，优先使用Qt6，否则使用Qt5
 define detect_qt_version
 ifneq (,$(shell which qmake6 2>/dev/null))
