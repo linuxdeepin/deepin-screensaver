@@ -1,3 +1,9 @@
+deepin-screensaver (6.5.6) unstable; urgency=medium
+
+  * chore: enhance Debian build security hardening
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 05 Mar 2026 20:44:21 +0800
+
 deepin-screensaver (6.5.5) unstable; urgency=medium
 
   * fix: prevent lock screen during screensaver preview (#119)
