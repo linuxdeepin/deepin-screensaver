@@ -162,6 +162,13 @@ DBusScreenSaver::~DBusScreenSaver()
 
 bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 {
+    // 仅在 X11 环境下检查 X Server 连接有效性，避免 Xorg 异常退出后仍启动屏保导致日志风暴
+    const static bool isWayland = qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland");
+    if (!isWayland && !QX11Info::display()) {
+        qWarning() << "X Server connection is invalid, skip starting screensaver.";
+        return false;
+    }
+
     const QDir &moduleDir = m_screenSaverNameToDir.value(name);
     if (!QFile::exists(moduleDir.absoluteFilePath(name)))
         return false;
@@ -213,7 +220,6 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 
     emit isRunningChanged(true);
 
-    const static bool isWayland = qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland");
     if (!preview && isWayland) {
         // 在wayland环境下无法接收到键盘事件，通过强制抓取键盘来进行规避
         qInfo() << QDateTime::currentDateTime().toString() << "current not preview,and wayland is true,grab keyboard!";
@@ -638,8 +644,8 @@ void DBusScreenSaver::onScreenAdded(QScreen *s)
 
 void DBusScreenSaver::cleanWindow(ScreenSaverWindow *w)
 {
-    w->hide();
     w->stop();
+    w->hide();
     w->deleteLater();
 
     if (QScreen *s = w->screen()) {
