@@ -48,7 +48,7 @@ bool ScreenSaverView::start(const QString &filePath)
     } else {
         if (!m_process) {
             m_process = new QProcess(this);
-            m_process->setProcessChannelMode(QProcess::ForwardedChannels);
+            m_process->setProcessChannelMode(QProcess::SeparateChannels);
         }
 
         create();
@@ -68,7 +68,10 @@ void ScreenSaverView::stop()
 {
     if (m_process && m_process->state() != QProcess::NotRunning) {
         m_process->terminate();
-        m_process->waitForFinished();
+        if (!m_process->waitForFinished(5000)) {
+            m_process->kill();
+            m_process->waitForFinished(3000);
+        }
     }
 
     // 清理qml的播放
