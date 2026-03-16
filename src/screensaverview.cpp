@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019~ 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019~ 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -52,13 +52,14 @@ bool ScreenSaverView::start(const QString &filePath)
         }
 
         create();
-        m_process->start(filePath, {"-window-id", QString::number(winId())}, QIODevice::ReadOnly);
-
-        if (!m_process->waitForStarted(3000)) {
-            qDebug() << "Failed on start:" << m_process->program() << ", error string:" << m_process->errorString();
-
-            return false;
-        }
+        QMetaObject::invokeMethod(this, [this, filePath](){
+            m_process->start(filePath, {"-window-id", QString::number(winId())}, QIODevice::ReadOnly);
+            if (!m_process->waitForStarted(3000)) {
+                qWarning() << "Failed on start:" << m_process->program() << ", error string:" << m_process->errorString();
+                stop();
+            }
+        }, Qt::QueuedConnection);
+        
     }
 
     return true;
