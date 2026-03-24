@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -33,8 +33,6 @@ bool CustomConfig::startCustomConfig(const QString &name)
 
     m_settingDialiog = new ScreenSaverSettingDialog(name);
     m_settingDialiog->setAttribute(Qt::WA_DeleteOnClose);
-    // remove dialog flag to let dock show window entry.
-    m_settingDialiog->setWindowFlag(Qt::Dialog, false);
     m_settingDialiog->show();
     m_lastConfigName = name;
     return true;

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -185,9 +185,6 @@ void SlideShowConfigDialog::startConfig()
     setWindowFlags(this->windowFlags() & ~Qt::WindowMaximizeButtonHint);
 
     setAttribute(Qt::WA_DeleteOnClose);
-
-    // remove dialog flag to let dock show window entry.
-    setWindowFlag(Qt::Dialog, false);
 
     QScreen *screen = qApp->primaryScreen();
     move(screen->geometry().width() / 2 - this->width() / 2,
