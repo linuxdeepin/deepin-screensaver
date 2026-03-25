@@ -10,7 +10,7 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Écran de veille personnalisé</translation>
     </message>
 </context>
 <context>
@@ -18,17 +18,17 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="45"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Chemin de l&apos;image</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="52"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Sélectionner un chemin d&apos;accès aux images</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Sélectionner un chemin d&apos;accès valide aux images</translation>
     </message>
 </context>
 <context>
@@ -36,27 +36,27 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="82"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Écran de veille personnalisé</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Chemin</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
         <source>Shuffle</source>
-        <translation type="unfinished"/>
+        <translation>Aléatoire</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Diaporama</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Chemin d&apos;image</translation>
     </message>
 </context>
 <context>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez sélectionner un chemin d&apos;accès à une image valide dans les &quot;Paramètres d&apos;économiseur d&apos;écran&quot; de l&apos;économiseur d&apos;écran personnalisé.</translation>
     </message>
 </context>
 <context>
@@ -72,12 +72,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Intervalle de temps (s)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Rayon</translation>
     </message>
 </context>
 </TS>
