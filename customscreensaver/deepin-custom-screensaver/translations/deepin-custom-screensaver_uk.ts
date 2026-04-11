@@ -18,7 +18,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="45"/>
         <source>Picture path</source>
-        <translation>Шлях до зображення</translation>
+        <translation>Шлях до зображень</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="52"/>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, виберіть коректний шлях до зображень у «Параметрах зберігача екрана» нетипового зберігача екрана.</translation>
     </message>
 </context>
 <context>
