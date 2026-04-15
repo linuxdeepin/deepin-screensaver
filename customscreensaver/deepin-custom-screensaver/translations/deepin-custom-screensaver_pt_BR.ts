@@ -18,17 +18,17 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="45"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Caminho da imagem</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="52"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Selecione uma pasta de imagens</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Selecione um caminho de imagem válido</translation>
     </message>
 </context>
 <context>
