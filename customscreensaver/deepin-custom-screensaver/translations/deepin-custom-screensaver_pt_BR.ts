@@ -4,13 +4,13 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="145"/>
         <source>Restore Defaults</source>
-        <translation>Restaurar Padrões</translation>
+        <translation>Restaurar padrões</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Protetor de tela personalizado</translation>
     </message>
 </context>
 <context>
