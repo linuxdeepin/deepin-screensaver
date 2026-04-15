@@ -7,6 +7,7 @@
 
 #include <DConfig>
 
+#include <QEvent>
 #include <QObject>
 #include <QDir>
 #include <QTimer>
