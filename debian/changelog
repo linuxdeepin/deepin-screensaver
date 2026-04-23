@@ -1,3 +1,9 @@
+deepin-screensaver (6.5.9) unstable; urgency=medium
+
+  * fix: include QEvent for dbusscreensaver build failure
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 23 Apr 2026 21:46:45 +0800
+
 deepin-screensaver (6.5.8) unstable; urgency=medium
 
   * fix: remove dialog flag removal for dock window entry
