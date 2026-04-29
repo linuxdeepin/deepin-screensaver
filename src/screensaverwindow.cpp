@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 ~ 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 ~ 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -18,6 +18,18 @@
 #include <X11/Xproto.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+
+// 创建X11不可见光标
+static Cursor createInvisibleCursor(Display *display)
+{
+    // 创建1x1的空白pixmap
+    Pixmap blank = XCreatePixmap(display, DefaultRootWindow(display), 1, 1, 1);
+    XColor color;
+    memset(&color, 0, sizeof(color));
+    Cursor cursor = XCreatePixmapCursor(display, blank, blank, &color, &color, 0, 0);
+    XFreePixmap(display, blank);
+    return cursor;
+}
 
 ScreenSaverWindow::ScreenSaverWindow(QObject *parent)
     : QObject(parent)
@@ -119,6 +131,14 @@ void ScreenSaverWindow::show()
     m_view->setGeometry(screen()->geometry());
     m_view->showFullScreen();
 
+    // 通过XDefineCursor在X11层面设置不可见光标，子窗口自动继承
+    auto display = QX11Info::display();
+    if (display) {
+        Cursor cursor = createInvisibleCursor(display);
+        XDefineCursor(display, m_view->winId(), cursor);
+        XFreeCursor(display, cursor);
+    }
+
     QTimer::singleShot(500, m_view, [this] {
         // 在kwin中，窗口类型为Qt::Drawer时会导致多屏情况下只会有一个窗口被显示，另一个被最小化
         // 这里判断最小化的窗口后更改其窗口类型再次显示。
@@ -169,6 +189,11 @@ void ScreenSaverWindow::show()
 
 void ScreenSaverWindow::hide()
 {
+    // 通过XUndefineCursor恢复光标
+    auto display = QX11Info::display();
+    if (display) {
+        XUndefineCursor(display, m_view->winId());
+    }
     m_view->hide();
 }
 
