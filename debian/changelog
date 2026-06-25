@@ -1,3 +1,11 @@
+deepin-screensaver (6.5.11) unstable; urgency=medium
+
+  * chore: Sync by
+    https://github.com/linuxdeepin/.github/commit/88706fa723e3771211cb07
+    81d3d97fd4a6cd2a68
+
+ -- Kun Zhang <zhangkun2@uniontech.com>  Thu, 25 Jun 2026 13:14:13 +0800
+
 deepin-screensaver (6.5.10) unstable; urgency=medium
 
   * fix: mouse cursor not hidden after screensaver activated
