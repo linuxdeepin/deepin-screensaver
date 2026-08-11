@@ -23,7 +23,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="52"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Выберите папку с изображениями</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
@@ -56,7 +56,7 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Путь к изображению</translation>
     </message>
 </context>
 <context>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, укажите действительный путь к изображению в настройках пользовательской заставки «Настройки заставки».</translation>
     </message>
 </context>
 <context>
@@ -72,12 +72,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Временной интервал (с)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Диапазон</translation>
     </message>
 </context>
 </TS>
