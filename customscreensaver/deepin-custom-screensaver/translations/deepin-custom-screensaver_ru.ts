@@ -10,7 +10,7 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Пользовательская заставка</translation>
     </message>
 </context>
 <context>
@@ -18,7 +18,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="45"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Путь к изображению</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="52"/>
@@ -28,7 +28,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Выберите допустимый путь к изображению</translation>
     </message>
 </context>
 <context>
@@ -36,22 +36,22 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="82"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Пользовательская заставка</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Путь</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
         <source>Shuffle</source>
-        <translation type="unfinished"/>
+        <translation>Перемешать</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Слайд-шоу</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
