@@ -28,7 +28,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Wählen Sie einen gültigen Bilddatei-Pfad</translation>
     </message>
 </context>
 <context>

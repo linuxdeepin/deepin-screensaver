@@ -28,7 +28,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Përzgjidhni një shteg të vlefshëm figure</translation>
     </message>
 </context>
 <context>

@@ -10,7 +10,7 @@
         <location filename="../src/main.cpp" line="37"/>
         <location filename="../src/main.cpp" line="38"/>
         <source>deepin-screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Нетипова заставка</translation>
     </message>
 </context>
 <context>
@@ -18,17 +18,17 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="45"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Шлях до зображень</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="52"/>
         <source>Select a path of pictures</source>
-        <translation type="unfinished"/>
+        <translation>Виберіть шлях до зображень</translation>
     </message>
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Виберіть коректний шлях до зображення</translation>
     </message>
 </context>
 <context>
@@ -36,27 +36,27 @@
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="82"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Нетиповий зберігач екрана</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="129"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Шлях</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="134"/>
         <source>Shuffle</source>
-        <translation type="unfinished"/>
+        <translation>Перемішати</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="135"/>
         <source>Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Показ слайдів</translation>
     </message>
     <message>
         <location filename="../src/slideshowconfigdialog.cpp" line="228"/>
         <source>Picture path</source>
-        <translation type="unfinished"/>
+        <translation>Шлях до зображень</translation>
     </message>
 </context>
 <context>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../src/slideshowscreensaver.cpp" line="168"/>
         <source>Please select a valid image path in the Custom Screensaver &quot;Screensaver Setting&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, виберіть коректний шлях до зображень у «Параметрах зберігача екрана» нетипового зберігача екрана.</translation>
     </message>
 </context>
 <context>
@@ -72,12 +72,12 @@
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="44"/>
         <source>Time interval (s)</source>
-        <translation type="unfinished"/>
+        <translation>Інтервал за часом (с)</translation>
     </message>
     <message>
         <location filename="../src/config/timeintervalwidget.cpp" line="46"/>
         <source>Range</source>
-        <translation type="unfinished"/>
+        <translation>Діапазон</translation>
     </message>
 </context>
 </TS>

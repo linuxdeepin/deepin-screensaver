@@ -28,7 +28,7 @@
     <message>
         <location filename="../src/config/selectpathwidget.cpp" line="83"/>
         <source>Select a valid image path</source>
-        <translation type="unfinished"/>
+        <translation>Seleccioneu un camí d&apos;imatge vàlid.</translation>
     </message>
 </context>
 <context>
