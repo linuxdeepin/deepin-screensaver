@@ -1,3 +1,9 @@
+deepin-screensaver (6.5.12) unstable; urgency=medium
+
+  * fix: update Arabic (ar) translations
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Mon, 07 Sep 2026 11:42:07 +0800
+
 deepin-screensaver (6.5.11) unstable; urgency=medium
 
   * chore: Sync by
