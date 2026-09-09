@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 ~ 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -15,7 +15,6 @@
 #include <QDBusMessage>
 #include <QScreen>
 #include <QAtomicInteger>
-#include <QDBusInterface>
 
 DCORE_USE_NAMESPACE
 
@@ -91,6 +90,12 @@ private:
     // 统一的 DBus 属性变化信号发送方法
     void sendDBusPropertyChanged(const QString &propertyName, const QVariant &value);
 
+    // isRunning 由 m_windowMap 推导，不经过 setProperty，需要显式广播属性变化
+    void notifyScreensaverRunningChanged(bool running);
+
+    QVariant powerProperty(const char *name, const QVariant &fallback = QVariant()) const;
+    void setPowerProperty(const char *name, const QVariant &value);
+
     QList<QDir> m_resourceDirList;
     QStringList m_resourceList;
 
@@ -110,7 +115,8 @@ private:
     QAtomicInteger<bool> m_grabKeyboard = false;
 
     DConfig *m_dcfg;
-    QScopedPointer<QDBusInterface> m_powerInterface;
+    QString m_powerService;
+    QString m_powerPath;
 
     static const QStringList m_dbusProperties;
     bool m_previewing = false;
