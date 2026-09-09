@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 ~ 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -16,6 +16,8 @@
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusMessage>
+#include <QDBusPendingCall>
+#include <QDBusVariant>
 #include <QResource>
 #include <QStandardPaths>
 #include <QDirIterator>
@@ -44,6 +46,8 @@ DCORE_USE_NAMESPACE
 static constexpr char dCfgAppId[] { "org.deepin.screensaver" };
 static constexpr char dCfgName[] { "org.deepin.screensaver" };
 static constexpr char dCurrentScreenSaver[] { "currentScreenSaver" };
+
+static constexpr int kPowerPropertyTimeoutMs = 3000;
 
 // 需要发送 DBus PropertiesChanged 信号的属性列表
 const QStringList DBusScreenSaver::m_dbusProperties = {
@@ -147,16 +151,15 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
     connect(m_dcfg, &DConfig::valueChanged, this, &DBusScreenSaver::onConfigChanged, Qt::DirectConnection);
 
     auto ver = DSysInfo::majorVersion().toInt();
-    QString powerService = "com.deepin.daemon.Power";
-    QString powerPath = "/com/deepin/daemon/Power";
+    m_powerService = QStringLiteral("com.deepin.daemon.Power");
+    m_powerPath = QStringLiteral("/com/deepin/daemon/Power");
     if (ver > 20) {
-        powerService = "org.deepin.dde.Power1";
-        powerPath = "/org/deepin/dde/Power1";
+        m_powerService = QStringLiteral("org.deepin.dde.Power1");
+        m_powerPath = QStringLiteral("/org/deepin/dde/Power1");
     }
-    m_powerInterface.reset(new QDBusInterface(powerService, powerPath, powerService, QDBusConnection::sessionBus(), this));
 
-    QDBusConnection::sessionBus().connect(powerService,
-                                          powerPath,
+    QDBusConnection::sessionBus().connect(m_powerService,
+                                          m_powerPath,
                                           "org.freedesktop.DBus.Properties",
                                           "PropertiesChanged",
                                           this, SLOT(onDBusPropertyChanged(QString,QVariantMap,QDBusMessage)));
@@ -200,6 +203,12 @@ void DBusScreenSaver::sendDBusPropertyChanged(const QString &propertyName, const
     );
     signal << "com.deepin.ScreenSaver" << changedProperties << QStringList();
     QDBusConnection::sessionBus().send(signal);
+}
+
+void DBusScreenSaver::notifyScreensaverRunningChanged(bool running)
+{
+    emit isRunningChanged(running);
+    sendDBusPropertyChanged(QStringLiteral("isRunning"), running);
 }
 
 bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
@@ -252,7 +261,7 @@ bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 
     m_autoQuitTimer.stop();
 
-    emit isRunningChanged(true);
+    notifyScreensaverRunningChanged(true);
 
     const static bool isWayland = qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland");
     if (!preview && isWayland) {
@@ -455,7 +464,7 @@ void DBusScreenSaver::Stop(bool lock)
     m_autoQuitTimer.start();
 #endif
 
-    emit isRunningChanged(false);
+    notifyScreensaverRunningChanged(false);
     m_previewing = false;
 }
 
@@ -476,14 +485,38 @@ QStringList DBusScreenSaver::allScreenSaver() const
     return m_screenSaverList;
 }
 
+QVariant DBusScreenSaver::powerProperty(const char *name, const QVariant &fallback) const
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall(
+        m_powerService, m_powerPath,
+        QStringLiteral("org.freedesktop.DBus.Properties"), QStringLiteral("Get"));
+    msg.setArguments({m_powerService, QString::fromLatin1(name)});
+
+    const QDBusMessage reply = QDBusConnection::sessionBus().call(msg, QDBus::Block, kPowerPropertyTimeoutMs);
+    if (reply.type() != QDBusMessage::ReplyMessage || reply.arguments().isEmpty())
+        return fallback;
+
+    return reply.arguments().first().value<QDBusVariant>().variant();
+}
+
+void DBusScreenSaver::setPowerProperty(const char *name, const QVariant &value)
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall(
+        m_powerService, m_powerPath,
+        QStringLiteral("org.freedesktop.DBus.Properties"), QStringLiteral("Set"));
+    msg.setArguments({m_powerService, QString::fromLatin1(name),
+                      QVariant::fromValue(QDBusVariant(value))});
+    QDBusConnection::sessionBus().asyncCall(msg);
+}
+
 int DBusScreenSaver::batteryScreenSaverTimeout() const
 {
-    return m_powerInterface->property("BatteryScreensaverDelay").toInt();
+    return powerProperty("BatteryScreensaverDelay").toInt();
 }
 
 int DBusScreenSaver::linePowerScreenSaverTimeout() const
 {
-    return m_powerInterface->property("LinePowerScreensaverDelay").toInt();
+    return powerProperty("LinePowerScreensaverDelay").toInt();
 }
 
 QString DBusScreenSaver::currentScreenSaver() const
@@ -498,12 +531,12 @@ bool DBusScreenSaver::isRunning() const
 
 void DBusScreenSaver::setBatteryScreenSaverTimeout(int batteryScreenSaverTimeout)
 {
-    m_powerInterface->setProperty("BatteryScreensaverDelay", batteryScreenSaverTimeout);
+    setPowerProperty("BatteryScreensaverDelay", batteryScreenSaverTimeout);
 }
 
 void DBusScreenSaver::setLinePowerScreenSaverTimeout(int linePowerScreenSaverTimeout)
 {
-    m_powerInterface->setProperty("LinePowerScreensaverDelay", linePowerScreenSaverTimeout);
+    setPowerProperty("LinePowerScreensaverDelay", linePowerScreenSaverTimeout);
 }
 
 void DBusScreenSaver::setCurrentScreenSaver(QString currentScreenSaver)
