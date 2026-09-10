@@ -1,3 +1,10 @@
+deepin-screensaver (6.5.12) unstable; urgency=medium
+
+  * fix: update Arabic (ar) translations
+  * fix: avoid blocking dbus calls in screensaver
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 10 Sep 2026 20:28:45 +0800
+
 deepin-screensaver (6.5.11) unstable; urgency=medium
 
   * chore: Sync by
