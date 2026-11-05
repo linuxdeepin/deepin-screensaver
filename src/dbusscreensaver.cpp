@@ -6,6 +6,12 @@
 #include "screensaverwindow.h"
 #include "screensaversettingdialog.h"
 #include "utils.h"
+#include "waylandsaver.h"
+
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#include <QDBusObjectPath>
+#include <unistd.h>
 
 #include <DDesktopEntry>
 #include <DSysInfo>
@@ -164,6 +170,30 @@ DBusScreenSaver::DBusScreenSaver(QObject *parent)
                                           "PropertiesChanged",
                                           this, SLOT(onDBusPropertyChanged(QString,QVariantMap,QDBusMessage)));
 
+    if (qEnvironmentVariable("XDG_SESSION_TYPE") == QStringLiteral("wayland")) {
+        m_waylandSaver = new WaylandSaver(this);
+        connect(m_waylandSaver, &WaylandSaver::activated, this, [this] {
+            if (!m_previewing)
+                m_lockScreenTimer.start();
+            notifyScreensaverRunningChanged(true);
+        });
+        connect(m_waylandSaver, &WaylandSaver::failed, this, [](const QString &reason) {
+            qWarning() << "Cannot start Wayland screensaver:" << reason;
+        });
+        connect(m_waylandSaver, &WaylandSaver::wakeRequested, this, [this] {
+            Stop(true);
+        }, Qt::QueuedConnection);
+        connect(m_waylandSaver, &WaylandSaver::stopped, this, [this] {
+            notifyScreensaverRunningChanged(false);
+            m_previewing = false;
+            if (m_waylandLockPending)
+                requestWaylandLock();
+#ifndef QT_DEBUG
+            m_autoQuitTimer.start();
+#endif
+        });
+    }
+
     RefreshScreenSaverList();
 }
 
@@ -213,6 +243,26 @@ void DBusScreenSaver::notifyScreensaverRunningChanged(bool running)
 
 bool DBusScreenSaver::Preview(const QString &name, int staysOn, bool preview)
 {
+    if (m_waylandSaver) {
+        if (m_waylandLockPending)
+            return false;
+        if (name != QStringLiteral("deepin-custom-screensaver"))
+            return false;
+        if (m_waylandSaver->isBusy())
+            return m_waylandSaver->isRunning();
+        m_previewing = preview;
+        m_autoQuitTimer.stop();
+        if (!m_waylandSaver->start()) {
+            m_previewing = false;
+#ifndef QT_DEBUG
+            if (!m_waylandSaver->isBusy())
+                m_autoQuitTimer.start();
+#endif
+            return false;
+        }
+        return true;
+    }
+
     const QDir &moduleDir = m_screenSaverNameToDir.value(name);
     if (!QFile::exists(moduleDir.absoluteFilePath(name)))
         return false;
@@ -375,6 +425,16 @@ void DBusScreenSaver::RefreshScreenSaverList()
     m_screenSaverList.clear();
     m_screenSaverNameToDir.clear();
 
+    if (m_waylandSaver) {
+        // The temporary Wayland backend only supports the existing slideshow.
+        const QString slideshow = QStringLiteral("deepin-custom-screensaver");
+        m_screenSaverList = QStringList{slideshow};
+        m_screenSaverNameToDir.insert(slideshow, QDir(MODULE_PATH));
+        m_currentScreenSaver = slideshow;
+        emit allScreenSaverChanged(m_screenSaverList);
+        return;
+    }
+
     for (const QDir &moduleDir : m_moduleDirList) {
         for (const QFileInfo &info : moduleDir.entryInfoList(QDir::Files)) {
             if (!info.isExecutable() && info.suffix() != "qml")
@@ -407,6 +467,11 @@ void DBusScreenSaver::Start(const QString &name)
     if (isRunning())
         return;
 
+    if (m_waylandSaver) {
+        Preview(name.isEmpty() ? m_currentScreenSaver : name, 1, false);
+        return; // Wayland starts the grace period when the compositor confirms locked.
+    }
+
     Preview(name.isEmpty() ? m_currentScreenSaver : name, 1, false);
 
     // 计时用于判断在唤醒时是否要锁定屏幕
@@ -415,6 +480,18 @@ void DBusScreenSaver::Start(const QString &name)
 
 void DBusScreenSaver::Stop(bool lock)
 {
+    if (m_waylandSaver) {
+        if (!m_waylandSaver->isBusy())
+            return;
+        m_waylandLockPending |= m_waylandSaver->isRunning() && lock && m_lockScreenAtAwake
+                && !m_lockScreenTimer.isActive() && !m_previewing;
+        // SECURITY: releasing session-lock before login1 is not an atomic handoff.
+        // The desktop may be exposed, and a failed login1 request leaves it unlocked.
+        // This temporary backend must not be used as a secure lock-screen boundary.
+        m_waylandSaver->stop();
+        return;
+    }
+
     bool waitLock = false;
 
     if (m_grabKeyboard) {
@@ -473,6 +550,51 @@ void DBusScreenSaver::stop()
     Stop(true);
 }
 
+void DBusScreenSaver::requestWaylandLock()
+{
+    const QString service = QStringLiteral("org.freedesktop.login1");
+    const QString managerPath = QStringLiteral("/org/freedesktop/login1");
+    const QString managerInterface = QStringLiteral("org.freedesktop.login1.Manager");
+    const QString sessionId = qEnvironmentVariable("XDG_SESSION_ID");
+    auto logResult = [this](const QDBusPendingCall &call) {
+        auto *watcher = new QDBusPendingCallWatcher(call, this);
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher] {
+            const QDBusPendingReply<> reply = *watcher;
+            if (reply.isError())
+                qWarning() << "Wayland screensaver: login1 lock failed:" << reply.error().message();
+            m_waylandLockPending = false;
+            watcher->deleteLater();
+        });
+    };
+    if (!sessionId.isEmpty()) {
+        auto message = QDBusMessage::createMethodCall(service, managerPath, managerInterface,
+                                                    QStringLiteral("LockSession"));
+        message << sessionId;
+        logResult(QDBusConnection::systemBus().asyncCall(message, 3000));
+        return;
+    }
+
+    // D-Bus activation does not always carry XDG_SESSION_ID. Resolve our actual
+    // session instead of confusing a process ID with a login1 session ID.
+    auto message = QDBusMessage::createMethodCall(service, managerPath, managerInterface,
+                                                QStringLiteral("GetSessionByPID"));
+    message << static_cast<uint>(getpid());
+    auto *watcher = new QDBusPendingCallWatcher(
+            QDBusConnection::systemBus().asyncCall(message, 3000), this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher, logResult, service] {
+        const QDBusPendingReply<QDBusObjectPath> reply = *watcher;
+        watcher->deleteLater();
+        if (reply.isError()) {
+            qWarning() << "Wayland screensaver: cannot resolve login1 session:" << reply.error().message();
+            m_waylandLockPending = false;
+            return;
+        }
+        auto lock = QDBusMessage::createMethodCall(service, reply.value().path(),
+                QStringLiteral("org.freedesktop.login1.Session"), QStringLiteral("Lock"));
+        logResult(QDBusConnection::systemBus().asyncCall(lock, 3000));
+    });
+}
+
 QStringList DBusScreenSaver::allScreenSaver() const
 {
     static const QString saverpic("saverpic.qml");
@@ -526,7 +648,7 @@ QString DBusScreenSaver::currentScreenSaver() const
 
 bool DBusScreenSaver::isRunning() const
 {
-    return !m_windowMap.isEmpty();
+    return m_waylandSaver ? m_waylandSaver->isRunning() : !m_windowMap.isEmpty();
 }
 
 void DBusScreenSaver::setBatteryScreenSaverTimeout(int batteryScreenSaverTimeout)
@@ -541,6 +663,8 @@ void DBusScreenSaver::setLinePowerScreenSaverTimeout(int linePowerScreenSaverTim
 
 void DBusScreenSaver::setCurrentScreenSaver(QString currentScreenSaver)
 {
+    if (m_waylandSaver && currentScreenSaver != QStringLiteral("deepin-custom-screensaver"))
+        return;
     if (m_currentScreenSaver == currentScreenSaver)
         return;
 

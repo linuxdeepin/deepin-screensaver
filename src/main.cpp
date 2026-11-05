@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 ~ 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -6,7 +6,6 @@
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
-#include <QDateTime>
 
 #include "screensaveradaptor.h"
 #include "dbusscreensaver.h"
@@ -38,9 +37,8 @@ static QString buildVersion(const QString &fallbackVersion)
 int main(int argc, char *argv[])
 {
     auto envType = qEnvironmentVariable("XDG_SESSION_TYPE");
-    if (envType.contains("wayland")) {
-        qInfo() << QDateTime::currentDateTime().toString() << "notes:change wayland to xcb for QT_QPA_PLATFORM.";
-        qputenv("QT_QPA_PLATFORM", "xcb");
+    if (envType == QStringLiteral("wayland") && !qEnvironmentVariableIsSet("QT_QPA_PLATFORM")) {
+        qputenv("QT_QPA_PLATFORM", "wayland");
     }
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     DApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

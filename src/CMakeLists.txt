@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(deepin-screensaver LANGUAGES CXX)
+project(deepin-screensaver LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,15 +9,19 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOMOC ON)
 
 # 查找 Qt 模块
-set(qt_required_components Core Gui Widgets DBus Quick)
+set(qt_required_components Core Gui Widgets DBus Quick WaylandClient)
 
 if (QT_DESIRED_VERSION MATCHES 6)
 #     list(APPEND qt_required_components GuiPrivate)
 else()
-    list(APPEND qt_required_components X11Extras)
+    list(APPEND qt_required_components X11Extras XkbCommonSupport)
 endif()
 
 find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS ${qt_required_components})
+set(SESSION_LOCK_QT_LIBS Qt${QT_DESIRED_VERSION}::WaylandClientPrivate)
+if (QT_DESIRED_VERSION MATCHES 5)
+    list(APPEND SESSION_LOCK_QT_LIBS Qt5::XkbCommonSupportPrivate)
+endif()
 
 # Qt 6.10 起，私有模块目标(如 Qt6::GuiPrivate)拆分为独立的 CMake 包，不再随主模块自动创建，需显式查找；
 # 更早版本该目标由 Qt6GuiTargets.cmake 自动创建，无需额外处理
@@ -29,6 +33,42 @@ find_package(Dtk${DTK_VERSION_MAJOR} REQUIRED COMPONENTS Widget Gui Core)
 # 查找系统库
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(X11 REQUIRED x11 xscrnsaver xext xcb)
+pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
+pkg_check_modules(WAYLAND_PROTOCOLS REQUIRED wayland-protocols>=1.27)
+pkg_get_variable(WAYLAND_PROTOCOLS_DIR wayland-protocols pkgdatadir)
+find_program(WAYLAND_SCANNER wayland-scanner REQUIRED)
+set(SESSION_LOCK_XML "${WAYLAND_PROTOCOLS_DIR}/staging/ext-session-lock/ext-session-lock-v1.xml")
+# Share generated protocol code between the application and fake-compositor test.
+add_library(session-lock-protocol STATIC)
+target_link_libraries(session-lock-protocol PUBLIC Qt${QT_DESIRED_VERSION}::Gui PkgConfig::WAYLAND_CLIENT)
+target_include_directories(session-lock-protocol PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+if (QT_DESIRED_VERSION MATCHES 6)
+    find_package(WaylandScanner REQUIRED)
+    qt6_generate_wayland_protocol_client_sources(session-lock-protocol
+        PRIVATE_CODE FILES ${SESSION_LOCK_XML})
+else()
+    # Qt 5.15 ships qtwaylandscanner, but no client protocol CMake helper.
+    get_target_property(QT5_QMAKE Qt5::qmake IMPORTED_LOCATION)
+    execute_process(COMMAND ${QT5_QMAKE} -query QT_HOST_BINS
+        OUTPUT_VARIABLE QT5_HOST_BINS OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE QT5_QMAKE_RESULT)
+    if (NOT QT5_QMAKE_RESULT EQUAL 0)
+        message(FATAL_ERROR "Cannot query Qt5 host tools directory")
+    endif()
+    find_program(QT5_WAYLAND_SCANNER qtwaylandscanner HINTS ${QT5_HOST_BINS} REQUIRED)
+    set(SESSION_LOCK_HEADER "${CMAKE_CURRENT_BINARY_DIR}/wayland-ext-session-lock-v1-client-protocol.h")
+    set(SESSION_LOCK_CODE "${CMAKE_CURRENT_BINARY_DIR}/wayland-ext-session-lock-v1-protocol.c")
+    set(SESSION_LOCK_QT_HEADER "${CMAKE_CURRENT_BINARY_DIR}/qwayland-ext-session-lock-v1.h")
+    set(SESSION_LOCK_QT_CODE "${CMAKE_CURRENT_BINARY_DIR}/qwayland-ext-session-lock-v1.cpp")
+    add_custom_command(OUTPUT ${SESSION_LOCK_HEADER} ${SESSION_LOCK_CODE} ${SESSION_LOCK_QT_HEADER} ${SESSION_LOCK_QT_CODE}
+        COMMAND ${WAYLAND_SCANNER} client-header ${SESSION_LOCK_XML} ${SESSION_LOCK_HEADER}
+        COMMAND ${WAYLAND_SCANNER} private-code ${SESSION_LOCK_XML} ${SESSION_LOCK_CODE}
+        COMMAND ${QT5_WAYLAND_SCANNER} client-header ${SESSION_LOCK_XML} > ${SESSION_LOCK_QT_HEADER}
+        COMMAND ${QT5_WAYLAND_SCANNER} client-code ${SESSION_LOCK_XML} > ${SESSION_LOCK_QT_CODE}
+        DEPENDS ${SESSION_LOCK_XML} ${QT5_WAYLAND_SCANNER} VERBATIM)
+    target_sources(session-lock-protocol PRIVATE ${SESSION_LOCK_HEADER} ${SESSION_LOCK_CODE}
+        ${SESSION_LOCK_QT_HEADER} ${SESSION_LOCK_QT_CODE})
+endif()
 
 # 源文件
 set(SOURCES
@@ -42,6 +82,8 @@ set(SOURCES
     utils.cpp
     singlecustomsetting.cpp
     commandlinehelper.cpp
+    waylandsaver.cpp
+    sessionlock.cpp
 )
 
 # 头文件
@@ -55,6 +97,8 @@ set(HEADERS
     utils.h
     singlecustomsetting.h
     commandlinehelper.h
+    waylandsaver.h
+    sessionlock.h
 )
 
 # 翻译文件
@@ -100,6 +144,8 @@ set(LINK_LIBS
     Dtk${DTK_VERSION_MAJOR}::Gui
     Dtk${DTK_VERSION_MAJOR}::Core
     ${X11_LIBRARIES}
+    session-lock-protocol
+    ${SESSION_LOCK_QT_LIBS}
 )
 
 if (QT_DESIRED_VERSION MATCHES 6)
@@ -109,6 +155,25 @@ else()
 endif()
 
 target_link_libraries(${PROJECT_NAME} ${LINK_LIBS})
+
+if (BUILD_TESTING)
+    pkg_check_modules(WAYLAND_SERVER REQUIRED IMPORTED_TARGET wayland-server)
+    pkg_check_modules(XKBCOMMON REQUIRED IMPORTED_TARGET xkbcommon)
+    find_package(Threads REQUIRED)
+    set(SESSION_LOCK_SERVER_HEADER "${CMAKE_CURRENT_BINARY_DIR}/ext-session-lock-v1-server-protocol.h")
+    add_custom_command(OUTPUT ${SESSION_LOCK_SERVER_HEADER}
+        COMMAND ${WAYLAND_SCANNER} server-header ${SESSION_LOCK_XML} ${SESSION_LOCK_SERVER_HEADER}
+        DEPENDS ${SESSION_LOCK_XML} VERBATIM)
+    add_executable(waylandsaver-smoke ../tests/waylandsaver_smoke.cpp
+        waylandsaver.cpp waylandsaver.h sessionlock.cpp sessionlock.h ${SESSION_LOCK_SERVER_HEADER})
+    target_include_directories(waylandsaver-smoke PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_definitions(waylandsaver-smoke PRIVATE SAVER_TEST_NO_DCONFIG)
+    target_link_libraries(waylandsaver-smoke PRIVATE session-lock-protocol
+        Dtk${DTK_VERSION_MAJOR}::Core ${SESSION_LOCK_QT_LIBS}
+        PkgConfig::WAYLAND_SERVER PkgConfig::XKBCOMMON Threads::Threads)
+    add_test(NAME waylandsaver-smoke COMMAND waylandsaver-smoke)
+    set_tests_properties(waylandsaver-smoke PROPERTIES TIMEOUT 60)
+endif()
 
 # 安装目标
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
