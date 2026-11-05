@@ -32,6 +32,8 @@ else()
 endif()
 message("   >>> Build with DTK: ${DTK_VERSION_MAJOR}")
 
+include(CTest)
+
 # 添加子目录
 add_subdirectory(tools)
 add_subdirectory(src) 

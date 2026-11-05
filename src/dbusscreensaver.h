@@ -20,6 +20,7 @@ DCORE_USE_NAMESPACE
 
 class ScreenSaverWindow;
 class X11EventFilter;
+class WaylandSaver;
 class DBusScreenSaver : public QObject
 {
     Q_OBJECT
@@ -86,6 +87,10 @@ private:
     void XGrabKeyBoard();
     void XUnGrabKeyBoard();
     void onLockedChanged(const bool locked);
+    void requestWaylandLock();
+
+    WaylandSaver *m_waylandSaver = nullptr;
+    bool m_waylandLockPending = false;
 
     // 统一的 DBus 属性变化信号发送方法
     void sendDBusPropertyChanged(const QString &propertyName, const QVariant &value);
