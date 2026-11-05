@@ -18,6 +18,12 @@ else()
 endif()
 
 find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS ${qt_required_components})
+
+# Qt 6.10 起，私有模块目标(如 Qt6::GuiPrivate)拆分为独立的 CMake 包，不再随主模块自动创建，需显式查找；
+# 更早版本该目标由 Qt6GuiTargets.cmake 自动创建，无需额外处理
+if (QT_DESIRED_VERSION MATCHES 6 AND Qt6_VERSION VERSION_GREATER_EQUAL 6.10)
+    find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
+endif()
 find_package(Dtk${DTK_VERSION_MAJOR} REQUIRED COMPONENTS Widget Gui Core)
 
 # 查找系统库
