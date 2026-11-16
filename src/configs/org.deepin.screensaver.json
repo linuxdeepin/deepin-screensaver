@@ -11,7 +11,7 @@
             "description[zh_CN]":"设置当前屏保",
             "description": "set current screen saver",
             "permissions": "readwrite",
-            "visibility": "public"
+            "visibility": "private"
         }
     }
 }
