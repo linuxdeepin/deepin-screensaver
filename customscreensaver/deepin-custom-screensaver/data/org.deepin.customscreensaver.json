@@ -11,7 +11,7 @@
             "description[zh_CN]":"自定义屏保图片路径",
             "description": "Custom screensaver picture path",
             "permissions": "readwrite",
-            "visibility": "public"
+            "visibility": "private"
         },
         "intervalTime": {
             "value": 0,
@@ -22,7 +22,7 @@
             "description[zh_CN]":"自定义屏保轮播间隔时间(3s ~ 3600s)",
             "description": "The interval time of custom screensaver slide show(3s ~ 3600s)",
             "permissions": "readwrite",
-            "visibility": "public"
+            "visibility": "private"
         },
         "playMode": {
             "value": -1,
@@ -33,7 +33,7 @@
             "description[zh_CN]":"自定义屏保播放模式",
             "description": "Custom screensaver play mode",
             "permissions": "readwrite",
-            "visibility": "public"
+            "visibility": "private"
         }
     }
 }
