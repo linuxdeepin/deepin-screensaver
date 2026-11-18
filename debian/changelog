@@ -1,3 +1,12 @@
+deepin-screensaver (6.5.13) unstable; urgency=medium
+
+  * fix: explicitly find Qt6 GuiPrivate on Qt >= 6.10
+  * feat(screensaver): add Wayland slideshow
+  * build(debian): add qt6-wayland runtime plugin to Build-Depends
+  * ci: update actions/checkout to v7 and add allow-unsafe-pr-checkout
+
+ -- zhangkun <zhangkun2@uniontech.com>  Wed, 18 Nov 2026 11:58:26 +0800
+
 deepin-screensaver (6.5.12) unstable; urgency=medium
 
   * fix: update Arabic (ar) translations
