@@ -1,3 +1,9 @@
+deepin-screensaver (6.5.14) unstable; urgency=medium
+
+  * fix: keep internal screensaver configuration private
+
+ -- zhaofangxun <zhaofangxun@uniontech.com>  Thu, 19 Nov 2026 21:35:59 +0800
+
 deepin-screensaver (6.5.13) unstable; urgency=medium
 
   * fix: explicitly find Qt6 GuiPrivate on Qt >= 6.10
